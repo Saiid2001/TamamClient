@@ -1,0 +1,51 @@
+body {
+    background: linear-gradient(90.76deg, #00836B 0.6%, #006383 99.35%);
+    margin: 0;
+    overflow: hidden;
+    font-family: Roboto;
+    font-style: normal;
+    font-weight: normal;
+    display:grid;
+    grid-template-rows:30px auto;
+    height:100%;
+}
+html{
+    height:100%;
+}
+button{
+    outline:none;
+    border:none;
+}
+.head{
+    color:white;
+    margin:5px;
+    height:20px;
+    -webkit-app-region: drag;
+}
+.head .logo {
+    height:16px;
+    margin:5px;
+}
+
+.head .window-control {
+    float: right;
+    align-items: center;
+    padding:3px 10px;
+    z-index:10;
+}
+.head .window-control button {
+   margin:0;
+   padding:0;
+   background:none;
+   border:none;
+   outline:none;
+   margin:0px 3px;
+}
+.head .window-control img{
+    width:20px;
+}
+
+.view{
+    color:white;
+    height:100%;
+}

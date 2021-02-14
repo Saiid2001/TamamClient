@@ -1,0 +1,15 @@
+{
+  "name": "tamam-client",
+  "version": "0.0.0",
+  "description": "TamamClient",
+  "main": "main.js",
+  "author": {
+    "name": ""
+  },
+  "dependencies": {
+    "electron": "^11.2.3"
+  },
+  "scripts": {
+    "start": "electron ."
+  }
+}

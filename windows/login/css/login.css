@@ -1,0 +1,70 @@
+.view {
+    background-image: url('../../../assets/img/background_graphic_login.svg');
+    background-size:contain;
+    background-repeat:no-repeat;
+    background-position:bottom left;
+}
+.login-container {
+    height: calc(100% + 30px);
+    background-color: white;
+    position: absolute;
+    right: 20%;
+    top: -10px;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 0px 20px;
+    box-shadow: 0px 4px 54px 7px rgba(0, 0, 0, 0.25);
+}
+
+    .login-container .title {
+        color: #0082AA;
+        align-items: center;
+        flex: none;
+        order: 0;
+        flex-grow: 0;
+        margin: 20px 0px 186px 0px;
+    }
+.login-container .logo{
+    height:40px;
+}
+
+    .login-container .title p {
+        letter-spacing: 0.38em;
+        font-style: normal;
+        font-weight: 300;
+        font-size: 14px;
+        line-height: 21px;
+        margin:0;
+    }
+
+    .login-container .login button {
+        background: #FBFBFB;
+        border-radius: 4px;
+        padding:15px 25px;
+        transition: background 0.5s;
+        vertical-align:middle;
+    }
+    .login-container .login img{
+        vertical-align:middle;
+    }
+    .login-container .login button:hover {
+        background-color: #eeeeee;
+        transition: background 0.5s;
+    }
+
+.quote {
+    position: absolute;
+    bottom: 100px;
+    left: 10%;
+    width: 250px;
+    font-family: Cambria;
+    font-style: normal;
+    font-weight: normal;
+    font-size: 26px;
+    padding: 40px 80px;
+    line-height: 30px;
+    background: url(../../../assets/img/format_quote.svg) no-repeat top left, url(../../../assets/img/format_quote_bottom.svg) no-repeat bottom right;
+}
