@@ -21,7 +21,9 @@ button{
     margin:5px;
     height:20px;
     -webkit-app-region: drag;
+    z-index:10;
 }
+
 .head .logo {
     height:16px;
     margin:5px;
@@ -30,8 +32,9 @@ button{
 .head .window-control {
     float: right;
     align-items: center;
-    padding:3px 10px;
-    z-index:10;
+    padding: 3px 10px;
+    z-index: 10;
+    -webkit-app-region: no-drag;
 }
 .head .window-control button {
    margin:0;
@@ -40,6 +43,11 @@ button{
    border:none;
    outline:none;
    margin:0px 3px;
+   opacity: 0.6;
+}
+.head .window-control button:hover {
+    opacity:1;
+    transition: opacity 0.5s;
 }
 .head .window-control img{
     width:20px;

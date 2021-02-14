@@ -1,0 +1,18 @@
+body{
+    background:white;
+    
+}
+body{
+    border-radius:20px;
+}
+
+.view {
+    display: grid;
+    grid-template-columns: 75% auto;
+    
+
+}
+.lobby {
+    background-color: lightblue;
+    margin-top: -30px;
+}
