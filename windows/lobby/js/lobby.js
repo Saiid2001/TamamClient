@@ -2,6 +2,8 @@
 const { connectSocket, onUserEnteredRoom, enterRoom, getSocket, onDisconnect } = require('../../services/socket-service')
 let canvasController
 
+const {logout} = require('../../services/auth-service')
+
 document.addEventListener('DOMContentLoaded', () => {
 
     connectSocket(() => {

@@ -3,7 +3,8 @@
 const rootPath = require('electron-root-path').rootPath;
 const { app, BrowserWindow, ipcMain, screen } = require('electron')
 const fs = require('fs')
-const {connectSocket} = require('./services/socket-service')
+const { connectSocket } = require('./services/socket-service')
+const authService = require('./services/auth-service');
 const aspect = require('electron-aspectratio')
 
 
@@ -37,7 +38,7 @@ function goTo(pageKey, args) {
     mainWindow.loadFile(pages[pageKey]['path'], { query: { "data": JSON.stringify(query) } })
 }
 
-function createMainWindow() {
+async function createMainWindow() {
     let screenSize = screen.getPrimaryDisplay().workAreaSize
     mainWindow = new BrowserWindow({
         width: 1064,
@@ -56,10 +57,54 @@ function createMainWindow() {
     
     mainWindowHandler.setRatio(screenSize.width, screenSize.height, 10);
 
-    goTo('login')
+    try {
+        
+        await authService.refreshTokens();
+        return goTo('lobby');
+    } catch (err) {
+
+        try {
+            await createAuthWindow(mainWindow);
+        }
+        catch (err) {
+            console.log(err)
+        }
+
+    }
+
 }
 
+async function createAuthWindow(win) {
+
+
+    ipcMain.on('go-to-ms-login', () => {
+
+        win.loadURL(authService.getAuthenticationURL());
+        const { session: { webRequest } } = win.webContents;
+
+        const filter = {
+            urls: [
+                'http://localhost/callback*'
+            ]
+        };
+
+        webRequest.onBeforeRequest(filter, async ({ url }) => {
+            
+            await authService.loadTokens(url);
+            return goTo('lobby');
+        });
+        win.on('authenticated', () => {
+            goTo('lobby');
+        });
+    })
+
+    goTo('login');
+}
+
+
 //setting ipc events
+
+
 
 ipcMain.on('goTo', (event, pageKey) => {
     event.returnValue = rootPath+'\\'+pages[pageKey]['path']
