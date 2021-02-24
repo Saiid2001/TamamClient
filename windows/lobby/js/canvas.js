@@ -138,7 +138,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 addRandomCloud();
             }
             if (cloud.x/app.stage.scale.x > app.stage.width) {
-                console.log(container.getBoundingClientRect().width)
                 cloudsGroup.removeChild(cloud)
             }
         }
@@ -185,7 +184,7 @@ class Canvas {
 
 
 //adding avatar
-    addToContainer(avatarSprite, group = null) {
+    addToContainer(userId, avatarSprite, group = null) {
         
         for (var i in this.positions) {
             for (var j in this.positions[i]) {
@@ -195,6 +194,7 @@ class Canvas {
                     this.rows[i].addChild(avatarSprite)
                     this.positions[i][j]['free'] = false
                     this.positions[i][j]['sprite'] = avatarSprite
+                    this.positions[i][j]['user'] = userId
                     return
                 }
             }
@@ -203,8 +203,21 @@ class Canvas {
 }
 
 //removing avatar
- removeFromContainer(avatarSprite) {
+    removeFromContainer(avatarSprite) {
+    
+        for (var i in this.positions) {
+           
+            for (var j in this.positions[i]) {
 
+                if (!this.positions[i][j]['free'] && this.positions[i][j]['sprite'] == avatarSprite) {
+                 this.rows[i].removeChild(avatarSprite)
+                 this.positions[i][j]['free'] = true
+                 this.positions[i][j]['sprite'] = null
+                this.positions[i][j]['user'] = null
+             }
+                
+         }
+     }
 }
 
 //changing group of avatar

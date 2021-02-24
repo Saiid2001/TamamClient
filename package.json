@@ -14,7 +14,7 @@
     "jwt-decode": "^3.1.2",
     "keytar": "^7.4.0",
     "pixi.js": "^5.3.7",
-    "socket.io-client": "^3.1.1"
+    "socket.io-client": "^3.1.1",
     "screenz": "^1.0.0"
   },
   "scripts": {
