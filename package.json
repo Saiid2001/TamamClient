@@ -7,9 +7,13 @@
     "name": ""
   },
   "dependencies": {
+    "axios": "^0.21.1",
     "electron": "^11.2.3",
     "electron-root-path": "^1.0.16",
-    "pixi.js": "^5.3.7"
+    "jwt-decode": "^3.1.2",
+    "keytar": "^7.4.0",
+    "pixi.js": "^5.3.7",
+    "socket.io-client": "^3.1.1"
   },
   "scripts": {
     "start": "electron ."

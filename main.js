@@ -3,6 +3,7 @@
 const rootPath = require('electron-root-path').rootPath;
 const { app, BrowserWindow, ipcMain } = require('electron')
 const fs = require('fs')
+const {connectSocket} = require('./services/socket-service')
 
 
 //setting the available pages to load
