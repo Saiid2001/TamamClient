@@ -5,7 +5,6 @@
     <meta charset="utf-8" />
     <title></title>
     <link rel="stylesheet" href="../../css/main.css" />
-    <link rel="stylesheet" href="./css/lobby.css" />
 </head>
 <body>
     <div class="head">
@@ -16,18 +15,15 @@
             <button id="close-window"><img src="../../assets/img/close-dark.svg" /></button>
         </div>
     </div>
-    <div class="view">
-        <div class="lobby">
+    <div class="view"><p></p></div>
+    <script>
+        const querystring = require('querystring');
+        let query = querystring.parse(global.location.search);
+        let data = JSON.parse(query['?data'])
 
-        </div>
-        <div class="side-bar">
-
-        </div>
-    </div>
-    <script src="js/main.js"></script>
+        let p = document.querySelector('p')
+        p.innerHTML = "Connected to " + data['users'][0]
+    </script>
     <script src="../../js/window-control.js"></script>
-    <script src="../../js/CanvasController.js"></script>
-    <script src="js/canvas.js"></script>
-    <script src="js/lobby.js"></script>
 </body>
 </html>

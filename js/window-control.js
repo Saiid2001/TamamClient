@@ -3,7 +3,7 @@
 document.addEventListener('DOMContentLoaded', () => {
     
     const remote = require('electron').remote;
-    const { ipcRenderer } = require('electron')
+    
     let BrowserWindow = remote.BrowserWindow;
 
 

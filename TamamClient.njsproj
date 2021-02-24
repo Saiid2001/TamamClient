@@ -36,12 +36,30 @@
     <Content Include="assets\img\overlay.png" />
     <Content Include="assets\img\minimize.png" />
     <Content Include="assets\img\close.png" />
+    <Content Include="js\CanvasController.js">
+      <SubType>Code</SubType>
+    </Content>
     <Content Include="js\window-control.js">
       <SubType>Code</SubType>
     </Content>
     <Content Include="main.js" />
     <Content Include="package.json" />
     <Content Include="README.md" />
+    <Content Include="windows\convo\convo.html">
+      <SubType>Code</SubType>
+    </Content>
+    <Content Include="windows\lobby\assets\img\background-ground.png" />
+    <Content Include="windows\lobby\assets\img\background.png" />
+    <Content Include="windows\lobby\assets\img\cloud1.svg" />
+    <Content Include="windows\lobby\assets\img\cloud2.svg" />
+    <Content Include="windows\lobby\assets\img\green.svg" />
+    <Content Include="windows\lobby\assets\img\green1.svg" />
+    <Content Include="windows\lobby\assets\img\green2.svg" />
+    <Content Include="windows\lobby\assets\img\green3.svg" />
+    <Content Include="windows\lobby\css\lobby.css" />
+    <Content Include="windows\lobby\js\canvas.js" />
+    <Content Include="windows\lobby\js\main.js" />
+    <Content Include="windows\lobby\lobby.html" />
     <Content Include="windows\login\js\JavaScript1.js">
       <SubType>Code</SubType>
     </Content>
@@ -53,9 +71,15 @@
     <Folder Include="css\" />
     <Folder Include="js\" />
     <Folder Include="windows\" />
+    <Folder Include="windows\lobby\" />
+    <Folder Include="windows\lobby\assets\" />
+    <Folder Include="windows\lobby\assets\img\" />
+    <Folder Include="windows\lobby\css\" />
+    <Folder Include="windows\lobby\js\" />
     <Folder Include="windows\login\" />
     <Folder Include="windows\login\css\" />
     <Folder Include="windows\login\js\" />
+    <Folder Include="windows\convo\" />
   </ItemGroup>
   <Import Project="$(VSToolsPath)\Node.js Tools\Microsoft.NodejsToolsV2.targets" />
 </Project>

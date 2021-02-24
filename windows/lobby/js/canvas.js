@@ -1,11 +1,15 @@
 
-document.addEventListener('DOMContentLoaded', () => {
-    const PIXI = require('pixi.js')
+const PIXI = require('pixi.js')
+let avatarsGroup = new PIXI.Container();
+let app
+
+document.addEventListener('DOMContentLoaded', () => { 
+    
 
     let container = document.querySelector('.lobby')
 
     //Create a Pixi Application
-    let app = new PIXI.Application({
+    app = new PIXI.Application({
         height: container.getBoundingClientRect().height,
         width: container.getBoundingClientRect().width,
         autoResize: true,
@@ -15,10 +19,7 @@ document.addEventListener('DOMContentLoaded', () => {
     //Add the canvas that Pixi automatically created for you to the HTML document
     container.appendChild(app.view);
 
-    //dynamic resize
-    window.addEventListener('resize', () => {
-        app.renderer.resize(container.getBoundingClientRect().width, container.getBoundingClientRect().height)
-    })
+    
 
     //setting the renderer
     app.renderer.backgroundColor = 0xFFFFFF;
@@ -28,9 +29,11 @@ document.addEventListener('DOMContentLoaded', () => {
         .add(
             [
                 './assets/img/background.png',
+                './assets/img/background-ground.png',
                 './assets/img/cloud1.svg',
                 './assets/img/cloud2.svg',
                 './assets/img/green.svg',
+                './assets/img/forground.png'
             ]
         )
         .load(setup);
@@ -38,7 +41,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
     //scene objects
     let cloudsGroup = new PIXI.Container();
-    let cloudSprites = []
 
     function randomInt(max, min) {
         return Math.floor(Math.random() * (max - min + 1)) + min;
@@ -64,27 +66,66 @@ document.addEventListener('DOMContentLoaded', () => {
 
     }
 
+    
+
     function setup() {
         let background = new PIXI.Sprite(
             app.loader.resources['./assets/img/background.png'].texture
         );
-        let green = new PIXI.Sprite(
-            app.loader.resources['./assets/img/green.svg'].texture
-        )
-        green.y = 300;
-        green.x = 80;
 
-        green.scale.set(0.8)
+        let green = new PIXI.Sprite(
+            app.loader.resources['./assets/img/background-ground.png'].texture
+        )
+        green.y = 120;
+        green.x = 0;
+        
+
+        let forground = new PIXI.Sprite(
+            app.loader.resources['./assets/img/forground.png'].texture
+        )
+        forground.y = 920
+
+        avatarsGroup.position.set(100, 550)
+        avatarsGroup.scale.set(0.3)
+
+        green.scale.set(0.5)
         app.stage.addChild(background)
         app.stage.addChild(cloudsGroup)
-        //app.stage.addChild(green)
+        app.stage.addChild(green)
+        app.stage.addChild(avatarsGroup)
+        app.stage.addChild(forground)
+        
 
         for (var i = 0; i < 7; i++) {
             addRandomCloud()
         }
+
+        function resize() {
+            app.renderer.resize(container.getBoundingClientRect().width, document.body.getBoundingClientRect().height)
+
+            let oldHeight = app.stage.height / app.stage.scale.y
+            let oldWidth = app.stage.width / app.stage.scale.x
+            let width = document.body.getBoundingClientRect().width * 0.75
+            let height = document.body.getBoundingClientRect().height
+
+            let scaleX = width / oldWidth
+            let scaleY = height / oldHeight
+
+            let minScale = Math.max(scaleX, scaleY)
+
+
+            app.stage.scale.set(minScale)
+        }
+
+        //dynamic resize
+        window.addEventListener('resize', () => {
+            resize()
+        })
+
+        resize();
         
         app.ticker.add(delta => update(delta));
-
+        document.dispatchEvent(new Event('canvasReady'))
     }
 
     function update(delta) {
@@ -96,12 +137,78 @@ document.addEventListener('DOMContentLoaded', () => {
                 
                 addRandomCloud();
             }
-            if (cloud.x > container.getBoundingClientRect().width) {
+            if (cloud.x/app.stage.scale.x > app.stage.width) {
+                console.log(container.getBoundingClientRect().width)
                 cloudsGroup.removeChild(cloud)
             }
         }
     }
 
-
-
+    
 })
+
+
+class Canvas {
+//canvas apis that should exist in all canvas
+    constructor() {
+        this.avatars = {}
+        this.groups = {}
+        this.positions = []
+        this.rows = []
+
+        var spaceY = 200;
+        var spaceX = 180;
+
+        for (var i = 0; i < 2; i++) {
+            this.rows.push(new PIXI.Container())
+            avatarsGroup.addChild(this.rows[i])
+            this.positions.push([])
+            var _y = i * spaceY;
+            for (var j = 0; j < 15; j++) {
+                var _x = j * spaceX;
+                this.positions[i].push(
+                    {
+                        free: true,
+                        sprite: null,
+                        x: _x,
+                        y: _y
+                    }
+                )
+            }
+        }
+
+        this.rows[1].scale.set(1.1)
+        this.rows[0].position.x = 150
+
+
+    }
+
+
+//adding avatar
+    addToContainer(avatarSprite, group = null) {
+        
+        for (var i in this.positions) {
+            for (var j in this.positions[i]) {
+                
+                if (this.positions[i][j]['free']) {
+                    avatarSprite.position.set(this.positions[i][j]['x'], this.positions[i][j]['y'])
+                    this.rows[i].addChild(avatarSprite)
+                    this.positions[i][j]['free'] = false
+                    this.positions[i][j]['sprite'] = avatarSprite
+                    return
+                }
+            }
+        
+    }
+}
+
+//removing avatar
+ removeFromContainer(avatarSprite) {
+
+}
+
+//changing group of avatar
+ changeAvatarGroup(avatarID, group) {
+
+}
+}

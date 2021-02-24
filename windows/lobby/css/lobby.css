@@ -9,10 +9,9 @@ body{
 .view {
     display: grid;
     grid-template-columns: 75% auto;
-    
-
+    margin-top: -30px;
+    height:calc(100% + 30px)
 }
 .lobby {
     background-color: lightblue;
-    margin-top: -30px;
 }
