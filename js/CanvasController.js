@@ -9,23 +9,38 @@ class CanvasController {
     addAvatar(userData) {
         let userId = userData['id']
         //we need to construct the avatar
-        let avatar = CanvasController.buildAvatar(userData['avatar'])
+        let avatar = new Avatar(userId, userData['avatar'])
         this.users[userId]= avatar
-        this.canvas.addToContainer(avatar)
+        this.canvas.addToContainer(avatar.getFullBody())
     }
 
     removeAvatar(userId) {
 
     }
 
-    static buildAvatar(avatarData) {
-        let img = document.createElement('img')
-        img.src = '../../assets/img/steve.png'
+    
 
-        let base = new PIXI.BaseTexture(img)
-        let resource = new PIXI.Texture(base)
+}
 
-        return new PIXI.Sprite(resource)
+
+class Avatar{
+    constructor(userID, avatarData) {
+        this.data = avatarData
+        this.userID = userID
+    }
+
+    getFullBody(interactive = true) {
+        let sprite = new PIXI.Container()
+        sprite.addChild(PIXI.Sprite.from('../../assets/img/steve.png'))
+
+        if (interactive) {
+            sprite.interactive = true
+            sprite.on('mousedown', () => {
+                document.dispatchEvent(new CustomEvent('request-call', { detail: {UID: this.userID }}))
+            })
+        }
+
+        return sprite
     }
 
 }

@@ -45,6 +45,9 @@
     <Content Include="main.js" />
     <Content Include="package.json" />
     <Content Include="README.md" />
+    <Content Include="windows\convo\convo.html">
+      <SubType>Code</SubType>
+    </Content>
     <Content Include="windows\lobby\assets\img\background-ground.png" />
     <Content Include="windows\lobby\assets\img\background.png" />
     <Content Include="windows\lobby\assets\img\cloud1.svg" />
@@ -76,6 +79,7 @@
     <Folder Include="windows\login\" />
     <Folder Include="windows\login\css\" />
     <Folder Include="windows\login\js\" />
+    <Folder Include="windows\convo\" />
   </ItemGroup>
   <Import Project="$(VSToolsPath)\Node.js Tools\Microsoft.NodejsToolsV2.targets" />
 </Project>

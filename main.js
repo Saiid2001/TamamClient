@@ -1,37 +1,59 @@
 'use strict';
 
 const rootPath = require('electron-root-path').rootPath;
-const { app, BrowserWindow, ipcMain } = require('electron')
+const { app, BrowserWindow, ipcMain, screen } = require('electron')
 const fs = require('fs')
+const aspect = require('electron-aspectratio')
 
 
 //setting the available pages to load
 let pages = {
     'login': {
-        'path': 'windows/login/login.html'
+        'path': 'windows/login/login.html',
+        'required':[]
     },
     'lobby': {
-        'path': 'windows/lobby/lobby.html'
+        'path': 'windows/lobby/lobby.html',
+        'required':[]
+    },
+    'convo': {
+        'path': 'windows/convo/convo.html',
+        'required': ['users']
     }
 }
 
 
-let mainWindow;
+let mainWindow, mainWindowHandler;
 
-function goTo(pageKey) {
-    mainWindow.loadFile(pages[pageKey]['path'])
+function goTo(pageKey, args) {
+
+    let query = {}
+    for (var arg of pages[pageKey]['required']) {
+        console.log(args)
+        query[arg] = args[arg]
+    }
+
+    mainWindow.loadFile(pages[pageKey]['path'], { query: { "data": JSON.stringify(query) } })
 }
 
 function createMainWindow() {
+    let screenSize = screen.getPrimaryDisplay().workAreaSize
     mainWindow = new BrowserWindow({
         width: 1064,
-        height: 648,
+        height: 1064 * screenSize.height / screenSize.width,
         frame: false,
         webPreferences: {
             nodeIntegration: true,
             enableRemoteModule: true,       
         }
     })
+
+    //Create a new handler for the mainWindow
+    mainWindowHandler = new aspect(mainWindow);
+
+    //define the ratio
+    
+    mainWindowHandler.setRatio(screenSize.width, screenSize.height, 10);
 
     goTo('login')
 }
@@ -40,6 +62,11 @@ function createMainWindow() {
 
 ipcMain.on('goTo', (event, pageKey) => {
     event.returnValue = rootPath+'\\'+pages[pageKey]['path']
+})
+
+ipcMain.on('request-call', (event, userID) => {
+
+    app.emit('request-call', userID)
 })
 
 app.whenReady().then(createMainWindow)
@@ -55,3 +82,13 @@ app.on('activate', () => {
         createMainWindow()
     }
 })
+
+app.on('request-call', (userID) => {
+    app.emit('call-accepted', userID)
+})
+
+app.on('call-accepted', (userID) => {
+    goTo('convo', {users: [userID]})
+})
+
+
