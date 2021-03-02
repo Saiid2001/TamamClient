@@ -2,14 +2,11 @@
 const { connectSocket, onUserEnteredRoom, enterRoom, getSocket, onDisconnect } = require('../../services/socket-service')
 let canvasController
 
-const {logout} = require('../../services/auth-service')
+const { logout } = require('../../services/auth-service')
+
+
 
 document.addEventListener('DOMContentLoaded', () => {
-
-    connectSocket(() => {
-        console.log('connected to socket')
-        enterRoom('lobby');
-    })
 
     const { ipcRenderer } = require('electron')
 
@@ -20,15 +17,26 @@ document.addEventListener('DOMContentLoaded', () => {
     //    console.log('added')
     //}
 
-    onUserEnteredRoom(({ user }) => {
-        canvasController.addAvatar({ id: user, avatar: {} })
-        console.log(user)
+    connectSocket(() => {
+        console.log('connected to socket')
+
+        onUserEnteredRoom(({ user }) => {
+            canvasController.addAvatar({ id: user, avatar: {} })
+        })
+
+        onDisconnect(() => {
+            console.log('disconnected')
+            canvasController.clear();
+        })
+        enterRoom('lobby', users => {
+            console.log(users)
+            users.forEach((user, i) => {
+                canvasController.addAvatar({ id: user, avatar: {} })
+            })
+        });
     })
 
-    onDisconnect(() => {
-        console.log('disconnected')
-        canvasController.clear();
-    })
+    
 
 
     //event listeners

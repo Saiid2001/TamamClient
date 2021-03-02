@@ -10,18 +10,20 @@ const { SERVER_ADDRESS, AUTHENTICATE_ADDRESS, REFRESH_ADDRESS } = envVariables;
 const redirectUri = "http://localhost/callback";
 
 const keytarService = "electron-openid-oauth";
+const keytarAccessService = 'electron-access-token';
 const keytarAccount = os.userInfo().username;
 
 let accessToken = null;
 let profile = null;
 let refreshToken = null;
 
-function getAccessToken() {
-    return accessToken;
+async function getAccessToken() {
+    const token = await keytar.getPassword(keytarAccessService, keytarAccount);
+    return token
 }
 
 function getProfile() {
-    return profile;
+    
 }
 
 function getAuthenticationURL() {
@@ -31,6 +33,7 @@ function getAuthenticationURL() {
 async function refreshTokens() {
     const refreshToken = await keytar.getPassword(keytarService, keytarAccount);
     if (refreshToken) {
+        console.log('refresh')
         const refreshOptions = {
             method: "POST",
             url: SERVER_ADDRESS+REFRESH_ADDRESS,
@@ -46,7 +49,10 @@ async function refreshTokens() {
         try {
             const response = await axios(refreshOptions);
             
-            accessToken = response.access_token;
+            accessToken = response.data.access_token;
+            await keytar.setPassword(keytarAccessService, keytarAccount, accessToken);
+
+            
         } catch (error) {
             
             await logout();
@@ -100,7 +106,7 @@ async function loadTokens(callbackURL) {
 }
 
 async function logout() {
-    await keytar.deletePassword(keytarService, keytarAccount);
+    await keytar.deletePassword(keytarService, keytarAccount).then(()=>{console.log("removed refresh token")}).catch(e=>{console.log});
     accessToken = null;
     profile = null;
     refreshToken = null;

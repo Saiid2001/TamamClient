@@ -60,6 +60,7 @@ async function createMainWindow() {
     try {
         
         await authService.refreshTokens();
+
         return goTo('lobby');
     } catch (err) {
 
@@ -137,4 +138,44 @@ app.on('call-accepted', (userID) => {
     goTo('convo', {users: [userID]})
 })
 
+ipcMain.on('get-all-cookies', deleteAllCookies)
+
+//dealing with cookies
+
+const { session } = require('electron')
+
+// Query all cookies.
+async function getAllCookies(){
+	console.log()
+session.defaultSession.cookies.get({})
+  .then((cookies) => {
+	 cookies.forEach( (item, i) =>{
+		 session.defaultSession.cookies.remove(item.domain+item.path, item.name).then(()=>{console.log('removed', item.name)}).catch((e)=>{console.log(e)})
+		 
+	 })
+  }).catch((error) => {
+    console.log(error)
+  })
+  session.defaultSession.cookies.flushStore();
+}
+function deleteAllCookies() {
+	console.log('deleting')
+  session.defaultSession.cookies.get({}).then((cookies) => {
+	  console.log(cookies)
+    cookies.forEach((cookie) => {
+      let url = '';
+      // get prefix, like https://www.
+      url += cookie.secure ? 'https://' : 'http://';
+      url += cookie.domain.charAt(0) === '.' ? 'www' : '';
+      // append domain and path
+      url += cookie.domain;
+      url += cookie.path;
+	  console.log(url);
+
+      session.defaultSession.cookies.remove(url, cookie.name, (error) => {
+        if (error) console.log(`error removing cookie ${cookie.name}`, error);
+      });
+    });
+  });
+}
 
