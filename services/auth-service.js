@@ -4,6 +4,7 @@ const url = require("url");
 const envVariables = require("../config/settings.json");
 const keytar = require("keytar");
 const os = require("os");
+const {session} = require('electron')
 
 const { SERVER_ADDRESS, AUTHENTICATE_ADDRESS, REFRESH_ADDRESS } = envVariables;
 
@@ -17,11 +18,11 @@ let accessToken = null;
 let profile = null;
 let refreshToken = null;
 
-async function getAccessToken() {
-    const token = await keytar.getPassword(keytarAccessService, keytarAccount);
-    return token
-}
+function getAccessToken() {
+    console.log("getting token")
+    return accessToken
 
+}
 function getProfile() {
     
 }
@@ -50,7 +51,9 @@ async function refreshTokens() {
             const response = await axios(refreshOptions);
             
             accessToken = response.data.access_token;
-            await keytar.setPassword(keytarAccessService, keytarAccount, accessToken);
+
+            session.defaultSession.cookies.set({ url: "app://auth.access.token", name: "access-token", value: accessToken })
+            //await keytar.setPassword(keytarAccessService, keytarAccount, accessToken);
 
             
         } catch (error) {

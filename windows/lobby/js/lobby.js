@@ -1,9 +1,8 @@
 
-const { connectSocket, onUserEnteredRoom, enterRoom, getSocket, onDisconnect } = require('../../services/socket-service')
+const socket = require('../../services/socket-service')
 let canvasController
 
 const { logout } = require('../../services/auth-service')
-
 
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -12,23 +11,27 @@ document.addEventListener('DOMContentLoaded', () => {
 
     canvasController = new CanvasController(new Canvas())
 
-    //for (var i = 0; i < 40; i++) {
-     //   canvasController.addAvatar({ id: i, avatar: {} })
-    //    console.log('added')
-    //}
+    
 
-    connectSocket(() => {
+    socket.connectSocket(() => {
         console.log('connected to socket')
 
-        onUserEnteredRoom(({ user }) => {
-            canvasController.addAvatar({ id: user, avatar: {} })
+        socket.onUserEnteredRoom(({ user }) => {
+            canvasController.addAvatar(user)
+            
         })
 
-        onDisconnect(() => {
+        socket.onUserLeftRoom((userId) => {
+            
+            canvasController.removeAvatar(userId)
+        })
+
+        socket.onDisconnect(() => {
             console.log('disconnected')
             canvasController.clear();
         })
-        enterRoom('lobby', users => {
+
+        socket.enterRoom('lobby', users => {
             console.log(users)
             users.forEach((user, i) => {
                 canvasController.addAvatar({ id: user, avatar: {} })
@@ -47,3 +50,5 @@ document.addEventListener('DOMContentLoaded', () => {
     })
 
 })
+
+

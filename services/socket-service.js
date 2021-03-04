@@ -1,6 +1,6 @@
 const {SERVER_ADDRESS} = require('../config/settings.json')
 const io = require('socket.io-client')
-const {getAccessToken} = require('../services/auth-service')
+const { ipcRenderer } = require('electron')
 
 var socket = null;
 
@@ -8,11 +8,12 @@ function getSocket() {
     return socket;
 }
 
-async function connectSocket(onSuccess) {
-    const token = await getAccessToken();
+function connectSocket(onSuccess) {
+    const token  = ipcRenderer.sendSync('get-access-token');
     socket = io.connect(SERVER_ADDRESS, {
         extraHeaders: {
             Authorization: "Bearer " + token
+
         }
     })
     socket.on('connect', onSuccess)
@@ -29,6 +30,14 @@ function onUserEnteredRoom(callback) {
     })
 }
 
+function onUserLeftRoom(callback) {
+    socket.on('user-left-room', ({ user }) => {
+        console.log(`user: ${user} left the room`)
+        callback(user)
+
+    })
+}
+
 function onDisconnect(callback) {
     socket.on("disconnect", callback)
 }
@@ -36,6 +45,7 @@ function onDisconnect(callback) {
 module.exports = {
     connectSocket,
     onUserEnteredRoom,
+    onUserLeftRoom,
     enterRoom,
     getSocket,
     onDisconnect

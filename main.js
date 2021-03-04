@@ -6,7 +6,8 @@ const fs = require('fs')
 const { connectSocket } = require('./services/socket-service')
 const authService = require('./services/auth-service');
 const aspect = require('electron-aspectratio')
-
+const { session } = require('electron');
+const { getAccessToken } = require('./services/auth-service');
 
 //setting the available pages to load
 let pages = {
@@ -138,11 +139,16 @@ app.on('call-accepted', (userID) => {
     goTo('convo', {users: [userID]})
 })
 
+ipcMain.on('get-access-token', (event) => {
+    console.log("getting access token");
+    event.returnValue = getAccessToken()
+})
+
 ipcMain.on('get-all-cookies', deleteAllCookies)
 
 //dealing with cookies
 
-const { session } = require('electron')
+
 
 // Query all cookies.
 async function getAllCookies(){

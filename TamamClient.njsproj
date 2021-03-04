@@ -45,6 +45,9 @@
     <Content Include="package.json" />
     <Content Include="README.md" />
     <Content Include="services\auth-service.js" />
+    <Content Include="services\user-service.js">
+      <SubType>Code</SubType>
+    </Content>
     <Content Include="services\socket-service.js" />
     <Content Include="windows\lobby\assets\img\background.png" />
     <Content Include="windows\lobby\assets\img\cloud1.svg" />
@@ -55,7 +58,9 @@
     <Content Include="windows\lobby\assets\img\green3.svg" />
     <Content Include="windows\lobby\css\lobby.css" />
     <Content Include="windows\lobby\js\canvas.js" />
+    <Content Include="windows\lobby\js\chatbot.js" />
     <Content Include="windows\lobby\js\lobby.js" />
+    <Content Include="windows\lobby\js\ui.js" />
     <Content Include="windows\lobby\lobby.html" />
     <Content Include="windows\login\js\JavaScript1.js">
       <SubType>Code</SubType>

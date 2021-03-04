@@ -76,17 +76,17 @@ document.addEventListener('DOMContentLoaded', () => {
         let green = new PIXI.Sprite(
             app.loader.resources['./assets/img/background-ground.png'].texture
         )
-        green.y = 120;
+        green.y = 0;
         green.x = 0;
         
 
         let forground = new PIXI.Sprite(
             app.loader.resources['./assets/img/forground.png'].texture
         )
-        forground.y = 920
+        forground.y = 1200
 
-        avatarsGroup.position.set(100, 550)
-        avatarsGroup.scale.set(0.3)
+        avatarsGroup.position.set(100, 700)
+        avatarsGroup.scale.set(0.4)
 
         green.scale.set(0.5)
         app.stage.addChild(background)

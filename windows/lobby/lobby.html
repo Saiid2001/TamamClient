@@ -6,6 +6,7 @@
     <title></title>
     <link rel="stylesheet" href="../../css/main.css" />
     <link rel="stylesheet" href="./css/lobby.css" />
+    
 </head>
 <body>
     <div class="head">
@@ -17,16 +18,70 @@
         </div>
     </div>
     <div class="view">
+        <header>
+            <h1 id="header-greeting"></h1>
+            <div class="search">
+                <img src="../../assets/img/search.png" height="15px" width="15px" />
+                <input type="search" name="rooms" placeholder="Find Rooms..." />
+            </div>
+        </header>
         <div class="lobby">
 
         </div>
         <div class="side-bar">
+            <div class="top-menu">
+                <img class="logo" src="../../assets/img/settings_applications.svg" />
+                <img class="logo" src="../../assets/img/account_box.svg" />
+                <h4 id="username"></h4>
+            </div>
+            <section class="catchup">
+                <h3>Catch Up</h3>
+                <div class="user-container">
+                    <div class="user-list">
+                        <div class="user">
+                            <img class="logo" src="../../assets/img/avatar.png" />
+                            <div>Karim</div>
+                        </div>
+                        <div class="user">
+                            <img class="logo" src="../../assets/img/avatar.png" />
+                            <div>Karim</div>
+                        </div>
+                        <div class="user">
+                            <img class="logo" src="../../assets/img/avatar.png" />
+                            <div>Karim</div>
+                        </div>
+                        <div class="user">
+                            <img class="logo" src="../../assets/img/avatar.png" />
+                            <div>Karim</div>
+                        </div>
+                        <div class="user">
+                            <img class="logo" src="../../assets/img/avatar.png" />
+                            <div>Karim</div>
+                        </div>
+                        <div class="user">
+                            <img class="logo" src="../../assets/img/avatar.png" />
+                            <div>Karim</div>
+                        </div>
 
+                    </div>
+                </div>
+            </section>
+            <section class="chatArea">
+                <h3>Activity</h3>
+                <div class="chat">
+                    
+                </div>
+            </section>
+            <footer>
+                <h3>Quick Actions</h3>
+            </footer>
         </div>
     </div>
     <script src="../../js/window-control.js"></script>
     <script src="../../js/CanvasController.js"></script>
     <script src="js/canvas.js"></script>
     <script src="js/lobby.js"></script>
+    <script src="js/ui.js"></script>
+    <script src="js/chatbot.js"></script>
 </body>
 </html>

@@ -10,8 +10,204 @@ body{
     display: grid;
     grid-template-columns: 75% auto;
     margin-top: -30px;
-    height:calc(100% + 30px)
+    height:calc(100% + 30px);
+    grid-template-areas: 'main side';
 }
 .lobby {
     background-color: lightblue;
+    grid-area: main;
+}
+
+
+.view header {
+    position: absolute;
+    top: 50px;
+    left: 0px;
+    padding-left: 50px;
+    box-sizing: border-box;
+    display: grid;
+    grid-template-columns: auto 300px;
+    align-items: center;
+    width: 75%;
+}
+
+.view header h1 {
+    font-family: Roboto;
+    font-style: normal;
+    font-weight: 300;
+    font-size: 24px;
+    line-height: 28px;
+    margin:0;
+}
+
+.view header .search{
+    border: solid white;
+    border-radius: 17.5px;
+    height:35px;
+    margin-right: 50px;
+    padding: 7px;
+    box-sizing:border-box;
+}
+
+.view header .search img{
+    vertical-align:middle;
+}
+.view header .search input {
+    background: none;
+    color: white;
+    border:none;
+    outline: none;
+    
+}
+::placeholder { /* Chrome, Firefox, Opera, Safari 10.1+ */
+    color: white;
+    opacity: .8; /* Firefox */
+}
+
+
+
+.side-bar {
+    grid-area: side;
+    margin-top: 30px;
+    color: black;
+    padding:15px;
+    display: grid;
+    height:calc(95% - 30px);
+    grid-template-rows: 20px 100px auto 100px;
+}
+
+.side-bar .top-menu h4 {
+    font-family: Roboto;
+    font-style: normal;
+    font-weight: 300;
+    font-size: 12px;
+    line-height: 14px;
+    text-align: right;
+    color:black;
+    padding:5px;
+    margin: 0px;
+}
+
+
+.top-menu{
+    display:flex;
+    flex-direction:row-reverse;
+    align-items:center;
+    margin-top: 5px;
+}
+.top-menu img{
+    height: 28px;
+    vertical-align: middle;
+}
+
+.side-bar h3{
+    font-size: 16px;
+}
+
+.user-list{
+    display:flex;
+    flex-direction: row;
+    
+}
+.user-container {
+}
+.user-list .user{
+    width:40px;
+    margin:0px 1px;
+}
+
+.user-list .user img{
+    height: 40px;
+}
+.user-list .user div{
+    font-size: 8px;
+    text-align: center;
+}
+
+.side-bar .chat{
+    width:100%;
+}
+
+.side-bar .chat .message{
+    width:100%;
+    margin: 5px 0px;
+    font-size:14px;
+    display: flex;
+}
+
+    .side-bar .chat .message .content {
+        max-width: 100px;
+        min-width: auto;
+        background-color: #B9EEE5;
+        padding: 7px 12px;
+        border-radius:10px;
+    }
+
+
+    .side-bar .chat .in .content {
+        border-top-left-radius: 0px;
+    }
+        .side-bar .chat .out .content {
+        background-color: white;
+        border: solid black 0.5px;
+        border-top-right-radius:0px;
+    }
+        .side-bar .chat .out {
+    flex-direction: row-reverse;
+}
+.chat{
+    overflow-y: scroll;
+}
+
+div#wave {
+    position: relative;
+    text-align: center;
+    width: 100px;
+    margin-left: 0px;
+    transform: scale(0.7);
+}
+
+div#wave .dot {
+    display: inline-block;
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    margin-right: 3px;
+    background: #303131;
+    animation: wave 1.3s linear infinite;
+}
+div #wave .dot:nth-child(2)
+{
+    animation-delay: -1.1s;
+}
+
+div #wave .dot:nth-child(3) {
+    animation-delay: -0.9s;
+}
+
+
+@keyframes wave {
+    0%, 60%, 100% {
+        transform: initial;
+    }
+
+    30% {
+        transform: translateY(-15px);
+    }
+}
+
+
+.out button{
+    color:white;
+    padding: 4px;
+    border-radius:5px;
+    margin: 3px;
+    cursor: pointer;
+}
+#go-vibe {
+    background: #00B494;
+}
+
+#go-study {
+    background: #0082AA;
 }
