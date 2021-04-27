@@ -1,0 +1,38 @@
+body{
+    background:white;
+}
+
+.view{
+    position: relative;
+    height: 90%;
+}
+
+.room-head{
+    position: absolute;
+    width:100%;
+    margin-left: 10px;
+    text-align:center;
+}
+#room-title{
+    color: var(--main-blue);
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    display: inline;
+    font-size: 22px;
+    margin:0px auto;
+}
+
+#exit-room, #exit-room img{
+    background: none;
+    position: absolute;
+    bottom: 0px;
+    right: 0;
+    height: 40px;
+    vertical-align: middle;
+    float: right;
+    margin-right:20px;
+    z-index:20;
+}
+
+canvas{
+    width:100%;
+}

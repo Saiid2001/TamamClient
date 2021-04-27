@@ -211,3 +211,7 @@ div #wave .dot:nth-child(3) {
 #go-study {
     background: #0082AA;
 }
+
+.conversation embed {
+    width: 75%;
+}

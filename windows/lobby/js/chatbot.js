@@ -80,5 +80,11 @@ function presentChoices() {
       <button id='go-study'>I want to Study</button>
       <button id='go-vibe'>I want to vibe with friends</button>
     `;
+
+    const { ipcRenderer } = require('electron')
+    content.querySelector('#go-study').onclick = () => {
+        socket.exitRoom();
+        ipcRenderer.send('go-to','roomMap')
+    }
     message.appendChild(content)
 }

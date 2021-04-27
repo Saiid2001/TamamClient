@@ -1,0 +1,50 @@
+﻿<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="utf-8" />
+    <title></title>
+    <link rel="stylesheet" href="../../css/main.css" />
+    <link rel="stylesheet" href="./css/roomMap.css" />
+
+</head>
+<body>
+    <div class="head">
+        <img class="logo" src="../../assets/img/logo.svg" />
+        <div class="window-control">
+            <button id="min-window"><img src="../../assets/img/minimize-dark.svg" /></button>
+            <button id="max-window"><img src="../../assets/img/maximize-dark.svg" /></button>
+            <button id="close-window"><img src="../../assets/img/close-dark.svg" /></button>
+        </div>
+    </div>
+    <div class="view">
+        <div class="recommended">
+            <h1>Recommended rooms</h1>
+            <div class="cards">
+                <!--<div class="room">
+                    <div>
+                        <h1><img src="./assets/location_on.png" /> Jaffet</h1>
+                        <p>12/30 <img src="./assets/supervisor_account.png" /></p>
+                    </div>
+                </div>-->
+            </div>
+        </div>
+        <div class="map">
+            <h1>Map</h1>
+            <img src="./assets/map.svg" />
+        </div>
+        <div class="list" hidden>
+            <h1>Room lists</h1>
+        </div>
+    </div>
+
+    <script src="../../js/window-control.js"></script>
+    <script src="../../js/CanvasController.js"></script>
+    <script src="js/room-list.js"></script>
+    <script src="js/main.js"></script>
+
+    <!--<script src="js/canvas.js"></script>
+    <script src="js/lobby.js"></script>
+    <script src="js/ui.js"></script>-->
+</body>
+</html>

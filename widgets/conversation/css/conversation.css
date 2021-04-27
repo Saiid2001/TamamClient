@@ -1,0 +1,79 @@
+body {
+    background: linear-gradient(0deg, #FFFFFF 0.2%, rgba(255, 255, 255, 0) 54.26%);
+}
+
+.control {
+    position: fixed;
+    bottom: 0px;
+    left: 0px;
+    width: 100%;
+    padding-left:20px;
+    box-sizing: border-box;
+
+    
+    background-image: url(../assets/img/forground.png);
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position:bottom;
+    margin:0px;
+    right:0px;
+
+}
+    .control button {
+        border: none;
+        outline: none;
+        border-radius: 50%;
+        height: 60px;
+        width: 60px;
+        box-shadow: black 0px 0px 50px -20px;
+        cursor: pointer;
+        transform: scale(0.7);
+    }
+
+.leave{
+    background-color: var(--main-red);
+}
+
+.voice .on, .video .on{
+    display: none;
+}
+
+.voice , .video{
+    background-color: var(--main-green);
+}
+
+.voice.on .on, .video.on .on {
+    display: inherit;
+}
+.voice.on .off, .video.on .off {
+    display: none;
+}
+
+.users{
+    display: grid;
+    grid-template-columns:1fr 1fr;
+    width:100%;
+    
+}
+
+
+.window video{
+    position: absolute;
+    left: 5px;
+    transform:scaleX(-1);
+    border: 5px solid black;
+}
+
+.video_on .window {
+    background-image: url(../assets/img/laptop.png);
+    background-size: contain;
+    background-repeat: no-repeat;
+    height: 150px;
+    width: 150px;
+    position: absolute;
+    bottom: -11px;
+    left: 10px;
+    transform: scale(1.4);
+    transform-origin:  left;
+}
+

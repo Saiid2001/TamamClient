@@ -8,8 +8,10 @@ class CanvasController {
 
     addAvatar(userData) {
         let userId = userData['_id']
+        if (userId in this.users || userId == User._id) return;
         //we need to construct the avatar
         let avatar = new Avatar(userId, userData)
+        
         this.users[userId]= avatar
         this.canvas.addToContainer(userId,avatar.getFullBody())
     }
@@ -35,7 +37,7 @@ class CanvasController {
 
 class Avatar{
     constructor(userID, userData) {
-        let avatarData = userData['avatar']
+        let avatarData = userData['avatar'] 
         this.data = avatarData
         this.userID = userID
         this.name = userData['firstName']
