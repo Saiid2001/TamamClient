@@ -6,21 +6,29 @@ const { logout } = require('../../services/auth-service')
 
 let roomData = null;
 
+function getUrlData() {
+    const querystring = require('querystring');
+    let query = querystring.parse(global.location.search);
+    return JSON.parse(query['?data'])
+}
 document.addEventListener('DOMContentLoaded', () => {
 
     const { ipcRenderer } = require('electron')
     const rooms = require('../../services/room-service')
-    
-    rooms.getRooms({ 'name': "Main Gate" }, (rooms) => {
+
+    rooms.getRooms({ '_id': getUrlData()['room'] }, (rooms) => {
+        console.log(getUrlData()['room'])
         roomData = rooms[0]
         onRoom(rooms[0]['_id'])
     })
 
     
-    canvasController = new CanvasController(new Canvas())
+    
 
 
     function onRoom(roomId) {
+        canvasController = new CanvasController(new Canvas())
+        createApp()
         socket.connectSocket(() => {
             console.log('connected to socket')
 
@@ -50,6 +58,11 @@ document.addEventListener('DOMContentLoaded', () => {
             });
 
             document.dispatchEvent(new Event('connected-to-socket'))
+
+            document.getElementById('room-title').innerHTML = roomData['name']
+            document.getElementById('exit-room').onclick = () => {
+                let r = ipcRenderer.send('go-to', 'roomMap')
+            }
         })
 
 

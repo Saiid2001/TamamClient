@@ -8,6 +8,7 @@ function getSocket() {
     return socket;
 }
 
+
 function connectSocket(onSuccess) {
     const token  = ipcRenderer.sendSync('get-access-token');
     socket = io.connect(SERVER_ADDRESS, {
@@ -22,7 +23,9 @@ function connectSocket(onSuccess) {
 function enterRoom(roomID, callback = () => { }) {
     socket.emit('join', { room: roomID }, callback = callback)
 }
-
+function exitRoom(roomID, callback = () => { }) {
+    socket.emit('leave', callback = callback)
+}
 function onUserEnteredRoom(callback) {
     socket.on('user-joined-room', ({ user }) => {
             callback({ user: user })
@@ -42,11 +45,36 @@ function onDisconnect(callback) {
     socket.on("disconnect", callback)
 }
 
+function on(event, callback, namespace = null) {
+    if (namespace) {
+        let nsp = socket.of(namespace)
+        nsp.on(event, message => { callback(JSON.parse(message)) })
+    }
+    else {
+       
+        socket.on(event, message => { console.log(message); callback(message) })
+    }
+}
+
+function sendMessage(message, namespace=null) {
+    console.log('Sending message: ' + message.id);
+    if (namespace) {
+        let nsp = socket.of(namespace)
+        nsp.emit(JSON.stringify(message))
+    } else {
+        socket.send(JSON.stringify(message))
+    }
+    
+}
+
 module.exports = {
     connectSocket,
     onUserEnteredRoom,
     onUserLeftRoom,
     enterRoom,
+    exitRoom,
     getSocket,
-    onDisconnect
+    onDisconnect,
+    on,
+    sendMessage
 }

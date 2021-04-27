@@ -19,7 +19,6 @@ let profile = null;
 let refreshToken = null;
 
 function getAccessToken() {
-    console.log("getting token")
     return accessToken
 
 }
@@ -33,6 +32,12 @@ function getAuthenticationURL() {
 
 async function refreshTokens() {
     const refreshToken = await keytar.getPassword(keytarService, keytarAccount);
+
+    //TODO: remove the  following line
+    //**put here only for changing account testing only
+    refreshToken = false;
+    //**
+
     if (refreshToken) {
         console.log('refresh')
         const refreshOptions = {

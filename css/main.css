@@ -59,3 +59,47 @@ button{
     color:white;
     height:100%;
 }
+
+.conversation {
+    position: fixed;
+    bottom: 0;
+    outline: none;
+    border: none;
+    width: 100%;
+    
+}
+
+.conversation embed {
+    outline: none;
+    border: none;
+    height: 50%;
+    position: fixed;
+    bottom: 0;
+}
+
+
+:root {
+    --main-green: #00B494;
+    --main-blue: #0082AA;
+    --main-red: #EC4B4B;
+}
+
+
+
+    /* Works on Chrome, Edge, and Safari */
+    *::-webkit-scrollbar {
+        width: 8px;
+        
+    }
+
+    *::-webkit-scrollbar-track {
+        background: transparent;
+    }
+
+*::-webkit-scrollbar-thumb {
+    background-color: white;
+    margin-right: 5px;
+    border-radius: 20px;
+    border: none;
+}
+ 

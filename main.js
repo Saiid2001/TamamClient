@@ -3,7 +3,6 @@
 const rootPath = require('electron-root-path').rootPath;
 const { app, BrowserWindow, ipcMain, screen } = require('electron')
 const fs = require('fs')
-const { connectSocket } = require('./services/socket-service')
 const authService = require('./services/auth-service');
 const aspect = require('electron-aspectratio')
 const { session } = require('electron');
@@ -19,9 +18,17 @@ let pages = {
         'path': 'windows/lobby/lobby.html',
         'required':[]
     },
+    'roomMap': {
+        'path': 'windows/roomMap/roomMap.html',
+        'required': []
+    },
     'convo': {
         'path': 'windows/convo/convo.html',
         'required': ['users']
+    },
+    'room': {
+        'path': 'windows/room/room.html',
+        'required': ['room']
     }
 }
 
@@ -32,7 +39,6 @@ function goTo(pageKey, args) {
 
     let query = {}
     for (var arg of pages[pageKey]['required']) {
-        console.log(args)
         query[arg] = args[arg]
     }
 
@@ -111,7 +117,12 @@ async function createAuthWindow(win) {
 ipcMain.on('goTo', (event, pageKey) => {
     event.returnValue = rootPath+'\\'+pages[pageKey]['path']
 })
-
+ipcMain.on('go-to', (event, pageKey) => {
+    goTo(pageKey)
+})
+ipcMain.on('go-to-room', (event, roomId) => {
+    goTo('room', { room: roomId })
+})
 ipcMain.on('request-call', (event, userID) => {
 
     app.emit('request-call', userID)
@@ -136,7 +147,7 @@ app.on('request-call', (userID) => {
 })
 
 app.on('call-accepted', (userID) => {
-    goTo('convo', {users: [userID]})
+    ipcMain.send('call-accepted', ({users:[userID]}))
 })
 
 ipcMain.on('get-access-token', (event) => {
