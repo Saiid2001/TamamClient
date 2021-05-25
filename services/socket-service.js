@@ -26,6 +26,13 @@ function enterRoom(roomID, callback = () => { }) {
 function exitRoom(roomID, callback = () => { }) {
     socket.emit('leave', callback = callback)
 }
+
+function enterGroup(id, callback = () => { }) {
+    socket.emit('join-group', { group: id }, callback = callback)
+}
+function exitGroup(id, callback = () => { }) {
+    socket.emit('leave-group', callback = callback)
+}
 function onUserEnteredRoom(callback) {
     socket.on('user-joined-room', ({ user }) => {
             callback({ user: user })
@@ -76,5 +83,7 @@ module.exports = {
     getSocket,
     onDisconnect,
     on,
-    sendMessage
+    sendMessage,
+    enterGroup,
+    exitGroup
 }

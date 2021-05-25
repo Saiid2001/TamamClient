@@ -50,6 +50,8 @@ class Avatar{
             let sprite = new PIXI.Container()
 
             let av = PIXI.Sprite.from('../../assets/img/steve.png')
+
+            av.scale.set(0.4,0.4)
             sprite.addChild(av)
 
             let nameLabel = new PIXI.Text(this.name, { fontFamily: 'Arial', fontSize: 72, fill: PIXI.Texture.WHITE, align: 'center' });

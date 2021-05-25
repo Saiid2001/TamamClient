@@ -66,6 +66,7 @@
       <SubType>Code</SubType>
     </Content>
     <Content Include="windows\login\login.html" />
+    <Content Include="windows\roomMap\js\map.js" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="assets\" />

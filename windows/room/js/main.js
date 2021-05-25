@@ -4,7 +4,10 @@ let canvasController
 
 const { logout } = require('../../services/auth-service')
 
+const { getUserData } = require('../../services/user-service')
+
 let roomData = null;
+let myRoom;
 
 function getUrlData() {
     const querystring = require('querystring');
@@ -13,6 +16,10 @@ function getUrlData() {
 }
 document.addEventListener('DOMContentLoaded', () => {
 
+
+    getUserData(myUserData => {
+
+    
     const { ipcRenderer } = require('electron')
     const rooms = require('../../services/room-service')
 
@@ -27,34 +34,41 @@ document.addEventListener('DOMContentLoaded', () => {
 
 
     function onRoom(roomId) {
-        canvasController = new CanvasController(new Canvas())
         createApp()
         socket.connectSocket(() => {
             console.log('connected to socket')
 
+            myRoom = new Room(conf)
+            myRoom.build(scene)
+
             socket.onUserEnteredRoom(({ user }) => {
                 console.log("user joined : ", user)
-                canvasController.addAvatar(user)
+                uuser = new User(user)
+                myRoom.addUser(uuser)
 
             })
 
             socket.onUserLeftRoom((userId) => {
 
-                canvasController.removeAvatar(userId)
             })
 
             socket.onDisconnect(() => {
                 console.log('disconnected')
-                canvasController.clear();
             })
 
             socket.enterRoom(roomId, users => {
-                console.log(users)
                 users.forEach((user, i) => {
-
                     console.log("user existing:", user)
-                    canvasController.addAvatar(user)
                 })
+
+                users = users.map(user => {return new User(user)})
+
+                myRoom.loadUsers(users)
+
+                myUser = new MyUser(myUserData)
+
+                myRoom.addUser(myUser)
+
             });
 
             document.dispatchEvent(new Event('connected-to-socket'))
@@ -63,6 +77,7 @@ document.addEventListener('DOMContentLoaded', () => {
             document.getElementById('exit-room').onclick = () => {
                 let r = ipcRenderer.send('go-to', 'roomMap')
             }
+            
         })
 
 
@@ -75,7 +90,9 @@ document.addEventListener('DOMContentLoaded', () => {
             ipcRenderer.send('request-call', e.detail.UID)
         })
 
-    }
+        }
+
+    })
 
 })
 

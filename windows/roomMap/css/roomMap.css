@@ -22,9 +22,9 @@
         position: relative;
         display: inline-block;
         margin-right: 10px;
-        background-image: url('../assets/Group 442.png');
-        background-size:contain;
-        cursor:pointer;
+        background: linear-gradient(180deg, #FF00B8 0%, #00C3FF 100%) ;
+        background-size: cover;
+        cursor: pointer;
     }
 
 .cards .room h1{
@@ -50,4 +50,8 @@
     bottom:0px;
     height:22px;
     vertical-align:middle;
+}
+
+#map{
+    width:100%;
 }

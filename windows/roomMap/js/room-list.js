@@ -1,5 +1,26 @@
 const { ipcRenderer } = require('electron')
 
+
+const backgrounds = {
+    'BDH': {
+        image: './assets/BDH_bg.png'
+
+    },
+    'Jaffet Upper': {
+        image: './assets/Group 442.png'
+
+    },
+    'Jaffet Library': {
+        image: './assets/Group 442.png'
+
+    },
+    'Main Gate': {
+        image: './assets/MainGat_bg.jpg'
+
+    }
+}
+
+
 function showRooms(container, rooms) {
 
     container.innerHTML = ""
@@ -13,7 +34,7 @@ function showRooms(container, rooms) {
                             <p>${room['users'].length}/${room['maxCapacity']} <img src="./assets/supervisor_account.png" /></p>
                          </div>`;
 
-
+        box.style.backgroundImage = 'url(\'' + backgrounds[room.name]['image'] + '\')'
         if (room['name'] == "Main Gate") {
             box.onclick = () => {
                 let r = ipcRenderer.send('go-to', 'lobby')

@@ -1,12 +1,19 @@
 
 const PIXI = require('pixi.js')
 let avatarsGroup = new PIXI.Container
-let app
+let app = null
+
+let scene = {
+    app : null,
+    background: null,
+    scene: new PIXI.Container
+}
 
 function createApp() { 
     
 
     let container = document.querySelector('.room')
+
 
     //Create a Pixi Application
     app = new PIXI.Application({
@@ -15,6 +22,8 @@ function createApp() {
         autoResize: true,
         resolution: devicePixelRatio
     });
+
+    scene.app = app
 
     //Add the canvas that Pixi automatically created for you to the HTML document
     container.appendChild(app.view);
@@ -31,6 +40,7 @@ function createApp() {
                 './assets/marble-tile.png',
                 './assets/table.svg',
                 './assets/desk.svg',
+                '../../assets/img/avatar.png'
             ]
         )
         .load(setup);
@@ -42,11 +52,11 @@ function createApp() {
 
     function setup() {
 
-        let background = new PIXI.TilingSprite(
+        scene.background = new PIXI.TilingSprite(
             app.loader.resources['./assets/marble-tile.png'].texture,3910, 1720
         )
         
-        let desk = new PIXI.Sprite(
+        /*let desk = new PIXI.Sprite(
             app.loader.resources['./assets/desk.svg'].texture
         )
         avatarsGroup.position.set(100, 700)
@@ -96,7 +106,7 @@ function createApp() {
         ]
         
 
-        app.stage.addChild(background)
+        app.stage.addChild(scene.background)
         app.stage.addChild(avatarsGroup)
 
 
@@ -127,7 +137,11 @@ function createApp() {
 
             }
         }
-        
+        */
+
+        app.stage.addChild(scene.background)
+        app.stage.addChild(scene.scene)
+
         function resize() {
             app.renderer.resize(container.getBoundingClientRect().width, document.body.getBoundingClientRect().height)
 
