@@ -48,6 +48,22 @@ function onUserLeftRoom(callback) {
     })
 }
 
+function onUserEnteredGroup(callback) {
+    socket.on('user-joined-group', (data) => {
+        console.log(`user: ${data.user} joined the group ${data.group}`)
+        callback(data.user, data.group)
+
+    })
+}
+
+function onUserLeftGroup(callback) {
+    socket.on('user-left-group', (data) => {
+        console.log(`user: ${data.user} left the group ${data.group}`)
+        callback(data.user,data.group )
+
+    })
+}
+
 function onDisconnect(callback) {
     socket.on("disconnect", callback)
 }
@@ -78,6 +94,8 @@ module.exports = {
     connectSocket,
     onUserEnteredRoom,
     onUserLeftRoom,
+    onUserEnteredGroup,
+    onUserLeftGroup,
     enterRoom,
     exitRoom,
     getSocket,

@@ -6,12 +6,20 @@ class Group {
         this.rotation = config.rotation ? config.rotation : 0;
         this.users = []
         this.id = config.id
+        this.room = room
 
     }
 
     build(scene) {
 
         this.pixi.group.position.set(this.position.x, this.position.y)
+
+        //interactivity
+        this.pixi.group.interactive = true
+
+        this.pixi.group.on('mousedown', () => {
+            this.room.moveUser(myUser, this)
+        })
 
         scene.scene.addChild(this.pixi.group)
     }
@@ -26,9 +34,23 @@ class Group {
         let freeSeat = this.pixi.seats.find(seat => seat.free)
         freeSeat.addChild(user.avatar.getFullBody(false))
         freeSeat.free = false;
+        freeSeat.user = user.id;
     }
 
     removeUser(user) {
+
+        if (!this.findUser(user.id)) return
+
+        this.users.splice(this.users.findIndex(elem => elem.id == user.id), 1)
+
+        let userSeat = this.pixi.seats.find(seat => seat.user == user.id)
+        userSeat.removeChildren()
+        userSeat.free = true;
+        userSeat.user = null;
+
+        if (this.capacity == 0) {
+            //do stuff when table is empty
+        }
 
     }
 
@@ -46,6 +68,7 @@ class TableGroup extends Group {
 
         this.rowsDist = config.rowsDist ? config.rowsDist : 40;
         this.seatSize = config.seatSize ? config.seatSize : 80;
+        this.id = "table-" + this.id;
     }
     build(scene) {
 
@@ -189,6 +212,8 @@ class Room {
 
         this.loadObjects(config.objects)
 
+        
+
     }
 
     loadObjects(objects) {
@@ -235,8 +260,11 @@ class Room {
 
     addStandingGroup(config) {
 
+        console.log('config for standing: ', config)
         var newGroup = config==null
         if (newGroup) {
+
+            console.log('creating new id')
             
             config = {
                 id: myUser._id + "-" + new Date().getTime()
@@ -246,9 +274,9 @@ class Room {
         var group = new StandingGroup(config, this)
         this.objects['standing'].push(group)
 
-        if (newGroup) {
+        //if (newGroup) {
             group.build(this.scene)
-        }
+        //}
 
         return group
     }
@@ -285,16 +313,40 @@ class Room {
     }
 
     moveUser(user, location = null) {
-
+        if (location) {
+            user.addToGroup(location.id)
+            var oldLocation = this.findObj(null, user.group)
+            oldLocation.removeUser(user)
+            location.addUser(user)
+        }
     }
 
     removeUser(user) {
-
+        var group = this.findObj(null, user.group);
+        user.removeFromGroup()
+        group.removeUser(user)
     }
 
     addUser(user, groupType = null, location = null) {
         if (location) {
-            var group = this.findObj(groupType, location)
+
+           
+            var group;
+
+            if (groupType) {
+                group = this.findObj(groupType, location)
+            } else {
+                group = this.findObj(null, location)
+            }
+
+            if (!group) {
+                var config = {
+                    id: location
+                }
+                group = this.addStandingGroup(config)
+                group.build(this.scene)
+            }
+
             user.addToGroup(group.id)
             group.addUser(user)
         } else {
@@ -309,8 +361,32 @@ class Room {
         }
     }
 
-    findObj(group, id) {
-        return this.objects[group].find(obj => obj.id == id)
+    findObj(group = null, id) {
+
+        if (group) {
+            
+            return this.objects[group].find(obj => obj.id == id)
+        } else {
+            for (var type of Object.keys(this.objects)) {
+                var g = this.objects[type].find(obj => obj.id == id)
+                if (g) {
+                    return g
+                }
+            }
+        }
+        return null;
+    }
+
+    findUser(userId) {
+        for (var group of Object.keys(this.objects)) {
+
+            for (var obj of this.objects[group]) {
+                var user = obj.findUser(userId);
+                if (user) {
+                    return user;
+                }
+            }
+        }
     }
 
     loadUsers(users) {
@@ -318,16 +394,17 @@ class Room {
 
         users.forEach((user, i) => {
             // if user in table
+            console.log("user is ", user)
             if (user.group != 'NONE') {
                 if (user.group.includes('table')) {
 
-                    var table = _this.findObj('table', user.group)
+                    var table = _this.findObj('tables', user.group)
                     table.addUser(user)
 
                 }
                 else if (user.group.includes('desk')) {
 
-                    var desk = _this.findObj('table', user.group)
+                    var desk = _this.findObj('desks', user.group)
                     desk.addUser(user)
 
                 } else {
@@ -337,6 +414,8 @@ class Room {
                     if (!group) {
                         group = _this.addStandingGroup({'id': user.group})
                     }
+
+                    console.log(group)
                     group.addUser(user)
                 }
             }

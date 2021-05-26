@@ -41,6 +41,8 @@ document.addEventListener('DOMContentLoaded', () => {
             myRoom = new Room(conf)
             myRoom.build(scene)
 
+            console.log(myRoom.objects)
+
             socket.onUserEnteredRoom(({ user }) => {
                 console.log("user joined : ", user)
                 uuser = new User(user)
@@ -49,7 +51,22 @@ document.addEventListener('DOMContentLoaded', () => {
             })
 
             socket.onUserLeftRoom((userId) => {
+                console.log("user left : ", userId)
+                uuser = myRoom.findUser(userId)
+                myRoom.removeUser(uuser)
+            })
 
+            socket.onUserEnteredGroup((user, group ) => {
+
+                var uuser = myRoom.findUser(user)
+                if (uuser && uuser.id != myUser.id) {
+                    var loc = myRoom.findObj(null, group)
+                    myRoom.moveUser(uuser, loc)
+                }
+            })
+
+            socket.onUserLeftGroup((user, group) => {
+                console.log("user left group",group,": ", user)
             })
 
             socket.onDisconnect(() => {
@@ -67,7 +84,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
                 myUser = new MyUser(myUserData)
 
-                myRoom.addUser(myUser)
+                myRoom.addUser(myUser,null, myUserData.group)
 
             });
 
