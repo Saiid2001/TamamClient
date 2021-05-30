@@ -50,9 +50,10 @@ body{
 }
 
 .view header .search img{
-    vertical-align:middle;
+    vertical-align: middle;
+    cursor: pointer
 }
-.view header .search input {
+.view header .search input{
     background: none;
     color: white;
     border:none;
