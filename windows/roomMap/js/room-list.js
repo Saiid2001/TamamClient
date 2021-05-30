@@ -42,6 +42,7 @@ function showRooms(container, rooms) {
         } else {
             box.onclick = () => {
                 let r = ipcRenderer.send('go-to-room', room['_id'], urlData)
+                // Sends data sent with roommap url to room as query to know to which screen to return
             }
         }
         

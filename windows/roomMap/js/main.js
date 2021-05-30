@@ -23,7 +23,7 @@ document.addEventListener('DOMContentLoaded', () => {
             map.addRooms(rooms);
         })
     } else if (urlData['source'] == 'search') { // NEW: Display cards after Fuse search
-        document.getElementById('cards-label').innerHTML = "Search results";
+        document.getElementById('cards-label').innerHTML = `Results for search: ${urlData['extra-params']}`;
         const searchOptions = {
             keys: ['name'],
         };

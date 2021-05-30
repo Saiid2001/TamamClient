@@ -60,6 +60,27 @@ body{
     outline: none;
     
 }
+.view header .search .search-dropdown {
+    /*display: none;*/
+    position: relative;
+    top: -7px;
+    background-color: #f1f1f1;
+    min-width: 160px;
+    box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+    z-index: 1;
+}
+.view header .search .search-dropdown p {
+    color: black;
+    padding: 12px 10px;
+    text-decoration: none;
+    display: block;
+}
+.view header .search .search-dropdown p:hover {
+    background-color: #ddd;
+    transition: background 0.2s;
+    cursor: pointer;
+}
+
 ::placeholder { /* Chrome, Firefox, Opera, Safari 10.1+ */
     color: white;
     opacity: .8; /* Firefox */
