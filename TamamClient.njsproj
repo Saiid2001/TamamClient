@@ -84,6 +84,8 @@
     <Folder Include="windows\login\" />
     <Folder Include="windows\login\css\" />
     <Folder Include="windows\login\js\" />
+    <Folder Include="windows\roomMap\" />
+    <Folder Include="windows\roomMap\js\" />
   </ItemGroup>
   <Import Project="$(VSToolsPath)\Node.js Tools\Microsoft.NodejsToolsV2.targets" />
 </Project>

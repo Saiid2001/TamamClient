@@ -48,6 +48,9 @@ class ConversationInterface {
 
     open(callId, users) {
 
+        callId = roomData._id + "-" + callId
+        console.log('call id', callId)
+
         if (this.isOpen && this.room == callId) return;
 
         this.participants = users;
@@ -291,6 +294,8 @@ document.addEventListener("connected-to-socket", async => {
 
     socket.getSocket().on('start-call', async () => {
         console.log('Socket event callback: start_call')
+        await myConversationInterface._setLocalStream(myConversationInterface.mediaConstraints)
+        console.log(JSON.stringify(myConversationInterface.localStream))
         //if (myConversationInterface.isRoomCreator) {
         myConversationInterface.rtcPeerConnection = new RTCPeerConnection(myConversationInterface.iceServers)
         var rtcPeerConnection = myConversationInterface.rtcPeerConnection 
@@ -305,10 +310,11 @@ document.addEventListener("connected-to-socket", async => {
                 negotiating = false;
             }
         }
-            myConversationInterface.addLocalTracks(myConversationInterface.rtcPeerConnection)
+        
+        myConversationInterface.addLocalTracks(myConversationInterface.rtcPeerConnection)
         rtcPeerConnection.ontrack = event => { console.log(event);myConversationInterface.setRemoteStream(event) }
         rtcPeerConnection.onicecandidate = event => { myConversationInterface.sendIceCandidate(event) }
-            
+          
         //}
     })
 
