@@ -6,6 +6,7 @@
     <title></title>
     <link rel="stylesheet" href="../../css/main.css" />
     <link rel="stylesheet" href="css/room.css" />
+    <link rel='stylesheet' href="../../widgets/conversation/css/conversation.css" />
 </head>
 <body>
     <div class="head">
@@ -25,11 +26,41 @@
         <div class="room"></div>
         <button id="exit-room"><img src="../../assets/img/map.png" /></button>
     </div>
+
+    <div class="conversation" id="call" hidden>
+        <div class='users'>
+
+            <div class="video_on">
+                <!--<div class="window">
+    <video id="test" autoplay playsinline width="70%" height="50%" />
+    </div>-->
+                <div class="window" id="local">
+                    <video autoplay playsinline width="70%" height="50%"  muted />
+                </div>
+                <div class="window" id="remote">
+                    <video autoplay playsinline width="70%" height="50%"  />
+                </div>
+
+            </div>
+
+            <div class="participants"></div>
+        </div>
+        <div class="control">
+            <button class="leave"><img src="../../widgets/conversation/assets/img/skip_previous.png" width="40px" /></button>
+            <button class="voice on"><img class="on" src="../../widgets/conversation/assets/img/mic.png" width="40px" /><img class="off" src="../../widgets/conversation/assets/img/mic_off.png" width="40px" /></button>
+            <button class="video on"><img class="on" src="../../widgets/conversation/assets/img/videocam.png" width="40px" /><img class="off" src="../../widgets/conversation/assets/img/videocam_off.png" width="40px" /></button>
+        </div>
+
+    </div>
     <script src="../../js/window-control.js"></script>
     <script src="../../js/CanvasController.js"></script>
     <script src='js/canvas.js'></script>
     <script src='js/users.js'></script>
     <script src='js/groups.js'></script>
     <script src='js/main.js'></script>
+
+    <script src="../../widgets/conversation/js/canvas.js"></script>
+    <script src="../../widgets/conversation/js/conversation.js"></script>
+
 </body>
 </html>

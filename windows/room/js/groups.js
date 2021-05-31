@@ -35,6 +35,9 @@ class Group {
         freeSeat.addChild(user.avatar.getFullBody(false))
         freeSeat.free = false;
         freeSeat.user = user.id;
+
+        user.addToGroup(this)
+
     }
 
     removeUser(user) {
@@ -314,7 +317,7 @@ class Room {
 
     moveUser(user, location = null) {
         if (location) {
-            user.addToGroup(location.id)
+
             var oldLocation = this.findObj(null, user.group)
             oldLocation.removeUser(user)
             location.addUser(user)
@@ -347,7 +350,6 @@ class Room {
                 group.build(this.scene)
             }
 
-            user.addToGroup(group.id)
             group.addUser(user)
         } else {
 
@@ -357,7 +359,6 @@ class Room {
             var group = this.addStandingGroup(config)
             group.build(this.scene)
             group.addUser(user)
-            user.addToGroup(group.id)
         }
     }
 

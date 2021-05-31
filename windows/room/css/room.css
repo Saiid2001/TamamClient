@@ -36,3 +36,7 @@ body{
 canvas{
     width:100%;
 }
+
+.conversation embed {
+    width: 100%;
+}

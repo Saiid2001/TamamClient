@@ -33,9 +33,12 @@ document.addEventListener('DOMContentLoaded', () => {
     
 
 
+
     function onRoom(roomId) {
         createApp()
+        
         socket.connectSocket(() => {
+            
             console.log('connected to socket')
 
             myRoom = new Room(conf)
@@ -62,11 +65,23 @@ document.addEventListener('DOMContentLoaded', () => {
                 if (uuser && uuser.id != myUser.id) {
                     var loc = myRoom.findObj(null, group)
                     myRoom.moveUser(uuser, loc)
+
+                    if (uuser.group == myUser.group && !myConversationInterface.isOpen) {
+                        myConversationInterface.open(uuser.group, loc.users)
+                    }
+
+
+                    console.log("my ROOM ",myRoom.findObj(null, myUser.group))
+                    if (myRoom.findObj(null, myUser.group).users.length == 1 && myConversationInterface.isOpen) {
+                        myConversationInterface.close()
+                    }
                 }
+
+
             })
 
             socket.onUserLeftGroup((user, group) => {
-                console.log("user left group",group,": ", user)
+                console.log("user left group", group, ": ", user)
             })
 
             socket.onDisconnect(() => {
@@ -82,6 +97,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
                 myRoom.loadUsers(users)
 
+                console.log("My user", myUserData)
                 myUser = new MyUser(myUserData)
 
                 myRoom.addUser(myUser,null, myUserData.group)
