@@ -1,9 +1,13 @@
-const require = parent.require;
-const PIXI = require('pixi.js')
-let avatarsGroup = new PIXI.Container();
-let app
+//const require = parent.require;
 
-document.addEventListener('DOMContentLoaded', () => { 
+//if (!PIXI) {
+ //   const PIXI = require('pixi.js')
+ //   let avatarsGroup = new PIXI.Container();
+ //   let app
+//}
+
+
+document.addEventListener('nothing', () => { 
     
 
     let container = document.querySelector('.users .avatars')
@@ -91,8 +95,7 @@ document.addEventListener('DOMContentLoaded', () => {
     
 })
 
-
-class Canvas {
+/*class Canvas {
 //canvas apis that should exist in all canvas
     constructor() {
         this.avatars = {}
@@ -170,6 +173,8 @@ class Canvas {
 
 }
 }
+
+*/
 
 
 class VideoScreensHandler {
