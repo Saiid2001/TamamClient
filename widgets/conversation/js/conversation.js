@@ -284,7 +284,7 @@ class ConversationInterface {
             //Play it
             video.autoplay = true;
             video.playsInline = true;
-            video.muted = true;
+            video.muted = false;
         }
 
         var existing = this.remoteStream.getTracks().find(elem => { return elem.kind == event.track.kind })
