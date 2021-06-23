@@ -77,3 +77,6 @@ body {
     transform-origin:  left;
 }
 
+.video_on #remote {
+    left: 200px;
+}

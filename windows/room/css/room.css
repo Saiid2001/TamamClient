@@ -32,7 +32,10 @@ body{
     margin-right:20px;
     z-index:20;
 }
-
 canvas{
     width:100%;
+}
+
+.conversation embed {
+    width: 100%;
 }

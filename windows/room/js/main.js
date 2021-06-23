@@ -14,6 +14,9 @@ function getUrlData() {
     let query = querystring.parse(global.location.search);
     return JSON.parse(query['?data'])
 }
+
+let urlData = getUrlData();
+
 document.addEventListener('DOMContentLoaded', () => {
 
 
@@ -23,8 +26,8 @@ document.addEventListener('DOMContentLoaded', () => {
     const { ipcRenderer } = require('electron')
     const rooms = require('../../services/room-service')
 
-    rooms.getRooms({ '_id': getUrlData()['room'] }, (rooms) => {
-        console.log(getUrlData()['room'])
+    rooms.getRooms({ '_id': urlData['room'] }, (rooms) => {
+        console.log(urlData['room'])
         roomData = rooms[0]
         onRoom(rooms[0]['_id'])
     })
@@ -33,13 +36,18 @@ document.addEventListener('DOMContentLoaded', () => {
     
 
 
+
     function onRoom(roomId) {
         createApp()
+        
         socket.connectSocket(() => {
+            
             console.log('connected to socket')
 
             myRoom = new Room(conf)
             myRoom.build(scene)
+
+            console.log(myRoom.objects)
 
             socket.onUserEnteredRoom(({ user }) => {
                 console.log("user joined : ", user)
@@ -49,7 +57,34 @@ document.addEventListener('DOMContentLoaded', () => {
             })
 
             socket.onUserLeftRoom((userId) => {
+                console.log("user left : ", userId)
+                uuser = myRoom.findUser(userId)
+                myRoom.removeUser(uuser)
+            })
 
+            socket.onUserEnteredGroup((user, group ) => {
+
+                var uuser = myRoom.findUser(user)
+                if (uuser && uuser.id != myUser.id) {
+                    var loc = myRoom.findObj(null, group)
+                    myRoom.moveUser(uuser, loc)
+
+                    if (uuser.group == myUser.group && !myConversationInterface.isOpen) {
+                        myConversationInterface.open(uuser.group, loc.users)
+                    }
+
+
+                    console.log("my ROOM ",myRoom.findObj(null, myUser.group))
+                    if (myRoom.findObj(null, myUser.group).users.length == 1 && myConversationInterface.isOpen) {
+                        myConversationInterface.close()
+                    }
+                }
+
+
+            })
+
+            socket.onUserLeftGroup((user, group) => {
+                console.log("user left group", group, ": ", user)
             })
 
             socket.onDisconnect(() => {
@@ -65,9 +100,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
                 myRoom.loadUsers(users)
 
+                console.log("My user", myUserData)
                 myUser = new MyUser(myUserData)
 
-                myRoom.addUser(myUser)
+                myRoom.addUser(myUser,null, myUserData.group)
 
             });
 
@@ -75,7 +111,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
             document.getElementById('room-title').innerHTML = roomData['name']
             document.getElementById('exit-room').onclick = () => {
-                let r = ipcRenderer.send('go-to', 'roomMap')
+                let r = ipcRenderer.send('go-to-roommap', urlData['return-data']['source'], urlData['return-data']['extra-params'])
             }
             
         })

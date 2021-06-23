@@ -53,6 +53,7 @@
     .login-container .login button:hover {
         background-color: #eeeeee;
         transition: background 0.5s;
+        cursor: pointer
     }
 
 .quote {

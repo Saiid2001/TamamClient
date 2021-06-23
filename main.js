@@ -20,7 +20,7 @@ let pages = {
     },
     'roomMap': {
         'path': 'windows/roomMap/roomMap.html',
-        'required': []
+        'required': ['source', 'extra-params']
     },
     'convo': {
         'path': 'windows/convo/convo.html',
@@ -28,7 +28,7 @@ let pages = {
     },
     'room': {
         'path': 'windows/room/room.html',
-        'required': ['room']
+        'required': ['room', 'return-data']
     }
 }
 
@@ -120,8 +120,11 @@ ipcMain.on('goTo', (event, pageKey) => {
 ipcMain.on('go-to', (event, pageKey) => {
     goTo(pageKey)
 })
-ipcMain.on('go-to-room', (event, roomId) => {
-    goTo('room', { room: roomId })
+ipcMain.on('go-to-roommap', (event, source, extraParams) => {
+    goTo('roomMap', { source: source, 'extra-params': extraParams });
+})
+ipcMain.on('go-to-room', (event, roomId, returnData) => {
+    goTo('room', { room: roomId, 'return-data': returnData })
 })
 ipcMain.on('request-call', (event, userID) => {
 

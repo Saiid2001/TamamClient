@@ -84,7 +84,7 @@ function presentChoices() {
     const { ipcRenderer } = require('electron')
     content.querySelector('#go-study').onclick = () => {
         socket.exitRoom();
-        ipcRenderer.send('go-to','roomMap')
+        ipcRenderer.send('go-to-roommap', 'recommendation', '');
     }
     message.appendChild(content)
 }
