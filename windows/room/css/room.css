@@ -39,3 +39,16 @@ canvas{
 .conversation embed {
     width: 100%;
 }
+
+.conversation .participants{
+
+    position:absolute;
+    right:0;
+    height:200px;
+    width: 200px;
+    bottom: 0;
+}
+
+.conversation .participants img{
+    width:100%;
+}

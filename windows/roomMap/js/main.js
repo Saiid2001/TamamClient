@@ -15,6 +15,7 @@ let urlData = getUrlData();
         document.getElementById('map'),
         document.getElementById('map-img')
     );
+
     console.log(urlData['source']);
 
     if (urlData['source'] == 'recommendation') {

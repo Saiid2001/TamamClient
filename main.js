@@ -42,6 +42,8 @@ function goTo(pageKey, args) {
         query[arg] = args[arg]
     }
 
+    console.log("going to ", pageKey, "with args", args)
+
     mainWindow.loadFile(pages[pageKey]['path'], { query: { "data": JSON.stringify(query) } })
 }
 
@@ -99,10 +101,10 @@ async function createAuthWindow(win) {
         webRequest.onBeforeRequest(filter, async ({ url }) => {
             
             await authService.loadTokens(url);
-            return goTo('lobby');
+            return goTo('roomMap');
         });
         win.on('authenticated', () => {
-            goTo('lobby');
+            goTo('roomMap');
         });
     })
 

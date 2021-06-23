@@ -29,7 +29,7 @@ document.addEventListener('DOMContentLoaded', () => {
     rooms.getRooms({ '_id': urlData['room'] }, (rooms) => {
         console.log(urlData['room'])
         roomData = rooms[0]
-        onRoom(rooms[0]['_id'])
+        onRoom(rooms[0]['_id'], rooms[0]['layout'])
     })
 
     
@@ -37,17 +37,15 @@ document.addEventListener('DOMContentLoaded', () => {
 
 
 
-    function onRoom(roomId) {
+    function onRoom(roomId, roomConf) {
         createApp()
         
         socket.connectSocket(() => {
             
             console.log('connected to socket')
 
-            myRoom = new Room(conf)
+            myRoom = new Room(roomConf)
             myRoom.build(scene)
-
-            console.log(myRoom.objects)
 
             socket.onUserEnteredRoom(({ user }) => {
                 console.log("user joined : ", user)
@@ -70,7 +68,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     myRoom.moveUser(uuser, loc)
 
                     if (uuser.group == myUser.group && !myConversationInterface.isOpen) {
-                        myConversationInterface.open(uuser.group, loc.users)
+                        myConversationInterface.open(uuser.group, loc.users, false)
                     }
 
 
@@ -98,10 +96,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
                 users = users.map(user => {return new User(user)})
 
-                myRoom.loadUsers(users)
-
                 console.log("My user", myUserData)
                 myUser = new MyUser(myUserData)
+
+                myRoom.loadUsers(users)
 
                 myRoom.addUser(myUser,null, myUserData.group)
 

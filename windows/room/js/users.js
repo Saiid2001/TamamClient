@@ -35,7 +35,7 @@ class MyUser extends User {
         //activating the meeting
         if (group.users.length > 1) {
             // create the meeting interface
-            myConversationInterface.open(group.id, group.users)
+            myConversationInterface.open(group.id, group.users, true)
         } else {
             myConversationInterface.close()
         }

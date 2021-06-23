@@ -72,8 +72,6 @@ class TableGroup extends Group {
         this.rowsDist = config.rowsDist ? config.rowsDist : 40;
         this.seatSize = config.seatSize ? config.seatSize : 80;
         this.id = "table-" + this.id;
-    }
-    build(scene) {
 
         this.pixi = {
             group: new PIXI.Container,
@@ -84,6 +82,10 @@ class TableGroup extends Group {
             upperRow: new PIXI.Container,
             seats: []
         }
+    }
+    build(scene) {
+
+        
 
         //upper half
         
@@ -141,7 +143,14 @@ class TableGroup extends Group {
 }
 
 class DeskGroup extends TableGroup {
+    constructor(config, room) {
 
+        super(config, room)
+
+        this.pixi.sprite = new PIXI.Sprite(
+            app.loader.resources['./assets/desk.svg'].texture
+        )
+    }
 }
 
 class StandingGroup extends Group {
@@ -416,7 +425,6 @@ class Room {
                         group = _this.addStandingGroup({'id': user.group})
                     }
 
-                    console.log(group)
                     group.addUser(user)
                 }
             }
@@ -427,12 +435,60 @@ class Room {
 
 
 let conf = {
+
+    'background':{
+        'type': 'tile',
+        'id': 'tile_white_1',
+
+    },
+
     'objects': {
 
         'tables': [
-            { "id": 0, "capacity": 6, "position": { "x": 400, "y": 100 } }, { "id": 1, "capacity": 6, "position": { "x": 400, "y": 500 } }, { "id": 2, "capacity": 6, "position": { "x": 400, "y": 900 } }, { "id": 3, "capacity": 6, "position": { "x": 900, "y": 100 } }, { "id": 4, "capacity": 6, "position": { "x": 900, "y": 500 } }, { "id": 5, "capacity": 6, "position": { "x": 900, "y": 900 } }, { "id": 6, "capacity": 6, "position": { "x": 2000, "y": 100 } }, { "id": 7, "capacity": 6, "position": { "x": 2000, "y": 500 } }, { "id": 8, "capacity": 6, "position": { "x": 2000, "y": 900 } }, { "id": 9, "capacity": 6, "position": { "x": 2500, "y": 100 } }, { "id": 10, "capacity": 6, "position": { "x": 2500, "y": 500 } }, { "id": 11, "capacity": 6, "position": { "x": 2500, "y": 900 } }
+            
         ],
         'desks': [
+            { "id": 0, "capacity": 1, "position": { "x": 400, "y": 100 } , 'style':{'isLocal': true, 'id': 'desk_jafet_right'} }, 
+            { "id": 1, "capacity": 1, "position": { "x": 400, "y": 310 }, 'style':{'isLocal': true, 'id': 'desk_jafet_right'}  }, 
+            { "id": 2, "capacity": 1, "position": { "x": 400, "y": 520 }, 'style':{'isLocal': true, 'id': 'desk_jafet_right'}  }, 
+            { "id": 3, "capacity": 1, "position": { "x": 400, "y": 770 }, 'style':{'isLocal': true, 'id': 'desk_jafet_right'}  },
+            { "id": 4, "capacity": 1, "position": { "x": 400, "y": 980 }, 'style':{'isLocal': true, 'id': 'desk_jafet_right'}  },  
+            { "id": 5, "capacity": 1, "position": { "x": 400, "y": 1190 , 'style':{'isLocal': true, 'id': 'desk_jafet_right'} } },  
+
+            { "id": 7, "capacity": 1, "position": { "x": 800, "y": 100 }, 'style':{'isLocal': true, 'id': 'desk_jafet_right'}  }, 
+            { "id": 8, "capacity": 1, "position": { "x": 800, "y": 310 }, 'style':{'isLocal': true, 'id': 'desk_jafet_right'}  }, 
+            { "id": 9, "capacity": 1, "position": { "x": 800, "y": 520 }, 'style':{'isLocal': true, 'id': 'desk_jafet_right'}  }, 
+            { "id": 10, "capacity": 1, "position": { "x": 800, "y": 770 } , 'style':{'isLocal': true, 'id': 'desk_jafet_right'} },
+            { "id": 11, "capacity": 1, "position": { "x": 800, "y": 980 }, 'style':{'isLocal': true, 'id': 'desk_jafet_right'}  },  
+            { "id": 12, "capacity": 1, "position": { "x": 800, "y": 1190 }, 'style':{'isLocal': true, 'id': 'desk_jafet_right'}  },  
+
+            { "id": 13, "capacity": 1, "position": { "x": 1200, "y": 100 }, 'style':{'isLocal': true, 'id': 'desk_jafet_right'}  }, 
+            { "id": 14, "capacity": 1, "position": { "x": 1200, "y": 310 } , 'style':{'isLocal': true, 'id': 'desk_jafet_right'} }, 
+            { "id": 15, "capacity": 1, "position": { "x": 1200, "y": 520 } , 'style':{'isLocal': true, 'id': 'desk_jafet_right'} }, 
+            { "id": 16, "capacity": 1, "position": { "x": 1200, "y": 770 }, 'style':{'isLocal': true, 'id': 'desk_jafet_right'}  },
+            { "id": 17, "capacity": 1, "position": { "x": 1200, "y": 980 }, 'style':{'isLocal': true, 'id': 'desk_jafet_right'}  },  
+            { "id": 18, "capacity": 1, "position": { "x": 1200, "y": 1190 }, 'style':{'isLocal': true, 'id': 'desk_jafet_right'}  },  
+
+            { "id": 19, "capacity": 1, "position": { "x": 1600, "y": 100 } , 'style':{'isLocal': true, 'id': 'desk_jafet_right'} }, 
+            { "id": 20, "capacity": 1, "position": { "x": 1600, "y": 310 } , 'style':{'isLocal': true, 'id': 'desk_jafet_right'} }, 
+            { "id": 21, "capacity": 1, "position": { "x": 1600, "y": 520 } , 'style':{'isLocal': true, 'id': 'desk_jafet_right'} }, 
+            { "id": 22, "capacity": 1, "position": { "x": 1600, "y": 770 } , 'style':{'isLocal': true, 'id': 'desk_jafet_right'} },
+            { "id": 23, "capacity": 1, "position": { "x": 1600, "y": 980 }, 'style':{'isLocal': true, 'id': 'desk_jafet_right'}  },  
+            { "id": 24, "capacity": 1, "position": { "x": 1600, "y": 1190 }, 'style':{'isLocal': true, 'id': 'desk_jafet_right'}  },  
+
+            { "id": 25, "capacity": 1, "position": { "x": 2000, "y": 100 } , 'style':{'isLocal': true, 'id': 'desk_jafet_right'} }, 
+            { "id": 26, "capacity": 1, "position": { "x": 2000, "y": 310 } , 'style':{'isLocal': true, 'id': 'desk_jafet_right'} }, 
+            { "id": 27, "capacity": 1, "position": { "x": 2000, "y": 520 } , 'style':{'isLocal': true, 'id': 'desk_jafet_right'} }, 
+            { "id": 28, "capacity": 1, "position": { "x": 2000, "y": 770 } , 'style':{'isLocal': true, 'id': 'desk_jafet_right'} },
+            { "id": 29, "capacity": 1, "position": { "x": 2000, "y": 980 } , 'style':{'isLocal': true, 'id': 'desk_jafet_right'} },  
+            { "id": 30, "capacity": 1, "position": { "x": 2000, "y": 1190 } , 'style':{'isLocal': true, 'id': 'desk_jafet_right'} },  
+
+            { "id": 31, "capacity": 1, "position": { "x": 2400, "y": 100 } , 'style':{'isLocal': true, 'id': 'desk_jafet_right'} }, 
+            { "id": 32, "capacity": 1, "position": { "x": 2400, "y": 310 } , 'style':{'isLocal': true, 'id': 'desk_jafet_right'} }, 
+            { "id": 33, "capacity": 1, "position": { "x": 2400, "y": 520 } , 'style':{'isLocal': true, 'id': 'desk_jafet_right'} }, 
+            { "id": 34, "capacity": 1, "position": { "x": 2400, "y": 770 } , 'style':{'isLocal': true, 'id': 'desk_jafet_right'} },
+            { "id": 35, "capacity": 1, "position": { "x": 2400, "y": 980 } , 'style':{'isLocal': true, 'id': 'desk_jafet_right'} },  
+            { "id": 36, "capacity": 1, "position": { "x": 2400, "y": 1190 } , 'style':{'isLocal': true, 'id': 'desk_jafet_right'} },
         ]
     }
 }
