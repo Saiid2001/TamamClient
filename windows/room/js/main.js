@@ -26,7 +26,7 @@ document.addEventListener('DOMContentLoaded', () => {
     rooms.getRooms({ '_id': getUrlData()['room'] }, (rooms) => {
         console.log(getUrlData()['room'])
         roomData = rooms[0]
-        onRoom(rooms[0]['_id'])
+        onRoom(rooms[0]['_id'], rooms[0]['layout'])
     })
 
     
@@ -34,17 +34,15 @@ document.addEventListener('DOMContentLoaded', () => {
 
 
 
-    function onRoom(roomId) {
+    function onRoom(roomId, roomConf) {
         createApp()
         
         socket.connectSocket(() => {
             
             console.log('connected to socket')
 
-            myRoom = new Room(conf)
+            myRoom = new Room(roomConf)
             myRoom.build(scene)
-
-            console.log(myRoom.objects)
 
             socket.onUserEnteredRoom(({ user }) => {
                 console.log("user joined : ", user)

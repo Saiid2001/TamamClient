@@ -2,7 +2,8 @@ class ConversationInterface {
     constructor(view, preferences = {}) {
         //this.scene = scene
         this.pixi = {
-            avatarGroup : new PIXI.Container
+            avatarGroup: new PIXI.Container
+            
         }
         this.participants = []
         this.view = view
@@ -44,6 +45,65 @@ class ConversationInterface {
         this.videoControlView.addEventListener('click', () => {
             _this.toggleVideo()
         })
+
+        //pixi
+        /*let container = this.view.querySelector('.participants')
+
+
+        //Create a Pixi Application
+        this.pixi.app = new PIXI.Application({
+            height: container.getBoundingClientRect().height/3,
+            width: container.getBoundingClientRect().width/4,
+            autoResize: true,
+            resolution: devicePixelRatio
+        });
+
+        //Add the canvas that Pixi automatically created for you to the HTML document
+        container.appendChild(this.pixi.app.view);
+
+
+
+        //setting the renderer
+        this.pixi.app.renderer = PIXI.autoDetectRenderer(800, 600, { transparent: true });
+        //adding background
+        this.pixi.app.loader
+            .add(
+                []
+            )
+            .load(setup);
+        var _this = this
+        function setup() {
+
+            _this.pixi.app.stage.addChild(_this.pixi.avatarGroup)
+
+            function resize() {
+                _this.pixi.app.renderer.resize(container.getBoundingClientRect().width/4, document.body.getBoundingClientRect().height/3)
+
+                let oldHeight = _this.pixi.app.stage.height / _this.pixi.app.stage.scale.y
+                let oldWidth = _this.pixi.app.stage.width / _this.pixi.app.stage.scale.x
+                let width = document.body.getBoundingClientRect().width/4
+                let height = document.body.getBoundingClientRect().height/3
+
+                let scaleX = width / oldWidth
+                let scaleY = height / oldHeight
+
+                let minScale = Math.max(scaleX, scaleY)
+
+
+                _this.pixi.app.stage.scale.set(minScale)
+            }
+
+            //dynamic resize
+            window.addEventListener('resize', () => {
+                resize()
+            })
+
+            resize();
+
+            _this.pixi.app.ticker.add(delta => update(delta));
+        }
+
+        function update(delta) {}*/
     }
 
     open(callId, users) {
@@ -59,12 +119,12 @@ class ConversationInterface {
         this.isOpen = true;
 
         this._join(callId)
-        
+
     }
 
     close() {
         console.log('closing conversation interface')
-        if (!this.isOpen) return; 
+        if (!this.isOpen) return;
 
         this.view.setAttribute("hidden", "");
 
@@ -80,15 +140,15 @@ class ConversationInterface {
                 track.enabled = false;
 
             })
-            
+
 
         } catch (e) {
-            console.error("could not close tracks ",e)
+            console.error("could not close tracks ", e)
         }
         this.localStream = null
         this.remoteStream = null
 
-        
+
     }
 
     _join(room) {
@@ -101,17 +161,17 @@ class ConversationInterface {
         }
     }
     async _setLocalStream(mediaConstraints) {
-    let stream
-    try {
-        stream = await navigator.mediaDevices.getUserMedia(mediaConstraints)
-    } catch (error) {
-        console.error('Could not get user media', error)
-    }
-    this.localStream = stream
-    this.localVideoComponent.srcObject = stream
+        let stream
+        try {
+            stream = await navigator.mediaDevices.getUserMedia(mediaConstraints)
+        } catch (error) {
+            console.error('Could not get user media', error)
+        }
+        this.localStream = stream
+        this.localVideoComponent.srcObject = stream
 
-        if (!this.videoOpen) { this.toggleVideo()}
-        if (!this.audioOpen) {this.toggleAudio()}
+        if (!this.videoOpen) { this.toggleVideo() }
+        if (!this.audioOpen) { this.toggleAudio() }
     }
 
 
@@ -131,26 +191,27 @@ class ConversationInterface {
                             _this.rtcPeerConnection.addTrack(track, _this.localStream)
                         }
                         _this.localVideoComponent.parentElement.removeAttribute('hidden')
+                        _this.hideAvatar(myUser)
 
-                        
                     } else {
                         // show control to unmute
                         _this.videoControlView.classList.remove('on')
                         //track.stop()
-                        
-                        _this.localVideoComponent.parentElement.setAttribute('hidden', "")
 
+                        _this.localVideoComponent.parentElement.setAttribute('hidden', "")
+                        _this.showAvatar(myUser)
                     }
 
                     socket.getSocket().emit('track-status-changed', {
                         room: _this.room,
                         status: track.enabled,
-                        id: track.id
+                        id: track.id, 
+                        user: myUser.id
                     })
                 }
             })
         }
-        catch {}
+        catch { }
     }
 
     toggleAudio() {
@@ -178,9 +239,18 @@ class ConversationInterface {
 
                 }
             })
-        } catch {}
+        } catch { }
     }
 
+    toggleRemoteVideo(enabled , user) {
+        if (enabled) {
+            this.remoteVideoComponent.parentElement.removeAttribute('hidden')
+            this.hideAvatar(user)
+        } else {
+            this.remoteVideoComponent.parentElement.setAttribute('hidden', "")
+            this.showAvatar(user)
+        }
+    }
 
     addLocalTracks(rtcPeerConnection) {
         var _this = this
@@ -229,6 +299,7 @@ class ConversationInterface {
                     label: event.candidate.sdpMLineIndex,
                     candidate: event.candidate.candidate,
                     room: roomId,
+                    user: myUser.id
             
             }
         socket.getSocket().emit('webrtc-ice-candidate', data)
@@ -248,6 +319,7 @@ class ConversationInterface {
         type: 'webrtc_answer',
         sdp: sessionDescription,
         room: roomId,
+        user: myUser.id
     })
     console.log("sent answer")
     }
@@ -268,8 +340,19 @@ class ConversationInterface {
         type: 'webrtc_offer',
         sdp: sessionDescription,
         room: roomId,
+        user: myUser.id
     })
-}
+    }
+
+    showAvatar(user) {
+        //var avatar = user.avatar.getFullBody(false);
+        //avatar.user = user.id;
+        //this.pixi.avatarGroup.addChild(avatar);
+        this.view.querySelector('.participants img').removeAttribute('hidden')
+    }
+    hideAvatar(user) {
+        this.view.querySelector('.participants img').setAttribute('hidden','')
+    }
 }
 
 
@@ -319,6 +402,9 @@ document.addEventListener("connected-to-socket", async => {
     })
 
     socket.on('webrtc-offer', async (event) => {
+
+        if(event.user == myUser.id) return;
+
         console.log('Socket event callback: webrtc_offer')
 
         if (!myConversationInterface.isRoomCreator) {
@@ -349,12 +435,18 @@ document.addEventListener("connected-to-socket", async => {
     })
 
     socket.on('webrtc-answer', (event) => {
+
+        if(event.user == myUser.id) return;
+
         console.log('Socket event callback: webrtc_answer')
 
         myConversationInterface.rtcPeerConnection.setRemoteDescription(new RTCSessionDescription(event.sdp))
     })
 
     socket.on('webrtc-ice-candidate', (event) => {
+
+        if(event.user == myUser.id) return;
+
         console.log('Socket event callback: webrtc_ice_candidate')
 
         // ICE candidate configuration.
@@ -362,7 +454,9 @@ document.addEventListener("connected-to-socket", async => {
             sdpMLineIndex: event.label,
             candidate: event.candidate,
         })
-        myConversationInterface.rtcPeerConnection.addIceCandidate(candidate)
+
+        console.log(candidate)
+        myConversationInterface.rtcPeerConnection.addIceCandidate(candidate).catch(error => console.log(error));
         
     })
 
@@ -371,11 +465,9 @@ document.addEventListener("connected-to-socket", async => {
         track.enabled = event.status
         console.log('remote track changed', event)
         if (track.kind == "video") {
-            if (track.enabled) {
-                myConversationInterface.remoteVideoComponent.parentElement.removeAttribute('hidden')
-            } else {
-                myConversationInterface.remoteVideoComponent.parentElement.setAttribute('hidden', "")
-            }
+
+            myConversationInterface.toggleRemoteVideo(track.enabled, myRoom.findUser(event.user))
+            
         }
     })
 

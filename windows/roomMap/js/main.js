@@ -5,10 +5,13 @@ document.addEventListener('DOMContentLoaded', () => {
         document.getElementById('map'),
         './assets/map.svg'
     );
-    rooms.getRooms({ 'open': '' }, (rooms) => {
-        showRooms(document.querySelector('.recommended .cards'), rooms)
-        map.addRooms(rooms)
-    })
+
+   
+        rooms.getRooms({ 'open': '' }, (rooms) => {
+            showRooms(document.querySelector('.recommended .cards'), rooms)
+            map.addRooms(rooms)
+        })
+    
 
     
 })
