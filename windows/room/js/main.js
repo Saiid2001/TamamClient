@@ -93,10 +93,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
                 users = users.map(user => {return new User(user)})
 
-                myRoom.loadUsers(users)
-
                 console.log("My user", myUserData)
                 myUser = new MyUser(myUserData)
+
+                myRoom.loadUsers(users)
 
                 myRoom.addUser(myUser,null, myUserData.group)
 
