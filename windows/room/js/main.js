@@ -65,7 +65,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     myRoom.moveUser(uuser, loc)
 
                     if (uuser.group == myUser.group && !myConversationInterface.isOpen) {
-                        myConversationInterface.open(uuser.group, loc.users)
+                        myConversationInterface.open(uuser.group, loc.users, false)
                     }
 
 

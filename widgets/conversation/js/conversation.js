@@ -106,7 +106,7 @@ class ConversationInterface {
         function update(delta) {}*/
     }
 
-    open(callId, users) {
+    open(callId, users, isNewComer) {
 
         callId = roomData._id + "-" + callId
         console.log('call id', callId)
@@ -118,7 +118,9 @@ class ConversationInterface {
 
         this.isOpen = true;
 
-        this._join(callId)
+        this.isNewComer = isNewComer;
+
+        this._join(callId, isNewComer)
 
     }
 
@@ -147,11 +149,12 @@ class ConversationInterface {
         }
         this.localStream = null
         this.remoteStream = null
+        this.callStarted = false;
 
 
     }
 
-    _join(room) {
+    _join(room, isNewComer) {
         console.log('joining call ', room)
         if (room === '') {
             throw 'No call id provided'
@@ -372,16 +375,24 @@ document.addEventListener("connected-to-socket", async => {
         console.log('Socket event callback: room_joined')
 
         await myConversationInterface._setLocalStream(myConversationInterface.mediaConstraints)
-        socket.getSocket().emit('start-call', { room: myConversationInterface.room })
+        socket.getSocket().emit('start-call', { room: myConversationInterface.room, user: myUser.id })
     })
 
-    socket.getSocket().on('start-call', async () => {
+    socket.getSocket().on('start-call', async (event) => {
+
+        if(myConversationInterface.callStarted) return;
+        myConversationInterface.callStarted = true;
+
         console.log('Socket event callback: start_call')
         await myConversationInterface._setLocalStream(myConversationInterface.mediaConstraints)
         console.log(JSON.stringify(myConversationInterface.localStream))
-        //if (myConversationInterface.isRoomCreator) {
+
+        
+
+        if (myConversationInterface.isNewComer) {
         myConversationInterface.rtcPeerConnection = new RTCPeerConnection(myConversationInterface.iceServers)
         var rtcPeerConnection = myConversationInterface.rtcPeerConnection 
+        rtcPeerConnection._debug = console.log
 
         let negotiating = false;
         rtcPeerConnection.onnegotiationneeded = async e => {
@@ -397,8 +408,10 @@ document.addEventListener("connected-to-socket", async => {
         myConversationInterface.addLocalTracks(myConversationInterface.rtcPeerConnection)
         rtcPeerConnection.ontrack = event => { console.log(event);myConversationInterface.setRemoteStream(event) }
         rtcPeerConnection.onicecandidate = event => { myConversationInterface.sendIceCandidate(event) }
+
+        myConversationInterface.isNewComer = false;
           
-        //}
+        }
     })
 
     socket.on('webrtc-offer', async (event) => {
@@ -407,7 +420,7 @@ document.addEventListener("connected-to-socket", async => {
 
         console.log('Socket event callback: webrtc_offer')
 
-        if (!myConversationInterface.isRoomCreator) {
+        if (!myConversationInterface.isNewComer) {
 
             
             myConversationInterface.rtcPeerConnection = new RTCPeerConnection(myConversationInterface.iceServers)
@@ -418,7 +431,7 @@ document.addEventListener("connected-to-socket", async => {
             rtcPeerConnection.onicecandidate = event => { myConversationInterface.sendIceCandidate(event) }
             rtcPeerConnection.setRemoteDescription(new RTCSessionDescription(event.sdp))
 
-            //rtcPeerConnection.onnegotiationneeded = async e => {
+            // rtcPeerConnection.onnegotiationneeded = async e => {
             //    try {
             //        console.log('in offer', 'peer status', rtcPeerConnection.signalingState)
             //        if (negotiating || rtcPeerConnection.signalingState != "stable") return;
@@ -427,20 +440,20 @@ document.addEventListener("connected-to-socket", async => {
             //    } finally {
             //        negotiating = false;
             //    }
-            //}
+            // }
             await myConversationInterface.createAnswer(rtcPeerConnection)
             
 
         }
     })
 
-    socket.on('webrtc-answer', (event) => {
+    socket.on('webrtc-answer', async (event) => {
 
         if(event.user == myUser.id) return;
 
         console.log('Socket event callback: webrtc_answer')
 
-        myConversationInterface.rtcPeerConnection.setRemoteDescription(new RTCSessionDescription(event.sdp))
+        await myConversationInterface.rtcPeerConnection.setRemoteDescription(new RTCSessionDescription(event.sdp))
     })
 
     socket.on('webrtc-ice-candidate', (event) => {
@@ -456,7 +469,7 @@ document.addEventListener("connected-to-socket", async => {
         })
 
         console.log(candidate)
-        myConversationInterface.rtcPeerConnection.addIceCandidate(candidate).catch(error => console.log(error));
+        myConversationInterface.rtcPeerConnection.addIceCandidate(candidate).catch(error => {console.log(candidate); console.log(error)});
         
     })
 
