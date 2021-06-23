@@ -101,10 +101,10 @@ async function createAuthWindow(win) {
         webRequest.onBeforeRequest(filter, async ({ url }) => {
             
             await authService.loadTokens(url);
-            return goTo('roomMap');
+            return goTo('roomMap', { source: 'recommendation', 'extra-params': '' });
         });
         win.on('authenticated', () => {
-            goTo('roomMap');
+            goTo('roomMap', { source: 'recommendation', 'extra-params': '' });
         });
     })
 
