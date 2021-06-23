@@ -4,11 +4,15 @@ class GlobalMap {
 
 
 
-    constructor(canvas, background_path) {
+    constructor(canvas, bg) {
         this.canvas = canvas.getContext('2d');
-        var bg = new Image;
-        bg.src = background_path;
-        this.canvas.drawImage(bg, 0, 0);
+        //var bg = new Image;
+        //bg.src = background_path;
+        bg.addEventListener('load', e => {
+            console.log("Drawing background.");
+            this.canvas.drawImage(bg, 0, 0, 2000, 2000 * bg.naturalHeight / bg.naturalWidth);
+        })
+        
 
         this.buildings = {
             'BDH': {
@@ -24,7 +28,7 @@ class GlobalMap {
                 image: './assets/Jaffet Upper.svg',
                 pos: {
                     x: 1102,
-                    y: 845
+                    y: 740
                 },
                 layer: 1
 
@@ -33,7 +37,7 @@ class GlobalMap {
                 image: './assets/Jaffet lower.svg',
                 pos: {
                     x: 1109,
-                    y: 868
+                    y: 763
                 },
                 layer:0
 
@@ -94,7 +98,7 @@ class GlobalMap {
                         
                     } else {
                         
-                        let r = ipcRenderer.send('go-to-room', info['id'])
+                        let r = ipcRenderer.send('go-to-room', info['id'], urlData)
                         
                     }
                 }

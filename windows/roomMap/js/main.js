@@ -8,12 +8,12 @@ function getUrlData() { // Taken from room/js/main, should globalize and make it
 
 let urlData = getUrlData();
 
-document.addEventListener('DOMContentLoaded', () => {
+//document.addEventListener('DOMContentLoaded', () => {
 
     const rooms = require('../../services/room-service')
     const map = new GlobalMap(
         document.getElementById('map'),
-        './assets/map.svg'
+        document.getElementById('map-img')
     );
     console.log(urlData['source']);
 
@@ -48,4 +48,4 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     
-})
+//})
