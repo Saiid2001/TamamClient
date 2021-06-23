@@ -14,6 +14,9 @@ function getUrlData() {
     let query = querystring.parse(global.location.search);
     return JSON.parse(query['?data'])
 }
+
+let urlData = getUrlData();
+
 document.addEventListener('DOMContentLoaded', () => {
 
 
@@ -23,8 +26,8 @@ document.addEventListener('DOMContentLoaded', () => {
     const { ipcRenderer } = require('electron')
     const rooms = require('../../services/room-service')
 
-    rooms.getRooms({ '_id': getUrlData()['room'] }, (rooms) => {
-        console.log(getUrlData()['room'])
+    rooms.getRooms({ '_id': urlData['room'] }, (rooms) => {
+        console.log(urlData['room'])
         roomData = rooms[0]
         onRoom(rooms[0]['_id'], rooms[0]['layout'])
     })
@@ -106,7 +109,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
             document.getElementById('room-title').innerHTML = roomData['name']
             document.getElementById('exit-room').onclick = () => {
-                let r = ipcRenderer.send('go-to', 'roomMap')
+                let r = ipcRenderer.send('go-to-roommap', urlData['return-data']['source'], urlData['return-data']['extra-params'])
             }
             
         })
