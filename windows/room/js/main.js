@@ -101,12 +101,16 @@ document.addEventListener('DOMContentLoaded', () => {
             
             socket.getSocket().on('accepted-to-group', (event)=>{
             
-                if(event.room == myUser.wavingTo){
+                if(event.user == myUser.id && event.room == myUser.wavingTo){
                     showNotification(`They waved back. Have fun!!`, {})
                     myUser.waveToCallback();
                     myUser.waveToCallback = null;
                     myUser.wavingTo = null;
                     setTimeout(()=>hideNotification(), 5000);
+                }
+
+                else if(event.user != myUser.id && event.room == myUser.wavingTo){
+                    hideNotification(event.user)
                 }
             
             })
