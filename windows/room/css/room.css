@@ -52,3 +52,41 @@ canvas{
 .conversation .participants img{
     width:100%;
 }
+
+
+.notification-collection{
+
+    position: absolute;
+    bottom:0px;
+    width: 100%;
+    text-align: center;
+}
+
+.notification{
+    background-color: white;
+    padding: 5px;
+    border-radius: 5px;
+    display: block;
+    width: max-content;
+    margin: auto ;
+    margin-bottom: 10px;
+}
+.notification *{
+    display: inline-block;
+    background-color:transparent;
+    vertical-align: middle;
+}
+.notification p{
+    margin: 0;
+    font-size: 12px;
+    margin-right: 10px;
+    margin-left: 5px;
+}
+
+
+.notification button{
+    padding:0px;
+}
+.notification img{
+    height: 25px;
+}
