@@ -8,7 +8,7 @@ function getUrlData() { // Taken from room/js/main, should globalize and make it
 
 let urlData = getUrlData();
 
-//document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener('DOMContentLoaded', () => {
 
     const rooms = require('../../services/room-service')
     const map = new GlobalMap(
@@ -20,6 +20,7 @@ let urlData = getUrlData();
 
     if (urlData['source'] == 'recommendation') {
         rooms.getRooms({ 'open': '' }, (rooms) => {
+
             showRooms(document.querySelector('.recommended .cards'), rooms);
             map.addRooms(rooms);
         })
@@ -49,4 +50,4 @@ let urlData = getUrlData();
     }
 
     
-//})
+})

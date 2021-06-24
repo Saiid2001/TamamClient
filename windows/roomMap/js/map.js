@@ -6,8 +6,6 @@ class GlobalMap {
 
     constructor(canvas, bg) {
         this.canvas = canvas.getContext('2d');
-        //var bg = new Image;
-        //bg.src = background_path;
         bg.addEventListener('load', e => {
             console.log("Drawing background.");
             this.canvas.drawImage(bg, 0, 0, 2000, 2000 * bg.naturalHeight / bg.naturalWidth);
@@ -16,37 +14,37 @@ class GlobalMap {
 
         this.buildings = {
             'BDH': {
-                image: './assets/BDH.svg',
+                //image: './assets/BDH.svg',
                 pos: {
-                    x: 1360,
-                    y: 790
+                    x: 1130,
+                    y: 583
                 },
                 layer: 0
 
             },
             'Jaffet Upper': {
-                image: './assets/Jaffet Upper.svg',
+                //image: './assets/Jaffet Upper.svg',
                 pos: {
-                    x: 1102,
+                    x: 1142,
                     y: 740
                 },
                 layer: 1
 
             },
             'Jaffet Library': {
-                image: './assets/Jaffet lower.svg',
+                //image: './assets/Jaffet lower.svg',
                 pos: {
-                    x: 1109,
+                    x: 1149,
                     y: 763
                 },
                 layer:0
 
             },
             'Main Gate': {
-                image: './assets/MainGate.svg',
+                //image: './assets/MainGate.svg',
                 pos: {
-                    x: 1089,
-                    y: 1121
+                    x: 1120,
+                    y: 915
                 },
                 layer:0
 
@@ -63,6 +61,7 @@ class GlobalMap {
 
             x = x / elem.getBoundingClientRect().width * 2000;
             y = y / elem.getBoundingClientRect().height * 2000;
+            console.log(`x: ${x}, y: ${y}`);
 
             return {x:x, y:y}
         }
@@ -75,36 +74,39 @@ class GlobalMap {
         this.hitboxes = []
     }
 
-    addRoom(info, image, position) {
+    addRoom(info, /*image,*/ position) {
         var img = new Image;
-        img.src = image;
-        this.canvas.drawImage(img, position.x, position.y)
+        img.src = './assets/map_pin.svg';
+        img.addEventListener('load', e => {
+            this.canvas.drawImage(img, position.x, position.y);
+            console.log(img.width); console.log(img.height);
 
 
 
-        this.hitboxes.push(
-            {
-                layer: this.buildings[info.name].layer,
-                hitbox: {
-                    x: position.x,
-                    y: position.y,
-                    w: img.width,
-                    h: img.height
-                },
-                click: function () {
-                    if (info['name'] == "Main Gate") {
-                        
-                        let r = ipcRenderer.send('go-to', 'lobby')
-                        
-                    } else {
-                        
-                        let r = ipcRenderer.send('go-to-room', info['id'], urlData)
-                        
+            this.hitboxes.push(
+                {
+                    layer: this.buildings[info.name].layer,
+                    hitbox: {
+                        x: position.x,
+                        y: position.y,
+                        w: img.width,
+                        h: img.height
+                    },
+                    click: function () {
+                        if (info['name'] == "Main Gate") {
+
+                            let r = ipcRenderer.send('go-to', 'lobby')
+
+                        } else {
+
+                            let r = ipcRenderer.send('go-to-room', info['id'], urlData)
+
+                        }
                     }
                 }
-            }
-        )
-        console.log(this.hitboxes)
+            )
+            console.log(this.hitboxes)
+        });
     }
 
     addRooms(roomList) {
@@ -127,7 +129,7 @@ class GlobalMap {
                 'name': room['name'], 
                 'id': room['_id']
             },
-                _this.buildings[room['name']]['image'],
+                //_this.buildings[room['name']]['image'],
                 _this.buildings[room['name']]['pos']
             )
         })
@@ -141,6 +143,7 @@ class GlobalMap {
 
         this.hitboxes.forEach((hitbox, i) => {
             if (_this.checkHit(position, hitbox.hitbox)) {
+                console.log('Clicked hitbox');
                 hitarea.push(hitbox)
             }
         })
