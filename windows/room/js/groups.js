@@ -8,7 +8,7 @@ function waveToGroup( group, onSuccess = ()=>{}){
     myUser.waveToCallback = onSuccess;
 
     if(group.users.length>1){
-        showNotification(`Waiting for ${group.users[0]} and friends to see you!`, {
+        showNotification(`Waiting for ${group.users[0].firstName} and friends to see you!`, {
             'confirm': null,
             'cancel': ()=>{
                 socket.getSocket.emit('canceled-waving', {user: myUser.id, room: group.id})
@@ -18,7 +18,7 @@ function waveToGroup( group, onSuccess = ()=>{}){
             }
         }, group.id)
     }else{
-        showNotification(`Waiting for ${group.users[0]} to see you!`, {
+        showNotification(`Waiting for ${group.users[0].firstName} to see you!`, {
             'confirm': null,
             'cancel': ()=>{
                 socket.getSocket().emit('canceled-waving', {user: myUser.id, room: group.id})
@@ -58,6 +58,7 @@ class Group {
 
         this.pixi.group.on('mousedown', () => {
 
+            if(_this.id == myUser.group) return;
             if(_this.users.length) waveToGroup(_this, ()=>_this.room.moveUser(myUser, _this));
             else _this.room.moveUser(myUser, _this);
         })
