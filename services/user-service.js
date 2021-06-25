@@ -44,6 +44,17 @@ function getFriendsOnline(room = null, onSuccess, onFail = () => { }) {
         success: function (message, status, data) {
             console.log(message)
             onSuccess(data.responseJSON)
+
+function getAllUsers(onSuccess, onFail = () => { }) {
+    let token = ipcRenderer.sendSync('get-access-token');
+    $.ajax({
+        type: 'GET',
+        method: 'GET',
+        url: SERVER_ADDRESS + "/users/get-users",
+        headers: { 'Authorization': "Bearer " + token },
+        success: function (message, status, data) {
+            onSuccess(data.responseJSON);
+
         },
         error: function (message, status, data) {
             //onAssessmentLoaded();
@@ -55,5 +66,6 @@ function getFriendsOnline(room = null, onSuccess, onFail = () => { }) {
 
 module.exports = {
     getUserData,
-    getFriendsOnline
+    getFriendsOnline,
+    getAllUsers
 }

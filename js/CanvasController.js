@@ -52,7 +52,7 @@ class Avatar{
         this.cache = {}
     }
 
-    getFullBody(interactive = true) {
+    getFullBody(interactive = true, withusername = true) {
         const PIXI = require("pixi.js");
 
         if ( this.cache['full-body'] == undefined ) {
@@ -67,10 +67,18 @@ class Avatar{
             sprite.width  = av.width
             sprite.position.set(50, 0)
 
+            if (withusername) {
+                let nameLabel, txtBG;
 
-            let nameLabel, txtBG;
+                txtBG = new PIXI.Sprite(PIXI.Texture.WHITE);
 
-            txtBG = new PIXI.Sprite(PIXI.Texture.WHITE);
+                if (this.userID == myUser.id) {
+                    nameLabel = new PIXI.Text("You", { fontFamily: 'Arial', fontSize: 72, fill: 0xffffff, align: 'center' });
+                    txtBG.tint = 0x00B494;
+                } else {
+                    nameLabel = new PIXI.Text(this.name, { fontFamily: 'Arial', fontSize: 72, fill: 0x00B494, align: 'center' });
+                    txtBG.tint = 0xbbbbbb;
+                }
 
             if(this.userID == myUser.id){
                 nameLabel= new PIXI.Text("You", { fontFamily: 'Arial', fontSize: 72, fill: 0xffffff, align: 'center' });
@@ -86,15 +94,19 @@ class Avatar{
             const nameCage = new PIXI.Container();
             nameCage.addChild(txtBG, nameLabel);
 
+                // cage text
+                const nameCage = new PIXI.Container();
+                nameCage.addChild(txtBG, nameLabel);
 
-            nameCage.x = 0;
-            nameCage.y = -nameCage.height/2
-            nameCage.scale.set(0.5,0.5)
 
-            nameLabel.position.x = txtBG.width/2-nameLabel.width/2;
+                nameCage.x = 0;
+                nameCage.y = -nameCage.height / 2
+                nameCage.scale.set(0.5, 0.5)
 
-            sprite.addChild(nameCage)
+                nameLabel.position.x = txtBG.width / 2 - nameLabel.width / 2;
 
+                sprite.addChild(nameCage)
+            }
             // if (interactive) {
             //     sprite.interactive = true
             //     // sprite.on('mousedown', () => {
