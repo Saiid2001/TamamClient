@@ -1,4 +1,6 @@
 const Fuse = require('fuse.js');
+const socket = require('../../services/socket-service');
+
 
 function getUrlData() { // Taken from room/js/main, should globalize and make it an import later
     const querystring = require('querystring');
@@ -8,20 +10,31 @@ function getUrlData() { // Taken from room/js/main, should globalize and make it
 
 let urlData = getUrlData();
 
-//document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener('DOMContentLoaded', () => {
 
-    const rooms = require('../../services/room-service')
+
+    const rooms = require('../../services/room-service');
+    const users = require('../../services/user-service.js');
     const map = new GlobalMap(
         document.getElementById('map'),
-        document.getElementById('map-img')
+        './assets/map.jpg',
+        rooms,
+        users
     );
 
-    console.log(urlData['source']);
 
+    //socket.connectSocket(() => {
+    //    socket.onUserEnteredRoom((user) => {
+    //        console.log(user);
+    //    });
+    //})
+
+    console.log(urlData['source']);
     if (urlData['source'] == 'recommendation') {
         rooms.getRooms({ 'open': '' }, (rooms) => {
+
             showRooms(document.querySelector('.recommended .cards'), rooms);
-            map.addRooms(rooms);
+            //map.addRooms(rooms);
         })
     } else if (urlData['source'] == 'search') { // NEW: Display cards after Fuse search
         document.getElementById('cards-label').innerHTML = `Results for search: ${urlData['extra-params']}`;
@@ -44,9 +57,9 @@ let urlData = getUrlData();
             } else {
                 showRooms(document.querySelector('.recommended .cards'), rooms);
             }
-            map.addRooms(rooms);
+            //map.addRooms(rooms);
         }); 
     }
 
     
-//})
+})

@@ -26,6 +26,25 @@ function getUserData(onSuccess, onFail = () => { }) {
     });
 }
 
+function getAllUsers(onSuccess, onFail = () => { }) {
+    let token = ipcRenderer.sendSync('get-access-token');
+    $.ajax({
+        type: 'GET',
+        method: 'GET',
+        url: SERVER_ADDRESS + "/users/get-users",
+        headers: { 'Authorization': "Bearer " + token },
+        success: function (message, status, data) {
+            onSuccess(data.responseJSON);
+        },
+        error: function (message, status, data) {
+            //onAssessmentLoaded();
+            console.log(message);
+            onFail();
+        }
+    });
+}
+
 module.exports = {
-    getUserData
+    getUserData,
+    getAllUsers
 }

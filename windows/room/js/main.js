@@ -29,6 +29,8 @@ document.addEventListener('DOMContentLoaded', () => {
     rooms.getRooms({ '_id': urlData['room'] }, (rooms) => {
         console.log(urlData['room'])
         roomData = rooms[0]
+        console.log(roomData);
+        console.log(rooms[0]['_id'], rooms[0]['layout']);
         onRoom(rooms[0]['_id'], rooms[0]['layout'])
     })
 
