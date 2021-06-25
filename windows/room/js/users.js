@@ -31,7 +31,7 @@ class MyUser extends User {
         super.addToGroup(group)
         socket.enterGroup(group.id, error => { console.log(error) })
 
-        console.log(0+group.users.length)
+        //console.log(0+group.users.length)
         //activating the meeting
         if (group.users.length > 1) {
             // create the meeting interface

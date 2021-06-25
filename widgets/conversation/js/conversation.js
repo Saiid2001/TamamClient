@@ -351,10 +351,32 @@ class ConversationInterface {
         //var avatar = user.avatar.getFullBody(false);
         //avatar.user = user.id;
         //this.pixi.avatarGroup.addChild(avatar);
-        this.view.querySelector('.participants img').removeAttribute('hidden')
+        //this.view.querySelector('.participants img').removeAttribute('hidden')
+        console.log('showing avatar for ', user)
+        var container = this.view.querySelector('.participants')
+
+        var elem= container.querySelector("#avatar-"+user.id);
+
+        if(!(elem)){
+            elem = document.createElement('img')
+            elem.id = 'avatar-'+user.id
+            elem.setAttribute('src','../../assets/img/avatars_gen1/'+Avatar.VARIANTS[user.avatar.data.index])
+            container.appendChild(elem)
+        }
+
+        elem.removeAttribute('hidden')
     }
     hideAvatar(user) {
-        this.view.querySelector('.participants img').setAttribute('hidden','')
+        //this.view.querySelector('.participants img').setAttribute('hidden','')
+        var container = this.view.querySelector('.participants')
+
+        var elem= container.querySelector("#avatar-"+user.id);
+
+        if(elem){
+            elem.setAttribute('hidden', '')
+        }
+
+        
     }
 }
 

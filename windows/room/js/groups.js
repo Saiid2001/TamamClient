@@ -1,3 +1,41 @@
+
+
+function waveToGroup( group, onSuccess = ()=>{}){
+
+    if(myUser.wavingTo) return;
+
+    myUser.wavingTo = group.id;
+    myUser.waveToCallback = onSuccess;
+
+    if(group.users.length>1){
+        showNotification(`Waiting for ${group.users[0].firstName} and friends to see you!`, {
+            'confirm': null,
+            'cancel': ()=>{
+                socket.getSocket.emit('canceled-waving', {user: myUser.id, room: group.id})
+                myUser.wavingTo = null;
+                myUser.waveToCallback = null;
+                hideNotification();
+            }
+        }, group.id)
+    }else{
+        showNotification(`Waiting for ${group.users[0].firstName} to see you!`, {
+            'confirm': null,
+            'cancel': ()=>{
+                socket.getSocket().emit('canceled-waving', {user: myUser.id, room: group.id})
+                myUser.wavingTo = null;
+                myUser.waveToCallback = null;
+                hideNotification();
+            }
+        }, group.id)
+    }
+
+    socket.getSocket().emit("waving-to-group", {user: myUser.id, room: group.id});
+}
+
+
+
+
+
 class Group {
     constructor(config, room) {
 
@@ -12,13 +50,17 @@ class Group {
 
     build(scene) {
 
+        var _this = this;
         this.pixi.group.position.set(this.position.x, this.position.y)
 
         //interactivity
         this.pixi.group.interactive = true
 
         this.pixi.group.on('mousedown', () => {
-            this.room.moveUser(myUser, this)
+
+            if(_this.id == myUser.group) return;
+            if(_this.users.length) waveToGroup(_this, ()=>_this.room.moveUser(myUser, _this));
+            else _this.room.moveUser(myUser, _this);
         })
 
         scene.scene.addChild(this.pixi.group)
@@ -327,9 +369,14 @@ class Room {
     moveUser(user, location = null) {
         if (location) {
 
-            var oldLocation = this.findObj(null, user.group)
+            var _this = this;
+
+            var oldLocation = _this.findObj(null, user.group)
             oldLocation.removeUser(user)
             location.addUser(user)
+            
+
+            
         }
     }
 
