@@ -6,7 +6,9 @@
     <title></title>
     <link rel="stylesheet" href="../../css/main.css" />
     <link rel="stylesheet" href="./css/roomMap.css" />
-
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Squada+One&display=swap" rel="stylesheet">
 </head>
 <body>
     <div class="head">
@@ -43,8 +45,29 @@
         </div>
     </div>
 
+    <div class = 'room-card-overlay'>
+        <div>
+        <div class='thumbnail'><img src = './assets/Group 442.png'></div>
+        <h1>Jaffet Upper</h1>
+        <div class='attributes'><small class='attribute-social'></small><small class='attribute-study'></small></div>
+        <p hidden>Some info about Jaffet</p>
+        <div class='people'>
+            <div class='friends'>
+                <img src = '../../assets/img/avatars_gen1/user_0.png'>
+                <img src = '../../assets/img/avatars_gen1/user_1.png'>
+            </div>
+            <div class='num-people' hidden>
+                + 24 others
+            </div>
+        </div>
+
+        <button>Enter Room</button>
+    </div>
+    </div>
+
     <script src="../../js/window-control.js"></script>
     <script src="../../js/CanvasController.js"></script>
+    <script src="js/card-view.js"></script>
     <script src="js/room-list.js"></script>
     <script src="js/map.js"></script>
     <script src="js/main.js"></script>
