@@ -76,8 +76,8 @@ class Avatar{
                 nameLabel= new PIXI.Text("You", { fontFamily: 'Arial', fontSize: 72, fill: 0xffffff, align: 'center' });
                 txtBG.tint = 0x00B494;
             }else{
-                nameLabel= new PIXI.Text(this.name, { fontFamily: 'Arial', fontSize: 72, fill: 0x00B494, align: 'center' });
-                txtBG.tint = 0xbbbbbb;
+                nameLabel= new PIXI.Text(this.name, { fontFamily: 'Arial', fontSize: 72, fill: 0xffffff, align: 'center' });
+                txtBG.tint = 0x0082AA;
             }
             
             txtBG.width = nameLabel.width+50, txtBG.height = nameLabel.height;
@@ -121,3 +121,4 @@ class Avatar{
     }
 
 }
+

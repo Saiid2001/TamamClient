@@ -38,7 +38,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
 
     function onRoom(roomId, roomConf) {
-        createApp()
+        createApp(roomConf)
         
         socket.connectSocket(() => {
             

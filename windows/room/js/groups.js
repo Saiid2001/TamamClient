@@ -1,5 +1,7 @@
 
 
+
+
 function waveToGroup( group, onSuccess = ()=>{}){
 
     if(myUser.wavingTo) return;
@@ -35,6 +37,31 @@ function waveToGroup( group, onSuccess = ()=>{}){
 
 
 
+
+class Static{
+    constructor(config, room) {
+
+        this.position = config.position ? config.position : room.allocateFreePosition();
+        this.rotation = config.rotation ? config.rotation : 0;
+        this.id = config.id
+        this.room = room
+
+        this.id = "static-" + this.id;
+
+        this.pixi = {
+            group: new PIXI.Container,
+            sprite: PIXI.Sprite.from(STATICS[config.style.id])
+        }
+
+    }
+
+    build(scene) {
+        this.pixi.group.position.set(this.position.x, this.position.y)
+        this.pixi.group.addChild(this.pixi.sprite)
+        scene.scene.addChild(this.pixi.group)
+        
+    }
+}
 
 class Group {
     constructor(config, room) {
@@ -256,13 +283,14 @@ class Room {
         this.lobbies = config.lobbies ? config.lobbies : [];
 
         //background
-        this.background = config.background ? config.background : "./assets/marble-tile.png";
+        this.background = config.background ? TILES[config.background.id] : "./assets/tiles/marble-tile.png";
       
         //loading objects
         this.objects = {}
         this.objects['tables'] = []
         this.objects['desks'] = []
         this.objects['standing'] = []
+        this.objects['static'] = []
 
         this.loadObjects(config.objects)
 
@@ -274,6 +302,9 @@ class Room {
         //tables
         this.loadTables(objects['tables'])
         this.loadDesks(objects['desks'])
+
+        //statics and decorations
+        this.loadStatics(objects['static'])
     }
 
     loadTables(tables) {
@@ -285,12 +316,29 @@ class Room {
         })
     }
 
+    loadStatics(objects) {
+        if (objects == undefined) return;
+
+        var _this = this
+        objects.forEach((object, i) => {
+            _this.addStatic(object)
+        })
+    }
+
     addTable(config) {
 
         var table = new TableGroup(config, this)
         this.objects['tables'].push(table)
 
         return table
+    }
+
+    addStatic(config) {
+
+        var object = new Static(config, this)
+        this.objects['static'].push(object)
+
+        return object
     }
 
 
@@ -342,18 +390,29 @@ class Room {
 
         this.scene = scene;
 
+
         scene.background = new PIXI.TilingSprite(
-            app.loader.resources['./assets/marble-tile.png'].texture, 3910, 1720
+            app.loader.resources[this.background].texture, 3910, 1720
         )
 
         scene.scene.addChild(scene.background)
 
+        var bigList = []
+
         Object.keys(this.objects).forEach((key, i) => {
 
             _this.objects[key].forEach((obj, i) => {
-                obj.build(scene)
+                bigList.push(obj)
             })
 
+        })
+
+        //sort object by y value
+        bigList.sort((a, b)=>a.position.y - b.position.y)
+
+        //display objects
+        bigList.forEach((obj, i) => {
+            obj.build(scene)
         })
 
         
@@ -377,6 +436,18 @@ class Room {
             
 
             
+        }else{
+            var config = {
+                id: user.id + "-" + new Date().getTime()
+            }
+            var group = this.addStandingGroup(config)
+            group.build(this.scene)
+
+            var _this = this;
+
+            var oldLocation = _this.findObj(null, user.group)
+            oldLocation.removeUser(user)
+            group.addUser(user)
         }
     }
 
@@ -476,67 +547,6 @@ class Room {
                 }
             }
         })
-    }
-}
-
-
-
-let conf = {
-
-    'background':{
-        'type': 'tile',
-        'id': 'tile_white_1',
-
-    },
-
-    'objects': {
-
-        'tables': [
-            
-        ],
-        'desks': [
-            { "id": 0, "capacity": 1, "position": { "x": 400, "y": 100 } , 'style':{'isLocal': true, 'id': 'desk_jafet_right'} }, 
-            { "id": 1, "capacity": 1, "position": { "x": 400, "y": 310 }, 'style':{'isLocal': true, 'id': 'desk_jafet_right'}  }, 
-            { "id": 2, "capacity": 1, "position": { "x": 400, "y": 520 }, 'style':{'isLocal': true, 'id': 'desk_jafet_right'}  }, 
-            { "id": 3, "capacity": 1, "position": { "x": 400, "y": 770 }, 'style':{'isLocal': true, 'id': 'desk_jafet_right'}  },
-            { "id": 4, "capacity": 1, "position": { "x": 400, "y": 980 }, 'style':{'isLocal': true, 'id': 'desk_jafet_right'}  },  
-            { "id": 5, "capacity": 1, "position": { "x": 400, "y": 1190 , 'style':{'isLocal': true, 'id': 'desk_jafet_right'} } },  
-
-            { "id": 7, "capacity": 1, "position": { "x": 800, "y": 100 }, 'style':{'isLocal': true, 'id': 'desk_jafet_right'}  }, 
-            { "id": 8, "capacity": 1, "position": { "x": 800, "y": 310 }, 'style':{'isLocal': true, 'id': 'desk_jafet_right'}  }, 
-            { "id": 9, "capacity": 1, "position": { "x": 800, "y": 520 }, 'style':{'isLocal': true, 'id': 'desk_jafet_right'}  }, 
-            { "id": 10, "capacity": 1, "position": { "x": 800, "y": 770 } , 'style':{'isLocal': true, 'id': 'desk_jafet_right'} },
-            { "id": 11, "capacity": 1, "position": { "x": 800, "y": 980 }, 'style':{'isLocal': true, 'id': 'desk_jafet_right'}  },  
-            { "id": 12, "capacity": 1, "position": { "x": 800, "y": 1190 }, 'style':{'isLocal': true, 'id': 'desk_jafet_right'}  },  
-
-            { "id": 13, "capacity": 1, "position": { "x": 1200, "y": 100 }, 'style':{'isLocal': true, 'id': 'desk_jafet_right'}  }, 
-            { "id": 14, "capacity": 1, "position": { "x": 1200, "y": 310 } , 'style':{'isLocal': true, 'id': 'desk_jafet_right'} }, 
-            { "id": 15, "capacity": 1, "position": { "x": 1200, "y": 520 } , 'style':{'isLocal': true, 'id': 'desk_jafet_right'} }, 
-            { "id": 16, "capacity": 1, "position": { "x": 1200, "y": 770 }, 'style':{'isLocal': true, 'id': 'desk_jafet_right'}  },
-            { "id": 17, "capacity": 1, "position": { "x": 1200, "y": 980 }, 'style':{'isLocal': true, 'id': 'desk_jafet_right'}  },  
-            { "id": 18, "capacity": 1, "position": { "x": 1200, "y": 1190 }, 'style':{'isLocal': true, 'id': 'desk_jafet_right'}  },  
-
-            { "id": 19, "capacity": 1, "position": { "x": 1600, "y": 100 } , 'style':{'isLocal': true, 'id': 'desk_jafet_right'} }, 
-            { "id": 20, "capacity": 1, "position": { "x": 1600, "y": 310 } , 'style':{'isLocal': true, 'id': 'desk_jafet_right'} }, 
-            { "id": 21, "capacity": 1, "position": { "x": 1600, "y": 520 } , 'style':{'isLocal': true, 'id': 'desk_jafet_right'} }, 
-            { "id": 22, "capacity": 1, "position": { "x": 1600, "y": 770 } , 'style':{'isLocal': true, 'id': 'desk_jafet_right'} },
-            { "id": 23, "capacity": 1, "position": { "x": 1600, "y": 980 }, 'style':{'isLocal': true, 'id': 'desk_jafet_right'}  },  
-            { "id": 24, "capacity": 1, "position": { "x": 1600, "y": 1190 }, 'style':{'isLocal': true, 'id': 'desk_jafet_right'}  },  
-
-            { "id": 25, "capacity": 1, "position": { "x": 2000, "y": 100 } , 'style':{'isLocal': true, 'id': 'desk_jafet_right'} }, 
-            { "id": 26, "capacity": 1, "position": { "x": 2000, "y": 310 } , 'style':{'isLocal': true, 'id': 'desk_jafet_right'} }, 
-            { "id": 27, "capacity": 1, "position": { "x": 2000, "y": 520 } , 'style':{'isLocal': true, 'id': 'desk_jafet_right'} }, 
-            { "id": 28, "capacity": 1, "position": { "x": 2000, "y": 770 } , 'style':{'isLocal': true, 'id': 'desk_jafet_right'} },
-            { "id": 29, "capacity": 1, "position": { "x": 2000, "y": 980 } , 'style':{'isLocal': true, 'id': 'desk_jafet_right'} },  
-            { "id": 30, "capacity": 1, "position": { "x": 2000, "y": 1190 } , 'style':{'isLocal': true, 'id': 'desk_jafet_right'} },  
-
-            { "id": 31, "capacity": 1, "position": { "x": 2400, "y": 100 } , 'style':{'isLocal': true, 'id': 'desk_jafet_right'} }, 
-            { "id": 32, "capacity": 1, "position": { "x": 2400, "y": 310 } , 'style':{'isLocal': true, 'id': 'desk_jafet_right'} }, 
-            { "id": 33, "capacity": 1, "position": { "x": 2400, "y": 520 } , 'style':{'isLocal': true, 'id': 'desk_jafet_right'} }, 
-            { "id": 34, "capacity": 1, "position": { "x": 2400, "y": 770 } , 'style':{'isLocal': true, 'id': 'desk_jafet_right'} },
-            { "id": 35, "capacity": 1, "position": { "x": 2400, "y": 980 } , 'style':{'isLocal': true, 'id': 'desk_jafet_right'} },  
-            { "id": 36, "capacity": 1, "position": { "x": 2400, "y": 1190 } , 'style':{'isLocal': true, 'id': 'desk_jafet_right'} },
-        ]
     }
 }
 

@@ -37,6 +37,7 @@ class ConversationInterface {
         //controls
         this.audioControlView = this.view.querySelector('.control .voice')
         this.videoControlView = this.view.querySelector('.control .video')
+        this.leaveControlButton = this.view.querySelector('.control .leave')
 
         var _this = this
         this.audioControlView.addEventListener('click', () => {
@@ -44,6 +45,10 @@ class ConversationInterface {
         })
         this.videoControlView.addEventListener('click', () => {
             _this.toggleVideo()
+        })
+
+        this.leaveControlButton.addEventListener('click', () =>{
+            myRoom.moveUser(myUser)
         })
 
         //pixi
@@ -134,11 +139,24 @@ class ConversationInterface {
 
         try {
             this.localStream.getTracks().forEach((track, i) => {
+
+                try{
                 track.stop()
+                }catch(e){console.error(e)}
                 track.enabled = false;
+                
             })
+
+        } catch (e) {
+            console.error("could not close tracks ", e)
+        }
+
+        try{
+
             this.remoteStream.getTracks().forEach((track, i) => {
+                try{
                 track.stop()
+                }catch(e){console.error(e)}
                 track.enabled = false;
 
             })
