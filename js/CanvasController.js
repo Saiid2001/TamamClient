@@ -80,7 +80,19 @@ class Avatar{
                     txtBG.tint = 0xbbbbbb;
                 }
 
-                txtBG.width = nameLabel.width + 50, txtBG.height = nameLabel.height;
+            if(this.userID == myUser.id){
+                nameLabel= new PIXI.Text("You", { fontFamily: 'Arial', fontSize: 72, fill: 0xffffff, align: 'center' });
+                txtBG.tint = 0x00B494;
+            }else{
+                nameLabel= new PIXI.Text(this.name, { fontFamily: 'Arial', fontSize: 72, fill: 0xffffff, align: 'center' });
+                txtBG.tint = 0x0082AA;
+            }
+            
+            txtBG.width = nameLabel.width+50, txtBG.height = nameLabel.height;
+
+            // cage text
+            const nameCage = new PIXI.Container();
+            nameCage.addChild(txtBG, nameLabel);
 
                 // cage text
                 const nameCage = new PIXI.Container();
@@ -121,3 +133,4 @@ class Avatar{
     }
 
 }
+

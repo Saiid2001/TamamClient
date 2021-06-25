@@ -40,7 +40,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
 
     function onRoom(roomId, roomConf) {
-        createApp()
+        createApp(roomConf)
         
         socket.connectSocket(() => {
             
@@ -85,6 +85,52 @@ document.addEventListener('DOMContentLoaded', () => {
 
             socket.onUserLeftGroup((user, group) => {
                 console.log("user left group", group, ": ", user)
+            })
+
+            socket.getSocket().on('waving-to-group', (event)=>{
+                showNotification(`${myRoom.findUser(event.user).firstName} is trying to join your table!`, {'confirm': ()=>{
+                    socket.getSocket().emit("accepted-to-group", {user: event.user, room: myUser.group});
+                    hideNotification(event.user);
+                },
+                'cancel': ()=>{
+                    socket.getSocket().emit("rejected-from-group", {user: event.user, room: myUser.group});
+                    hideNotification(event.user);
+                }
+                },
+                event.user
+                )
+            })
+            
+            socket.getSocket().on('accepted-to-group', (event)=>{
+            
+                if(event.user == myUser.id && event.room == myUser.wavingTo){
+                    showNotification(`They waved back. Have fun!!`, {})
+                    myUser.waveToCallback();
+                    myUser.waveToCallback = null;
+                    myUser.wavingTo = null;
+                    setTimeout(()=>hideNotification(), 5000);
+                }
+
+                else if(event.user != myUser.id && event.room == myUser.wavingTo){
+                    hideNotification(event.user)
+                }
+            
+            })
+            
+            socket.getSocket().on('rejected-from-group', (event)=>{
+                if(event.room == myUser.wavingTo){
+                    showNotification(`Oups! they seem to be busy at the moment!`, {})
+                    myUser.waveToCallback = null;
+                    myUser.wavingTo = null;
+                    setTimeout(()=>hideNotification(), 5000);
+                }
+            })
+            
+            socket.getSocket().on('canceled-waving', (event)=>{
+                
+                    showNotification(`Oups ${myRoom.findUser(event.user).firstName} decided to leave.}`, {}, event.user)
+                    setTimeout(()=>hideNotification(event.user), 5000);
+                
             })
 
             socket.onDisconnect(() => {

@@ -37,6 +37,7 @@ class ConversationInterface {
         //controls
         this.audioControlView = this.view.querySelector('.control .voice')
         this.videoControlView = this.view.querySelector('.control .video')
+        this.leaveControlButton = this.view.querySelector('.control .leave')
 
         var _this = this
         this.audioControlView.addEventListener('click', () => {
@@ -44,6 +45,10 @@ class ConversationInterface {
         })
         this.videoControlView.addEventListener('click', () => {
             _this.toggleVideo()
+        })
+
+        this.leaveControlButton.addEventListener('click', () =>{
+            myRoom.moveUser(myUser)
         })
 
         //pixi
@@ -134,11 +139,24 @@ class ConversationInterface {
 
         try {
             this.localStream.getTracks().forEach((track, i) => {
+
+                try{
                 track.stop()
+                }catch(e){console.error(e)}
                 track.enabled = false;
+                
             })
+
+        } catch (e) {
+            console.error("could not close tracks ", e)
+        }
+
+        try{
+
             this.remoteStream.getTracks().forEach((track, i) => {
+                try{
                 track.stop()
+                }catch(e){console.error(e)}
                 track.enabled = false;
 
             })
@@ -351,10 +369,32 @@ class ConversationInterface {
         //var avatar = user.avatar.getFullBody(false);
         //avatar.user = user.id;
         //this.pixi.avatarGroup.addChild(avatar);
-        this.view.querySelector('.participants img').removeAttribute('hidden')
+        //this.view.querySelector('.participants img').removeAttribute('hidden')
+        console.log('showing avatar for ', user)
+        var container = this.view.querySelector('.participants')
+
+        var elem= container.querySelector("#avatar-"+user.id);
+
+        if(!(elem)){
+            elem = document.createElement('img')
+            elem.id = 'avatar-'+user.id
+            elem.setAttribute('src','../../assets/img/avatars_gen1/'+Avatar.VARIANTS[user.avatar.data.index])
+            container.appendChild(elem)
+        }
+
+        elem.removeAttribute('hidden')
     }
     hideAvatar(user) {
-        this.view.querySelector('.participants img').setAttribute('hidden','')
+        //this.view.querySelector('.participants img').setAttribute('hidden','')
+        var container = this.view.querySelector('.participants')
+
+        var elem= container.querySelector("#avatar-"+user.id);
+
+        if(elem){
+            elem.setAttribute('hidden', '')
+        }
+
+        
     }
 }
 

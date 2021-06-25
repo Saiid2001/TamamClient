@@ -1,3 +1,14 @@
+const TILES = {
+    'tile_white_1':"./assets/tiles/marble-tile.png",
+    'tile_black_1':"./assets/tiles/black-tile.png",
+}
+
+const STATICS = {
+    'bush_1': "./assets/bush_1.png",
+}
+
+const ColorThief = require('colorthief');
+const onecolor = require('onecolor')
 
 const PIXI = require('pixi.js')
 let avatarsGroup = new PIXI.Container
@@ -9,7 +20,7 @@ let scene = {
     scene: new PIXI.Container
 }
 
-function createApp() { 
+function createApp(config = {}) { 
     
 
     let container = document.querySelector('.room')
@@ -28,21 +39,44 @@ function createApp() {
     //Add the canvas that Pixi automatically created for you to the HTML document
     container.appendChild(app.view);
 
-    
+    var bg = config.background? TILES[config.background.id]: './assets/tiles/marble-tile.png';
 
     //setting the renderer
-    app.renderer.backgroundColor = 0xFFFFFF;
+    //app.renderer.backgroundColor = 0xFFFFFF;
+    app.renderer.backgroundColor = 0x000000;
+
+    //get dominant color of tile to set as background color
+    
+    
+    var img = 'windows/room'+bg.substring(1, bg.length)
+
+    ColorThief.getColor(img)
+    .then(color => { 
+        var code = 'rgb('+color[0]+','+color[1]+','+color[2]+')'
+        var hexC = parseInt(onecolor(code).hex().replace(/^#/, ''), 16); 
+        app.renderer.backgroundColor = hexC;
+    })
+    .catch(err => { console.log(err) })
+
+    
+
+    //resources to load
+
+    var resources = []
+
+    //add background to resources
+    resources.push(bg)
+
+    //add objects
+
+    resources.push('./assets/table.svg')
+    resources.push('./assets/desk.svg')
+
+    console.log(resources)
 
     //adding background
     app.loader
-        .add(
-            [
-                './assets/marble-tile.png',
-                './assets/table.svg',
-                './assets/desk.svg',
-                '../../assets/img/avatar.png'
-            ]
-        )
+        .add(resources)
         .load(setup);
 
 
@@ -53,11 +87,13 @@ function createApp() {
     function setup() {
 
         scene.background = new PIXI.TilingSprite(
-            app.loader.resources['./assets/marble-tile.png'].texture,3910, 1720
+            app.loader.resources[bg].texture,3910, 1720
         )
 
         app.stage.addChild(scene.background)
         app.stage.addChild(scene.scene)
+
+        document.dispatchEvent(new Event('canvasReady'))
 
         function resize() {
             app.renderer.resize(container.getBoundingClientRect().width, document.body.getBoundingClientRect().height)
@@ -84,7 +120,7 @@ function createApp() {
         resize();
         
         app.ticker.add(delta => update(delta));
-        document.dispatchEvent(new Event('canvasReady'))
+        
     }
 
     function update(delta) {
