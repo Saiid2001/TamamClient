@@ -1,4 +1,6 @@
 const Fuse = require('fuse.js');
+const socket = require('../../services/socket-service');
+
 
 function getUrlData() { // Taken from room/js/main, should globalize and make it an import later
     const querystring = require('querystring');
@@ -10,15 +12,24 @@ let urlData = getUrlData();
 
 document.addEventListener('DOMContentLoaded', () => {
 
-    const rooms = require('../../services/room-service')
+
+    const rooms = require('../../services/room-service');
+    const users = require('../../services/user-service.js');
     const map = new GlobalMap(
         document.getElementById('map'),
         './assets/map.jpg',
-        rooms
+        rooms,
+        users
     );
 
-    console.log(urlData['source']);
 
+    //socket.connectSocket(() => {
+    //    socket.onUserEnteredRoom((user) => {
+    //        console.log(user);
+    //    });
+    //})
+
+    console.log(urlData['source']);
     if (urlData['source'] == 'recommendation') {
         rooms.getRooms({ 'open': '' }, (rooms) => {
 
