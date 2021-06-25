@@ -3,7 +3,7 @@ const rootPath = require('electron-root-path').rootPath;
 const axios = require("axios");
 const url = require("url");
 const $ = require('jquery')
-const {ipcRenderer}= require('electron')
+const {ipcRenderer}= require('electron');
 
 
 
@@ -44,6 +44,9 @@ function getFriendsOnline(room = null, onSuccess, onFail = () => { }) {
         success: function (message, status, data) {
             console.log(message)
             onSuccess(data.responseJSON)
+        }
+    })
+}
 
 function getAllUsers(onSuccess, onFail = () => { }) {
     let token = ipcRenderer.sendSync('get-access-token');
@@ -67,5 +70,5 @@ function getAllUsers(onSuccess, onFail = () => { }) {
 module.exports = {
     getUserData,
     getFriendsOnline,
-    getAllUsers
+    getAllUsers,
 }
