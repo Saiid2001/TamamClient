@@ -13,7 +13,8 @@ document.addEventListener('DOMContentLoaded', () => {
     const rooms = require('../../services/room-service')
     const map = new GlobalMap(
         document.getElementById('map'),
-        document.getElementById('map-img')
+        './assets/map.jpg',
+        rooms
     );
 
     console.log(urlData['source']);
@@ -22,7 +23,7 @@ document.addEventListener('DOMContentLoaded', () => {
         rooms.getRooms({ 'open': '' }, (rooms) => {
 
             showRooms(document.querySelector('.recommended .cards'), rooms);
-            map.addRooms(rooms);
+            //map.addRooms(rooms);
         })
     } else if (urlData['source'] == 'search') { // NEW: Display cards after Fuse search
         document.getElementById('cards-label').innerHTML = `Results for search: ${urlData['extra-params']}`;
@@ -45,7 +46,7 @@ document.addEventListener('DOMContentLoaded', () => {
             } else {
                 showRooms(document.querySelector('.recommended .cards'), rooms);
             }
-            map.addRooms(rooms);
+            //map.addRooms(rooms);
         }); 
     }
 
