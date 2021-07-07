@@ -7,14 +7,7 @@ class GlobalMap {
     constructor(canvas, bg, rooms, users) {
 
         let _this = this;
-        rooms.getRooms({ 'open': '' }, (rooms) => {
-            _this.rooms = rooms
-            console.log(_this.rooms)
-        })
-        users.getAllUsers((users) => {
-            _this.users = users;
-            console.log(_this.users)
-        })
+        
         console.log(canvas.getBoundingClientRect().width);
 
         let app = new PIXI.Application({
@@ -61,9 +54,20 @@ class GlobalMap {
                 console.log(canvas.getBoundingClientRect().width, canvas.getBoundingClientRect().width * 3 / 4);
                 resize()
             })
+            let foreground;
 
-            let foreground = _this.addRooms(_this.rooms);
-            app.stage.addChild(foreground);
+            rooms.getRooms({ 'open': '' }, (rooms) => {
+                _this.rooms = rooms
+                foreground =  _this.addRooms(_this.rooms);
+                app.stage.addChild(foreground);
+                console.log(_this.rooms)
+            })
+            users.getAllUsers((users) => {
+                _this.users = users;
+                console.log(_this.users)
+            })
+             
+            
 
         }
 

@@ -31,7 +31,7 @@ class ConversationInterface {
 
         //local view
         this.localVideoComponent = this.view.querySelector('.video_on #local video')
-        this.remoteVideoComponent = this.view.querySelector('.video_on #remote video')
+        //this.remoteVideoComponent = this.view.querySelector('.video_on #remote video')
 
 
         //controls
@@ -50,75 +50,41 @@ class ConversationInterface {
         this.leaveControlButton.addEventListener('click', () =>{
             myRoom.moveUser(myUser)
         })
-
-        //pixi
-        /*let container = this.view.querySelector('.participants')
-
-
-        //Create a Pixi Application
-        this.pixi.app = new PIXI.Application({
-            height: container.getBoundingClientRect().height/3,
-            width: container.getBoundingClientRect().width/4,
-            autoResize: true,
-            resolution: devicePixelRatio
-        });
-
-        //Add the canvas that Pixi automatically created for you to the HTML document
-        container.appendChild(this.pixi.app.view);
-
-
-
-        //setting the renderer
-        this.pixi.app.renderer = PIXI.autoDetectRenderer(800, 600, { transparent: true });
-        //adding background
-        this.pixi.app.loader
-            .add(
-                []
-            )
-            .load(setup);
-        var _this = this
-        function setup() {
-
-            _this.pixi.app.stage.addChild(_this.pixi.avatarGroup)
-
-            function resize() {
-                _this.pixi.app.renderer.resize(container.getBoundingClientRect().width/4, document.body.getBoundingClientRect().height/3)
-
-                let oldHeight = _this.pixi.app.stage.height / _this.pixi.app.stage.scale.y
-                let oldWidth = _this.pixi.app.stage.width / _this.pixi.app.stage.scale.x
-                let width = document.body.getBoundingClientRect().width/4
-                let height = document.body.getBoundingClientRect().height/3
-
-                let scaleX = width / oldWidth
-                let scaleY = height / oldHeight
-
-                let minScale = Math.max(scaleX, scaleY)
-
-
-                _this.pixi.app.stage.scale.set(minScale)
-            }
-
-            //dynamic resize
-            window.addEventListener('resize', () => {
-                resize()
-            })
-
-            resize();
-
-            _this.pixi.app.ticker.add(delta => update(delta));
-        }
-
-        function update(delta) {}*/
     }
 
+    __addUserToCall(userId){
+        var videoComponent = document.createElement('div');
+        videoComponent.innerHTML = `<video autoplay playsinline width="70%" height="50%"  />`;
+        videoComponent.className = 'window';
+        videoComponent.id = 'remote-'+userId;
+        this.view.querySelector('.video_on').appendChild(videoComponent)
+
+        this.remoteUsers[userId] = {
+            remoteVideoComponent: videoComponent.querySelector('video'),
+            rtcPeerConnection: null,
+            remoteStream: null
+        }
+    }
     open(callId, users, isNewComer) {
+
+        var _this=  this;
 
         callId = roomData._id + "-" + callId
         console.log('call id', callId)
 
         if (this.isOpen && this.room == callId) return;
 
-        this.participants = users;
+        this.participants = []
+        users.forEach(user=>{
+            if(user.id != myUser.id){
+                this.participants.push(user.id)
+            }
+        })
+        this.remoteUsers = {};
+
+        //create the video blocks
+        this.participants.forEach( userId =>_this.__addUserToCall(userId));
+
         this.view.removeAttribute('hidden');
 
         this.isOpen = true;
@@ -130,6 +96,9 @@ class ConversationInterface {
     }
 
     close() {
+
+        var _this = this;
+
         console.log('closing conversation interface')
         if (!this.isOpen) return;
 
@@ -153,20 +122,28 @@ class ConversationInterface {
 
         try{
 
-            this.remoteStream.getTracks().forEach((track, i) => {
-                try{
-                track.stop()
-                }catch(e){console.error(e)}
-                track.enabled = false;
-
+            this.participants.forEach(userId=>{
+                _this.remoteUsers[userId].remoteStream.getTracks().forEach((track, i) => {
+                    try{
+                    track.stop()
+                    }catch(e){console.error(e)}
+                    track.enabled = false;
+    
+                })
             })
+            
 
 
         } catch (e) {
             console.error("could not close tracks ", e)
         }
         this.localStream = null
-        this.remoteStream = null
+
+        this.participants.forEach(userId=>{
+            this.view.querySelector('.video_on').removeChild(this.remoteUsers[userId].remoteVideoComponent)
+        })
+        this.remoteUsers = null
+        this.participants = null
         this.callStarted = false;
 
 
@@ -209,7 +186,10 @@ class ConversationInterface {
                         _this.videoControlView.classList.add('on')
                         if (track.readyState == 'ended') {
                             _this._setLocalStream(_this.mediaConstraints)
-                            _this.rtcPeerConnection.addTrack(track, _this.localStream)
+
+                            _this.participants.forEach(userId=>{
+                                _this.remoteUsers[userId].rtcPeerConnection.addTrack(track, _this.localStream)
+                            })
                         }
                         _this.localVideoComponent.parentElement.removeAttribute('hidden')
                         _this.hideAvatar(myUser)
@@ -255,7 +235,8 @@ class ConversationInterface {
                     socket.getSocket().emit('track-status-changed', {
                         room: _this.room,
                         status: track.enabled,
-                        id: track.id
+                        id: track.id,
+                        user: myUser.id
                     })
 
                 }
@@ -265,10 +246,11 @@ class ConversationInterface {
 
     toggleRemoteVideo(enabled , user) {
         if (enabled) {
-            this.remoteVideoComponent.parentElement.removeAttribute('hidden')
+
+            this.remoteUsers[user.id].remoteVideoComponent.parentElement.removeAttribute('hidden')
             this.hideAvatar(user)
         } else {
-            this.remoteVideoComponent.parentElement.setAttribute('hidden', "")
+            this.remoteUsers[user.id].remoteVideoComponent.parentElement.setAttribute('hidden', "")
             this.showAvatar(user)
         }
     }
@@ -286,14 +268,18 @@ class ConversationInterface {
     
     }
 
-    setRemoteStream(event) {
+    setRemoteStream(event, userId) {
 
 
-        if (!this.remoteStream) {
 
-            this.remoteStream = new MediaStream()
-            var stream = this.remoteStream
-            var video = this.remoteVideoComponent
+        if (!this.remoteUsers[userId]){
+            this.__addUserToCall(userId)
+        }
+        if ( !this.remoteUsers[userId].remoteStream) {
+
+            this.remoteUsers[userId].remoteStream = new MediaStream()
+            var stream = this.remoteUsers[userId].remoteStream
+            var video = this.remoteUsers[userId].remoteVideoComponent
             
 
             //Set video source
@@ -305,12 +291,12 @@ class ConversationInterface {
             video.muted = false;
         }
 
-        var existing = this.remoteStream.getTracks().find(elem => { return elem.kind == event.track.kind })
-        if(existing) this.remoteStream.removeTrack(existing)
-        this.remoteStream.addTrack(event.track, this.remoteStream)
+        var existing = this.remoteUsers[userId].remoteStream.getTracks().find(elem => { return elem.kind == event.track.kind })
+        if(existing) this.remoteUsers[userId].remoteStream.removeTrack(existing)
+        this.remoteUsers[userId].remoteStream.addTrack(event.track, this.remoteUsers[userId].remoteStream)
     }
 
-    sendIceCandidate(event) {
+    sendIceCandidate(event, destinationUser) {
         if (event.candidate)
         {
             var roomId = this.room
@@ -320,14 +306,15 @@ class ConversationInterface {
                     label: event.candidate.sdpMLineIndex,
                     candidate: event.candidate.candidate,
                     room: roomId,
-                    user: myUser.id
+                    user: myUser.id,
+                    destination: destinationUser
             
             }
         socket.getSocket().emit('webrtc-ice-candidate', data)
         }
 
     }
-    async createAnswer(rtcPeerConnection) {
+    async createAnswer(rtcPeerConnection, destinationUser) {
     var roomId = this.room
     let sessionDescription
     try {
@@ -340,12 +327,13 @@ class ConversationInterface {
         type: 'webrtc_answer',
         sdp: sessionDescription,
         room: roomId,
-        user: myUser.id
+        user: myUser.id,
+        destination:destinationUser
     })
     console.log("sent answer")
     }
 
-    async createOffer(rtcPeerConnection) {
+    async createOffer(rtcPeerConnection, destinationUser) {
         console.log('creating offer')
         var _this = this
         var roomId = this.room
@@ -361,7 +349,8 @@ class ConversationInterface {
         type: 'webrtc_offer',
         sdp: sessionDescription,
         room: roomId,
-        user: myUser.id
+        user: myUser.id,
+        destination:destinationUser
     })
     }
 
@@ -420,85 +409,90 @@ document.addEventListener("connected-to-socket", async => {
 
     socket.getSocket().on('start-call', async (event) => {
 
-        if(myConversationInterface.callStarted) return;
+        if(myConversationInterface.callStarted) 
+        {
+            //if already call started then just add the user
+
+            return;
+        }
+        
         myConversationInterface.callStarted = true;
 
         console.log('Socket event callback: start_call')
         await myConversationInterface._setLocalStream(myConversationInterface.mediaConstraints)
-        console.log(JSON.stringify(myConversationInterface.localStream))
-
-        
 
         if (myConversationInterface.isNewComer) {
-        myConversationInterface.rtcPeerConnection = new RTCPeerConnection(myConversationInterface.iceServers)
-        var rtcPeerConnection = myConversationInterface.rtcPeerConnection 
-        rtcPeerConnection._debug = console.log
 
-        let negotiating = false;
-        rtcPeerConnection.onnegotiationneeded = async e => {
-            try {
-                if (negotiating || rtcPeerConnection.signalingState != "stable") return;
-                negotiating = true;
-                await myConversationInterface.createOffer(myConversationInterface.rtcPeerConnection)
-            } finally {
-                negotiating = false;
-            }
-        }
+        myConversationInterface.participants.forEach(userId=>{
+            myConversationInterface.remoteUsers[userId].rtcPeerConnection= new RTCPeerConnection(myConversationInterface.iceServers)
         
-        myConversationInterface.addLocalTracks(myConversationInterface.rtcPeerConnection)
-        rtcPeerConnection.ontrack = event => { console.log(event);myConversationInterface.setRemoteStream(event) }
-        rtcPeerConnection.onicecandidate = event => { myConversationInterface.sendIceCandidate(event) }
+            var rtcPeerConnection = myConversationInterface.remoteUsers[userId].rtcPeerConnection
+            rtcPeerConnection._debug = console.log
+    
+            let negotiating = false;
+            rtcPeerConnection.onnegotiationneeded = async e => {
+                try {
+                    if (negotiating || rtcPeerConnection.signalingState != "stable") return;
+                    negotiating = true;
+                    await myConversationInterface.createOffer(rtcPeerConnection, userId)
+                } finally {
+                    negotiating = false;
+                }
+            }
+            
+            myConversationInterface.addLocalTracks(rtcPeerConnection)
+            rtcPeerConnection.ontrack = event => { console.log(event);myConversationInterface.setRemoteStream(event, userId) }
+            rtcPeerConnection.onicecandidate = event => { myConversationInterface.sendIceCandidate(event, userId) }
+    
+            myConversationInterface.isNewComer = false;
+        
+        })
 
-        myConversationInterface.isNewComer = false;
+        
           
         }
     })
 
     socket.on('webrtc-offer', async (event) => {
 
+
         if(event.user == myUser.id) return;
+        if(event.destination != myUser.id) return;
+
+        var userId = event.user;
 
         console.log('Socket event callback: webrtc_offer')
 
         if (!myConversationInterface.isNewComer) {
 
-            
-            myConversationInterface.rtcPeerConnection = new RTCPeerConnection(myConversationInterface.iceServers)
-            var rtcPeerConnection = myConversationInterface.rtcPeerConnection
+            myConversationInterface.remoteUsers[userId].rtcPeerConnection = new RTCPeerConnection(myConversationInterface.iceServers)
+            var rtcPeerConnection = myConversationInterface.remoteUsers[userId].rtcPeerConnection
             let negotiating = false;
-            myConversationInterface.addLocalTracks(myConversationInterface.rtcPeerConnection)
-            rtcPeerConnection.ontrack = event => { myConversationInterface.setRemoteStream(event) }
-            rtcPeerConnection.onicecandidate = event => { myConversationInterface.sendIceCandidate(event) }
+                
+            myConversationInterface.addLocalTracks(rtcPeerConnection)
+            rtcPeerConnection.ontrack = event => { myConversationInterface.setRemoteStream(event, userId) }
+            rtcPeerConnection.onicecandidate = event => { myConversationInterface.sendIceCandidate(event, userId) }
             rtcPeerConnection.setRemoteDescription(new RTCSessionDescription(event.sdp))
-
-            // rtcPeerConnection.onnegotiationneeded = async e => {
-            //    try {
-            //        console.log('in offer', 'peer status', rtcPeerConnection.signalingState)
-            //        if (negotiating || rtcPeerConnection.signalingState != "stable") return;
-            //        negotiating = true;
-            //        await myConversationInterface.createAnswer(rtcPeerConnection)
-            //    } finally {
-            //        negotiating = false;
-            //    }
-            // }
-            await myConversationInterface.createAnswer(rtcPeerConnection)
+    
+            await myConversationInterface.createAnswer(rtcPeerConnection, userId)
             
-
         }
     })
 
     socket.on('webrtc-answer', async (event) => {
 
         if(event.user == myUser.id) return;
+        if(event.destination!= myUser.id) return;
 
         console.log('Socket event callback: webrtc_answer')
 
-        await myConversationInterface.rtcPeerConnection.setRemoteDescription(new RTCSessionDescription(event.sdp))
+        await myConversationInterface.remoteUsers[event.user].rtcPeerConnection.setRemoteDescription(new RTCSessionDescription(event.sdp))
     })
 
     socket.on('webrtc-ice-candidate', (event) => {
 
         if(event.user == myUser.id) return;
+        if(event.destination != myUser.id) return;
 
         console.log('Socket event callback: webrtc_ice_candidate')
 
@@ -509,12 +503,14 @@ document.addEventListener("connected-to-socket", async => {
         })
 
         console.log(candidate)
-        myConversationInterface.rtcPeerConnection.addIceCandidate(candidate).catch(error => {console.log(candidate); console.log(error)});
+        myConversationInterface.remoteUsers[event.user].rtcPeerConnection.addIceCandidate(candidate).catch(error => {console.log(candidate); console.log(error)});
         
     })
 
     socket.on('track-status-changed', (event) => {
-        var track = myConversationInterface.remoteStream.getTrackById(event.id)
+
+        console.log(event)
+        var track = myConversationInterface.remoteUsers[event.user].remoteStream.getTrackById(event.id)
         track.enabled = event.status
         console.log('remote track changed', event)
         if (track.kind == "video") {

@@ -70,13 +70,13 @@ body {
     background-repeat: no-repeat;
     height: 150px;
     width: 150px;
-    position: absolute;
-    bottom: -11px;
-    left: 10px;
+    
     transform: scale(1.4);
     transform-origin:  left;
 }
 
-.video_on #remote {
-    left: 200px;
+.video_on{
+    display: flex;
+    flex-direction: row;
 }
+
