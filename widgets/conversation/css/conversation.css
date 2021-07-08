@@ -49,6 +49,12 @@ body {
     display: none;
 }
 
+.chat{
+    float: right;
+    background-color: var(--main-blue);
+    margin-right: 10px;
+}
+
 .users{
     display: grid;
     grid-template-columns:1fr 1fr;

@@ -8,6 +8,8 @@ const aspect = require('electron-aspectratio')
 const { session } = require('electron');
 const { getAccessToken } = require('./services/auth-service');
 
+var chatWindowOpen = false;
+
 //setting the available pages to load
 let pages = {
     'login': {
@@ -29,6 +31,9 @@ let pages = {
     'room': {
         'path': 'windows/room/room.html',
         'required': ['room', 'return-data']
+    },
+    'chat':{
+        'path': 'windows/chat/chat.html',
     }
 }
 
@@ -55,6 +60,7 @@ async function createMainWindow() {
         frame: false,
         webPreferences: {
             nodeIntegration: true,
+            contextIsolation: false,
             enableRemoteModule: true,       
         }
     })
@@ -81,6 +87,8 @@ async function createMainWindow() {
         }
 
     }
+
+    //createChatWindow('hello');
 
 }
 
@@ -111,6 +119,27 @@ async function createAuthWindow(win) {
     goTo('login');
 }
 
+let chatWindow = null;
+async function createChatWindow(data){
+
+    chatWindow = new BrowserWindow({
+        width: 300,
+        height: 400,
+        frame: true,
+        webPreferences: {
+            nodeIntegration: true,
+            contextIsolation: false,
+            enableRemoteModule: true,       
+        },
+        autoHideMenuBar:true,
+        title: "Chat"
+    })
+
+    chatWindow.loadFile(pages['chat']['path'], { query: { "data": JSON.stringify(data) } })
+    chatWindow.on('close', ()=>{chatWindowOpen=false})
+
+
+}
 
 //setting ipc events
 
@@ -161,6 +190,48 @@ ipcMain.on('get-access-token', (event) => {
 })
 
 ipcMain.on('get-all-cookies', deleteAllCookies)
+
+
+//dealing with chat
+ipcMain.on('open-chat-window', (event,data)=>{
+    
+    if(chatWindowOpen) return;
+    createChatWindow(data)
+    chatWindowOpen = true;
+})
+
+ipcMain.on('send_message', (event,message)=>{
+    
+    if(!chatWindowOpen) return;
+    mainWindow.webContents.send('send_message', message)
+})
+
+ipcMain.on('message_recv', (event,message)=>{
+    
+    if(!chatWindowOpen) return;
+    chatWindow.webContents.send('message_recv', message)
+})
+
+
+ipcMain.on('user_left_group', (event,user_id)=>{
+    
+    if(!chatWindowOpen) return;
+    chatWindow.webContents.send('user_left_group', user_id)
+})
+
+ipcMain.on('user_added_group', (event,user)=>{
+    
+    if(!chatWindowOpen) return;
+    chatWindow.webContents.send('user_added_group', user)
+})
+
+ipcMain.on('close-chat-window', (event)=>{
+    
+    if(!chatWindowOpen) return;
+    chatWindow.destroy();
+    chatWindowOpen = false;
+})
+
 
 //dealing with cookies
 

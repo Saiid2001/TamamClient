@@ -1,3 +1,5 @@
+const { ipcRenderer } = require("electron");
+
 class ConversationInterface {
     constructor(view, preferences = {}) {
         //this.scene = scene
@@ -38,6 +40,7 @@ class ConversationInterface {
         this.audioControlView = this.view.querySelector('.control .voice')
         this.videoControlView = this.view.querySelector('.control .video')
         this.leaveControlButton = this.view.querySelector('.control .leave')
+        this.chatControlButton = this.view.querySelector('.control .chat')
 
         var _this = this
         this.audioControlView.addEventListener('click', () => {
@@ -50,9 +53,27 @@ class ConversationInterface {
         this.leaveControlButton.addEventListener('click', () =>{
             myRoom.moveUser(myUser)
         })
+
+        this.chatControlButton.addEventListener('click', ()=>{
+            _this.openChatWindow()
+        })
     }
 
+
     __addUserToCall(userId){
+
+        var user = myUser.groupObj.users.find(x=>{return x.id == userId})
+
+        if(user){
+
+        ipcRenderer.send('user_added_group', {
+            id: userId,
+            name: user.firstName+" "+user.lastName
+        })
+    }
+
+        if(userId in this.remoteUsers) return;
+
         var videoComponent = document.createElement('div');
         videoComponent.innerHTML = `<video autoplay playsinline width="70%" height="50%"  />`;
         videoComponent.className = 'window';
@@ -64,6 +85,58 @@ class ConversationInterface {
             rtcPeerConnection: null,
             remoteStream: null
         }
+    }
+
+    openChatWindow(){
+
+
+        var users = {}
+        myUser.groupObj.users.forEach(user=>{
+            if(myUser.id != user.id){
+            users[user.id] = {
+                name: user.firstName+" "+user.lastName
+            }
+        }
+        })
+
+        ipcRenderer.send('open-chat-window', {
+            "id": this.room,
+            "participants": users,
+            "user": myUser.id
+            
+        })
+    }
+
+    closeChatWindow(){
+
+        ipcRenderer.send('close-chat-window')
+    }
+
+    __removeUserFromCall(userId){
+
+
+        ipcRenderer.send('user_left_group', userId)
+
+        if(!(userId in this.remoteUsers)) return;
+
+        try{
+        this.remoteUsers[userId].remoteStream.getTracks().forEach((track, i) => {
+            try{
+            track.stop()
+            }catch(e){console.error(e)}
+            track.enabled = false;
+
+        })
+    }
+    catch(e){
+        console.error(e)
+    }
+
+    
+
+        
+        this.view.querySelector('.video_on').removeChild(this.view.querySelector('#remote-'+userId));
+        delete this.remoteUsers[userId];
     }
     open(callId, users, isNewComer) {
 
@@ -98,6 +171,8 @@ class ConversationInterface {
     close() {
 
         var _this = this;
+
+        this.closeChatWindow();
 
         console.log('closing conversation interface')
         if (!this.isOpen) return;
@@ -139,9 +214,12 @@ class ConversationInterface {
         }
         this.localStream = null
 
-        this.participants.forEach(userId=>{
-            this.view.querySelector('.video_on').removeChild(this.remoteUsers[userId].remoteVideoComponent)
+        var videoFeeds  = this.view.querySelectorAll('.video_on .window');
+        videoFeeds.forEach((elem,i)=>{
+            if(i==0) return;
+            elem.parentElement.removeChild(elem);
         })
+
         this.remoteUsers = null
         this.participants = null
         this.callStarted = false;
@@ -345,6 +423,14 @@ class ConversationInterface {
         console.error(error)
     }
 
+    console.log({
+        type: 'webrtc_offer',
+        sdp: sessionDescription,
+        room: roomId,
+        user: myUser.id,
+        destination:destinationUser
+    })
+
     socket.getSocket().emit('webrtc-offer', {
         type: 'webrtc_offer',
         sdp: sessionDescription,
@@ -453,7 +539,7 @@ document.addEventListener("connected-to-socket", async => {
         }
     })
 
-    socket.on('webrtc-offer', async (event) => {
+    socket.getSocket().on('webrtc-offer', async (event) => {
 
 
         if(event.user == myUser.id) return;
@@ -464,6 +550,10 @@ document.addEventListener("connected-to-socket", async => {
         console.log('Socket event callback: webrtc_offer')
 
         if (!myConversationInterface.isNewComer) {
+
+            if(!(userId in myConversationInterface.remoteUsers)){
+                myConversationInterface.__addUserToCall(userId)
+            }
 
             myConversationInterface.remoteUsers[userId].rtcPeerConnection = new RTCPeerConnection(myConversationInterface.iceServers)
             var rtcPeerConnection = myConversationInterface.remoteUsers[userId].rtcPeerConnection
@@ -479,7 +569,7 @@ document.addEventListener("connected-to-socket", async => {
         }
     })
 
-    socket.on('webrtc-answer', async (event) => {
+    socket.getSocket().on('webrtc-answer', async (event) => {
 
         if(event.user == myUser.id) return;
         if(event.destination!= myUser.id) return;
@@ -489,7 +579,7 @@ document.addEventListener("connected-to-socket", async => {
         await myConversationInterface.remoteUsers[event.user].rtcPeerConnection.setRemoteDescription(new RTCSessionDescription(event.sdp))
     })
 
-    socket.on('webrtc-ice-candidate', (event) => {
+    socket.getSocket().on('webrtc-ice-candidate', (event) => {
 
         if(event.user == myUser.id) return;
         if(event.destination != myUser.id) return;
@@ -507,9 +597,9 @@ document.addEventListener("connected-to-socket", async => {
         
     })
 
-    socket.on('track-status-changed', (event) => {
+    socket.getSocket().on('track-status-changed', (event) => {
 
-        console.log(event)
+        try{
         var track = myConversationInterface.remoteUsers[event.user].remoteStream.getTrackById(event.id)
         track.enabled = event.status
         console.log('remote track changed', event)
@@ -518,6 +608,18 @@ document.addEventListener("connected-to-socket", async => {
             myConversationInterface.toggleRemoteVideo(track.enabled, myRoom.findUser(event.user))
             
         }
+    }
+    catch(e){
+        console.error(e)
+    }
+    })
+
+    ipcRenderer.on('send_message', (event, message)=>{
+        socket.getSocket().emit('chat-send-message', message)
+    })
+
+    socket.getSocket().on('chat-message-recv', event=>{
+        ipcRenderer.send('message_recv', event)
     })
 
 })

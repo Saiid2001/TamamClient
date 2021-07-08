@@ -69,15 +69,24 @@ document.addEventListener('DOMContentLoaded', () => {
                     var loc = myRoom.findObj(null, group)
                     myRoom.moveUser(uuser, loc)
 
-                    if (uuser.group == myUser.group && !myConversationInterface.isOpen) {
-                        myConversationInterface.open(uuser.group, loc.users, false)
+                    if (uuser.group == myUser.group) {
+
+                        if(!myConversationInterface.isOpen){
+                        myConversationInterface.open(uuser.group, loc.users, false);
+                        }else{
+                            myConversationInterface.__addUserToCall(uuser.id);
+                        }
                     }
 
+                    if(myConversationInterface.remoteUsers && uuser.id in myConversationInterface.remoteUsers){
+                        myConversationInterface.__removeUserFromCall(uuser.id);
+                    }
 
-                    console.log("my ROOM ",myRoom.findObj(null, myUser.group))
                     if (myRoom.findObj(null, myUser.group).users.length == 1 && myConversationInterface.isOpen) {
                         myConversationInterface.close()
                     }
+
+                    
                 }
 
 
