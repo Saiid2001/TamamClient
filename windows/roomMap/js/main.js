@@ -12,37 +12,43 @@ let urlData = getUrlData();
 
 document.addEventListener('DOMContentLoaded', () => {
 
+    
 
     const rooms = require('../../services/room-service');
     const users = require('../../services/user-service.js');
+
+    let roomList = [];
+    rooms.getRooms({ 'open': '' }, (rooms) => {
+        for (let room of rooms) {
+            roomList.push(JSON.parse(JSON.stringify(room)));
+        }
+    });
+    var userList = [];
+    users.getAllUsers((users) => {
+        for (let user of users) {
+            userList.push(JSON.parse(JSON.stringify(user)));
+        }
+    })
     const map = new GlobalMap(
         document.getElementById('map'),
         './assets/map.jpg',
-        rooms,
-        users
+        roomList,
+        userList
     );
 
-
-    //socket.connectSocket(() => {
-    //    socket.onUserEnteredRoom((user) => {
-    //        console.log(user);
-    //    });
-    //})
-
     console.log(urlData['source']);
-    if (urlData['source'] == 'recommendation') {
-        rooms.getRooms({ 'open': '' }, (rooms) => {
-
+    rooms.getRooms({ 'open': '' }, (rooms) => {
+        if (urlData['source'] == 'recommendation') {
+            console.log(rooms);
             showRooms(document.querySelector('.recommended .cards'), rooms);
-            //map.addRooms(rooms);
-        })
-    } else if (urlData['source'] == 'search') { // NEW: Display cards after Fuse search
-        document.getElementById('cards-label').innerHTML = `Results for search: ${urlData['extra-params']}`;
-        const searchOptions = {
-            keys: ['name'],
-        };
-        let searchQuery = urlData['extra-params'];
-        rooms.getRooms({ 'open': '' }, (rooms) => {
+
+        } else if (urlData['source'] == 'search') { // NEW: Display cards after Fuse search
+            console.log(rooms);
+            document.getElementById('cards-label').innerHTML = `Results for search: ${urlData['extra-params']}`;
+            const searchOptions = {
+                keys: ['name'],
+            };
+            let searchQuery = urlData['extra-params'];
             if (!(searchQuery == '')) {
                 let fuseObject = new Fuse(rooms, searchOptions);
                 let searchResult = fuseObject.search(searchQuery);
@@ -53,13 +59,23 @@ document.addEventListener('DOMContentLoaded', () => {
                 if (searchedRooms.find((room) => room.name == "Main Gate") == undefined) {
                     searchedRooms.unshift(rooms.find((room) => room.name == "Main Gate"));
                 }
+                console.log(searchedRooms);
                 showRooms(document.querySelector('.recommended .cards'), searchedRooms);
             } else {
-                showRooms(document.querySelector('.recommended .cards'), rooms);
+                showRooms(document.querySelector('.recommended .cards'), roomList);
             }
             //map.addRooms(rooms);
-        }); 
-    }
+        }
+    })
 
+    socket.connectSocket(() => {
+        console.log("Connected to socket")
+
+        socket.onUserEnteredRoom((user) => {
+            console.log("User joined: ", user)
+        })
+
+        socket.enterMap();
+    });
     
 })

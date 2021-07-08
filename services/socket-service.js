@@ -38,6 +38,10 @@ function enterCall(id, callback = () => { }) {
     socket.emit('join-call', { room: id }, callback = callback)
 }
 
+function enterMap(callback = () => { }) {
+    socket.emit('enter-map', callback = callback)
+}
+
 function onUserEnteredRoom(callback) {
     socket.on('user-joined-room', ({ user }) => {
             callback({ user: user })
@@ -106,6 +110,7 @@ module.exports = {
     enterRoom,
     exitRoom,
     enterCall,
+    enterMap,
     getSocket,
     onDisconnect,
     on,
