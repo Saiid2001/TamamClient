@@ -1,20 +1,20 @@
 const { ipcRenderer } = require('electron')
 
 
-const backgrounds = {
-    'BDH': {
+const THUMBNAILS = {
+    'bdh': {
         image: './assets/BDH_bg.png'
 
     },
-    'Jaffet Upper': {
+    'jaffet_upper': {
         image: './assets/Group 442.png'
 
     },
-    'Jaffet Library': {
+    'jaffet_library': {
         image: './assets/Group 442.png'
 
     },
-    'Main Gate': {
+    'default': {
         image: './assets/MainGat_bg.jpg'
 
     }
@@ -34,14 +34,16 @@ function showRooms(container, rooms) {
                             <p>${room['users'].length}/${room['maxCapacity']} <img src="./assets/supervisor_account.png" /></p>
                          </div>`;
 
-        box.style.backgroundImage = 'url(\'' + backgrounds[room.name]['image'] + '\')'
+        box.style.backgroundImage = 'url(\'' + THUMBNAILS['thumbnail' in room? room['thumbnail']['id'] : 'default'].image + '\')'
         if (room['name'] == "Main Gate") {
             box.onclick = () => {
                 let r = ipcRenderer.send('go-to', 'lobby')
             }
         } else {
             box.onclick = () => {
-                let r = ipcRenderer.send('go-to-room', room['_id'], urlData)
+
+                openRoomPreview(room);
+                //let r = ipcRenderer.send('go-to-room', room['_id'], urlData)
                 // Sends data sent with roommap url to room as query to know to which screen to return
             }
         }

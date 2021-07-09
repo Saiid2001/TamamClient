@@ -24,12 +24,12 @@ body{
 #exit-room, #exit-room img{
     background: none;
     position: absolute;
-    bottom: 0px;
+    top: 0px;
     right: 0;
     height: 40px;
     vertical-align: middle;
     float: right;
-    margin-right:20px;
+    margin:10px;
     z-index:20;
 }
 canvas{

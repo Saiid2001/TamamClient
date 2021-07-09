@@ -3,7 +3,7 @@ const rootPath = require('electron-root-path').rootPath;
 const axios = require("axios");
 const url = require("url");
 const $ = require('jquery')
-const {ipcRenderer}= require('electron')
+const {ipcRenderer}= require('electron');
 
 
 
@@ -26,6 +26,28 @@ function getUserData(onSuccess, onFail = () => { }) {
     });
 }
 
+function getFriendsOnline(room = null, onSuccess, onFail = () => { }) {
+    let token = ipcRenderer.sendSync('get-access-token');
+    
+    var paramString = ""
+    if(room){
+        paramString = '?room='+room
+    }
+
+    console.log(paramString)
+    
+    $.ajax({
+        type: 'GET',
+        method: 'GET',
+        url: SERVER_ADDRESS + "/users/get-users"+paramString,
+        headers: { 'Authorization':"Bearer " + token },
+        success: function (message, status, data) {
+            console.log(message)
+            onSuccess(data.responseJSON)
+        }
+    })
+}
+
 function getAllUsers(onSuccess, onFail = () => { }) {
     let token = ipcRenderer.sendSync('get-access-token');
     $.ajax({
@@ -35,6 +57,7 @@ function getAllUsers(onSuccess, onFail = () => { }) {
         headers: { 'Authorization': "Bearer " + token },
         success: function (message, status, data) {
             onSuccess(data.responseJSON);
+
         },
         error: function (message, status, data) {
             //onAssessmentLoaded();
@@ -46,5 +69,6 @@ function getAllUsers(onSuccess, onFail = () => { }) {
 
 module.exports = {
     getUserData,
-    getAllUsers
+    getFriendsOnline,
+    getAllUsers,
 }
