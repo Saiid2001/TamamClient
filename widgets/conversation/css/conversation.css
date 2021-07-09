@@ -49,6 +49,12 @@ body {
     display: none;
 }
 
+.chat{
+    float: right;
+    background-color: var(--main-blue);
+    margin-right: 10px;
+}
+
 .users{
     display: grid;
     grid-template-columns:1fr 1fr;
@@ -70,13 +76,35 @@ body {
     background-repeat: no-repeat;
     height: 150px;
     width: 150px;
-    position: absolute;
-    bottom: -11px;
-    left: 10px;
+    
     transform: scale(1.4);
     transform-origin:  left;
 }
 
-.video_on #remote {
-    left: 200px;
+.video_on{
+    display: flex;
+    flex-direction: row;
+}
+
+
+
+.window>div{
+    position: absolute;
+    bottom: 160px;
+    left:0px;
+    
+    
+    margin-left: 3px;
+    max-width: 100%;
+    
+}
+
+.window>div>p{
+
+    padding:5px;
+    border-radius: 10px;
+    font-size: 10px;
+    background-color: white;
+    
+    
 }

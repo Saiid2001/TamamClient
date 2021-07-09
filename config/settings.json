@@ -1,5 +1,5 @@
 {
-"SERVER_ADDRESS": "https://2cd9f81cef4e.ngrok.io",
+"SERVER_ADDRESS": "https://883d3d9de936.ngrok.io/",
 "AUTHENTICATE_ADDRESS": "/authenticate/login-dev",
 "REFRESH_ADDRESS": "/authenticate/refresh-token"
 } 
