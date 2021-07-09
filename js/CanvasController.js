@@ -91,11 +91,6 @@ class Avatar{
             txtBG.width = nameLabel.width+50, txtBG.height = nameLabel.height;
 
 
-                // cage text
-                const nameCage = new PIXI.Container();
-                nameCage.addChild(txtBG, nameLabel);
-
-
                 nameCage.x = 0;
                 nameCage.y = -nameCage.height / 2
                 nameCage.scale.set(0.5, 0.5)

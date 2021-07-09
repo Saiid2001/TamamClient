@@ -1,13 +1,23 @@
 const PIXI = require('pixi.js');
+const rooms = require('../../services/room-service');
+const users = require('../../services/user-service.js');
 
 class GlobalMap {
 
 
 
-    constructor(canvas, bg, rooms, users) {
+    constructor(canvas, bg) {
+
 
         let _this = this;
-        
+
+        rooms.getRooms({ 'open': '' }, (rooms) => {
+            _this.rooms = rooms;
+        });
+        users.getAllUsers((users) => {
+            _this.users = users
+        })
+
         console.log(canvas.getBoundingClientRect().width);
 
         let app = new PIXI.Application({
@@ -71,64 +81,32 @@ class GlobalMap {
 
         }
 
-        this.buildings = {
-            'BDH': {
-                //image: './assets/BDH.svg',
-                pos: {
-                    x: 1130,
-                    y: 583
-                },
-                layer: 0
 
-            },
-            'Jaffet Upper': {
-                //image: './assets/Jaffet Upper.svg',
-                pos: {
-                    x: 1142,
-                    y: 740
-                },
-                layer: 1
-
-            },
-            'Jaffet Library': {
-                //image: './assets/Jaffet lower.svg',
-                pos: {
-                    x: 1149,
-                    y: 763
-                },
-                layer:0
-
-            },
-            'Main Gate': {
-                //image: './assets/MainGate.svg',
-                pos: {
-                    x: 1120,
-                    y: 915
-                },
-                layer:0
-
-            }
-        }
 
         this.app = app;
         this.canvas = canvas;
-        this.mapRooms = []
+        this.mapRooms = {};
+        this.curUsers = {};
     }
 
     addRoom(info, position) {
         let _this = this;
-        let scaleFactor = _this.canvas.getBoundingClientRect().width;
+        let scaleFactor = _this.canvas.getBoundingClientRect().width / 2000;
 
         let roomPin = new PIXI.Sprite(_this.app.loader.resources['./assets/map_pin.svg'].texture);
-        roomPin.width = roomPin.texture.baseTexture.realWidth / 2000 * scaleFactor;
-        roomPin.height = roomPin.texture.baseTexture.realHeight / 2000 * scaleFactor;
+        roomPin.width = roomPin.texture.baseTexture.realWidth * scaleFactor;
+        roomPin.height = roomPin.texture.baseTexture.realHeight * scaleFactor;
 
-        let roomContainer = new PIXI.Container();
+        this.mapRooms[info["_id"]] = new PIXI.Container();
+        let roomContainer = this.mapRooms[info["_id"]];
         roomContainer.interactive = true;
         roomContainer.buttonMode = true;
-        roomContainer.x = position.x / 2000 * scaleFactor;
-        roomContainer.y = position.y / 2000 * scaleFactor;
+        roomContainer.x = position.x * scaleFactor;
+        roomContainer.y = position.y * scaleFactor;
         roomContainer.on('mousedown', () => {
+            socket.connectSocket(() => {
+                socket.exitRoom("map");
+            })
             if (info['name'] == "Main Gate") {
 
                 let r = ipcRenderer.send('go-to', 'lobby')
@@ -140,40 +118,95 @@ class GlobalMap {
             }
         });
 
-        console.log(info);
-
         if (info['users'].length != 0) {
-            for (var id of info['users']) {
-                let userData = _this.users.find((user) => user['_id'] == id);
-                let avatar = new Avatar(id, userData);
-                let avatarBody = avatar.getFullBody(true, false);
-                avatarBody.position.x = 0;
-                avatarBody.position.y = -35;
-                avatarBody.scale.set(0.4);
+            for (let i = 0; i < info['users'].length; ++i) {
+                let userData = _this.users.find((user) => user['_id'] == info['users'][i]);
+                let avatar = new Avatar(info['users'][i], userData);
+                this.curUsers[info['users'][i]] = avatar.getFullBody(true, false);
+                let avatarBody = this.curUsers[info['users'][i]];
+                avatarBody.scale.set(0.6 * scaleFactor);
+                avatarBody.position.x = (-(info['users'].length-1)/2 + i) * 32 * scaleFactor;
+                avatarBody.position.y = -75 * scaleFactor;
                 roomContainer.addChild(avatarBody);
             }
         } else {
             roomContainer.addChild(roomPin);
         }
 
-        console.log("Added room");
+        console.log(this.curUsers);
 
         return roomContainer;
         
     }
 
     addUserToRoom(user, roomID) {
+        let _this = this;
+        rooms.getRooms({ 'open': '' }, (rooms) => {
+            _this.rooms = rooms;
+        });
 
+        if (user["_id"] in this.curUsers) {
+            _this.removeUserFromRoom(user, user.room);
+            delete this.curUsers[user["_id"]];
+        }
+
+        let room = _this.rooms.find((room) => room["_id"] == roomID);
+        if (room.users.length == 0) {
+            _this.mapRooms[roomID].removeChildren();
+        }
+
+        let scaleFactor = _this.canvas.getBoundingClientRect().width / 2000;
+        let roomContainer = this.mapRooms[roomID];
+        let newLength = roomContainer.children.length + 1;
+        for (let i = 0; i < newLength - 1; ++i) {
+            roomContainer.children[i].position.x = (-(newLength - 1) / 2 + i) * 32 * scaleFactor;
+        }
+
+        let avatar = new Avatar(user["_id"], user);
+        this.curUsers[user["_id"]] = avatar.getFullBody(true, false);
+        let avatarBody = this.curUsers[user["_id"]];
+        avatarBody.scale.set(0.6 * scaleFactor);
+        avatarBody.position.x = (-(newLength - 1) / 2 + newLength - 1) * 32 * scaleFactor;
+        avatarBody.position.y = -75 * scaleFactor;
+        roomContainer.addChild(avatarBody);
+    }
+
+    removeUserFromRoom(user, roomID) {
+        let _this = this;
+        rooms.getRooms({ 'open': '' }, (rooms) => {
+            _this.rooms = rooms;
+        });
+
+        if (user["_id"] in this.curUsers) {
+
+            let roomContainer = _this.mapRooms[roomID];
+            roomContainer.removeChild(this.curUsers[user["_id"]]);
+
+            let newLength = roomContainer.children.length;
+            let scaleFactor = _this.canvas.getBoundingClientRect().width / 2000;
+            if (newLength == 0) {
+                let roomPin = new PIXI.Sprite(_this.app.loader.resources['./assets/map_pin.svg'].texture);
+                roomPin.width = roomPin.texture.baseTexture.realWidth * scaleFactor;
+                roomPin.height = roomPin.texture.baseTexture.realHeight * scaleFactor;
+                roomContainer.addChild(roomPin);
+            } else {
+                for (let i = 0; i < newLength; ++i) {
+                    roomContainer.children[i].position.x = (-(newLength - 1) / 2 + i) * 32 * scaleFactor;
+                }
+            }
+            delete this.curUsers[user["_id"]];
+        }
     }
 
     addRooms(roomList) {
         const _this = this
 
+        console.log(roomList)
 
         let buildingRooms = roomList.sort((a, b) => {
-            if (_this.buildings[a.name].layer < _this.buildings[b.name].layer) {
+            if (a.mapInfo.layer < b.mapInfo.layer) {
                 return -1
-            } else if (_this.buildings[a.name].layer > _this.buildings[b.name].layer) {
+            } else if (a.mapInfo.layer > b.mapInfo.layer) {
                 return 1
             } else {
                 return 0
@@ -181,13 +214,14 @@ class GlobalMap {
         }
         )
 
+        console.log(buildingRooms)
+
         let foreground = new PIXI.Container();
-        buildingRooms.forEach((room ,i) => {
+        buildingRooms.forEach((room, i) => {
             let roomContainer = _this.addRoom(
                 room,
-                //_this.buildings[room['name']]['image'],
-                _this.buildings[room['name']]['pos'],
-                
+                room['mapInfo']['pos'],
+
             )
             foreground.addChild(roomContainer);
         })

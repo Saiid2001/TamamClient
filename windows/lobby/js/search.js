@@ -34,7 +34,13 @@ function instantSearch() {
         keys: ['name'],
         includeMatches: true
     };
-    rooms.getRooms({ 'open': '' }, roomList => {
+    rooms.getRooms({ 'open': '' }, (rooms) => {
+        let roomList = []
+        for (let room of rooms) {
+            if (room['mapInfo']['onMap']) {
+                roomList.push(room)
+            }
+        }
         let fuseObject = new Fuse(roomList, searchOptions);
         let searchResult = fuseObject.search(searchQuery);
         let maingateIndex = searchResult.findIndex((entry) => entry['item']['name'] == 'Main Gate');
