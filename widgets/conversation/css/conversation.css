@@ -86,3 +86,25 @@ body {
     flex-direction: row;
 }
 
+
+
+.window>div{
+    position: absolute;
+    bottom: 160px;
+    left:0px;
+    
+    
+    margin-left: 3px;
+    max-width: 100%;
+    
+}
+
+.window>div>p{
+
+    padding:5px;
+    border-radius: 10px;
+    font-size: 10px;
+    background-color: white;
+    
+    
+}

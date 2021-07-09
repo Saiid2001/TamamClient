@@ -166,6 +166,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
             document.getElementById('room-title').innerHTML = roomData['name']
             document.getElementById('exit-room').onclick = () => {
+                myConversationInterface.close()
                 let r = ipcRenderer.send('go-to-roommap', urlData['return-data']['source'], urlData['return-data']['extra-params'])
             }
             

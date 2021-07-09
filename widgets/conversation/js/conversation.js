@@ -75,7 +75,7 @@ class ConversationInterface {
         if(userId in this.remoteUsers) return;
 
         var videoComponent = document.createElement('div');
-        videoComponent.innerHTML = `<video autoplay playsinline width="70%" height="50%"  />`;
+        videoComponent.innerHTML = `<div></div><video autoplay playsinline width="70%" height="50%"  />`;
         videoComponent.className = 'window';
         videoComponent.id = 'remote-'+userId;
         this.view.querySelector('.video_on').appendChild(videoComponent)
@@ -468,8 +468,22 @@ class ConversationInterface {
         if(elem){
             elem.setAttribute('hidden', '')
         }
+    }
 
+    showMessagePopup(message){
+        var videoObj = this.remoteUsers[message.author].remoteVideoComponent;
+        var windowObj = videoObj.parentElement;
+
+        var chatGroup = windowObj.querySelector('div');
         
+        var chatPopup = document.createElement('p');
+        chatPopup.innerText  = message.text;
+
+        chatGroup.appendChild(chatPopup)
+
+        setTimeout(()=>{
+            chatGroup.removeChild(chatPopup)
+        }, 10000)
     }
 }
 
@@ -619,6 +633,7 @@ document.addEventListener("connected-to-socket", async => {
     })
 
     socket.getSocket().on('chat-message-recv', event=>{
+        myConversationInterface.showMessagePopup(event)
         ipcRenderer.send('message_recv', event)
     })
 
