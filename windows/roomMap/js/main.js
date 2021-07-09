@@ -12,28 +12,9 @@ let urlData = getUrlData();
 
 document.addEventListener('DOMContentLoaded', () => {
 
-    
-
-    const rooms = require('../../services/room-service');
-    const users = require('../../services/user-service.js');
-
-    let roomList = [];
-    rooms.getRooms({ 'open': '' }, (rooms) => {
-        for (let room of rooms) {
-            roomList.push(JSON.parse(JSON.stringify(room)));
-        }
-    });
-    var userList = [];
-    users.getAllUsers((users) => {
-        for (let user of users) {
-            userList.push(JSON.parse(JSON.stringify(user)));
-        }
-    })
     const map = new GlobalMap(
         document.getElementById('map'),
         './assets/map.jpg',
-        roomList,
-        userList
     );
 
     console.log(urlData['source']);
@@ -71,8 +52,20 @@ document.addEventListener('DOMContentLoaded', () => {
     socket.connectSocket(() => {
         console.log("Connected to socket")
 
-        socket.onUserEnteredRoom((user) => {
-            console.log("User joined: ", user)
+        socket.getSocket().on('user-joined-room-to-map', (data) => {
+            if (data.room != "NONE") {
+                console.log(data)
+                console.log(`User ${data.user} joined room ${data.room}`)
+                map.addUserToRoom(data.user, data.room);
+            }
+        })
+
+        socket.getSocket().on('user-left-room-to-map', (data) => {
+            if (data.room != "NONE") {
+                console.log(data);
+                console.log(`User ${data.user} left room ${data.room}`);
+                map.removeUserFromRoom(data.user, data.room);
+            }
         })
 
         socket.enterMap();
