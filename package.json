@@ -7,6 +7,7 @@
     "name": ""
   },
   "dependencies": {
+    "@fontsource/roboto": "^4.5.0",
     "adapter": "^1.0.0-beta.10",
     "axios": "^0.21.1",
     "colorthief": "^2.3.2",

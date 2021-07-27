@@ -10,22 +10,29 @@
     opacity: 0.6;
 }
 
+/*.recommended {
+    position: sticky;
+    top: 0;
+}*/
+
 .cards{
     margin: 0px 30px;
     width:100%;
 }
-    .cards .room {
-        height: 200px;
-        width: 200px;
-        background-color: blue;
-        border-radius: 10px;
-        position: relative;
-        display: inline-block;
-        margin-right: 10px;
-        background: linear-gradient(180deg, #FF00B8 0%, #00C3FF 100%) ;
-        background-size: cover;
-        cursor: pointer;
-    }
+
+.cards .room {
+
+    height: 200px;
+    width: 200px;
+    background-color: blue;
+    border-radius: 10px;
+    position: relative;
+    display: inline-block;
+    margin-right: 10px;
+    background: linear-gradient(180deg, #FF00B8 0%, #00C3FF 100%) ;
+    background-size: cover;
+    cursor: pointer;
+}
 
 .cards .room h1{
     font-size: 26px;
@@ -52,8 +59,42 @@
     vertical-align:middle;
 }
 
-#map{
+.map{
     width:100%;
+    position: relative;
+    top: 10px;
+}
+
+#map-name {
+    position: absolute;
+    top: 25px;
+    left: 25px;
+}
+#map-name img {
+    position: relative;
+    width: 33px;
+    height: 33px;
+}
+#map-name h1 {
+    position: relative;
+    left: 10px;
+    display: inline;
+    font-size: 160%;
+}
+
+#zoom {
+    position: absolute;
+    cursor: pointer;
+    left: 1140px;
+    top: 540px;
+}
+
+#zoom-in {
+    position: absolute;
+}
+#zoom-out {
+    position: absolute;
+    left: 50px;
 }
 
 .room-card-overlay{
@@ -153,19 +194,24 @@ grid-area: title;
 
 
 .room-card-overlay button{
-
     position: absolute;
     right: 0px;
     top:50%;
     padding: 10px;
     border-radius: 10px;
     font-style: normal;
-font-weight: 600;
-font-size: 20px;
-color: white;
-background-color: var(--main-green);
-border-top-right-radius: 0;
-border-bottom-right-radius: 0;
+    font-weight: 600;
+    font-size: 20px;
+    color: white;
+    background-color: var(--main-green);
+    border-top-right-radius: 0;
+    border-bottom-right-radius: 0;
+}
+
+.room-card-overlay button:hover {
+    transition: background 0.2s;
+    background-color: var(--dark-main-green);
+    cursor: pointer;
 }
 
 .room-card-overlay{
