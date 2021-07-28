@@ -105,3 +105,13 @@ button{
     border: none;
 }
  
+.black-scrollbar::-webkit-scrollbar-thumb {
+    background-color: rgb(170, 170, 170);
+    margin-right: 5px;
+    border-radius: 20px;
+    border: none;
+}
+.black-scrollbar::-webkit-scrollbar-track {
+    background: var(--light-grey);
+}
+ 

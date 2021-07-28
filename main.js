@@ -34,6 +34,11 @@ let pages = {
     },
     'chat':{
         'path': 'windows/chat/chat.html',
+        'required':[]
+    },
+    'signup':{
+        'path': 'windows/signup/signup.html',
+        'required':[]
     }
 }
 
@@ -71,6 +76,10 @@ async function createMainWindow() {
     //define the ratio
     
     mainWindowHandler.setRatio(screenSize.width, screenSize.height, 10);
+
+
+    goTo('signup');
+    return;
 
     try {
         

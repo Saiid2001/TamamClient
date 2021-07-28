@@ -1,0 +1,354 @@
+body{
+    background:none;
+    background-color: white;
+}
+
+.view{
+    color: black;
+}
+.view header{
+    height:25%;
+    width: 100%;
+    display: block;
+    background-image: url(../../../assets/img/aub-top.jpg);
+    background-size: cover;
+    background-position: center;
+    position: relative;
+}
+
+.view header>div{
+    
+    width: 100%;
+    height: 3rem;
+    font-size: 1.2rem;
+    font-family: Futura Bk BT;
+    font-style: normal;
+    font-weight: normal;
+    display: block;
+    align-items: center;
+    text-align: center;
+    position: absolute;
+    bottom: -1.5rem;
+}
+
+.view header>div>span{
+    background-color:var(--main-green);
+    width: fit-content;
+    height: 3rem;
+    display: flex;
+    align-items: center;
+    margin: auto;
+    padding:0 3rem;
+    border-radius: 26px;
+    color:white;
+}
+
+em{
+    font-style: normal;
+    font-weight: bolder;
+    font-family: Futura Hv BT;
+    
+}
+
+
+
+/*CARDS*/
+
+.view main{
+    height: 75%;
+    width: 70%;
+    margin:0 auto;
+    padding-top:2rem;
+    padding-bottom: 1.5rem;
+    box-sizing: border-box;
+    display: grid;
+    grid-template-rows: auto min-content;
+}
+
+.view .cards{
+    position: relative;
+}
+
+.view .card{
+    box-shadow: 0px 4px 90px rgba(0, 0, 0, 0.08);
+    border-radius: 23px;
+    padding:3%;
+    display: grid;
+    grid-template-rows: min-content auto min-content;
+    align-content:space-between;
+    transition: transform 0.5s ease;
+    position: absolute;
+    width: 100%;
+    box-sizing: border-box;
+    height: 100%;
+    top:0;
+    text-align: center;
+}
+
+.view .card h1{
+    font-family: Futura Hv BT;
+font-style: normal;
+font-weight: 900;
+font-size: 1.5rem;
+line-height: 43px;
+color: var(--main-blue);
+margin-top: 0;
+}
+
+
+.text-field, .select-field{
+    display: flex;
+    flex-direction: column;
+    margin: 10px;
+    margin-left: 0;
+    text-align: left;
+}
+
+.text-field label,.select-field label{
+font-style: normal;
+font-weight: 900;
+font-size: 16px;
+line-height: 19px;
+color:var(--main-blue);
+margin-bottom: 10px;
+}
+
+
+.text-field input{
+    background-color: var(--light-grey);
+    border:none;
+    outline:none;
+    padding: 0.5rem;
+    font-size: 1rem;
+    border-radius: 0.4rem;
+}
+
+input.error{
+    border: solid 2px red !important;
+}
+
+.text-field input:not(:placeholder-shown), .text-field input:focus{
+    border: solid 2px var(--main-green);
+    background-color: white;
+    color: var(--main-green);
+}
+
+.select-field select{
+    background-color: var(--light-grey);
+    border:none;
+    outline:none;
+    padding: 0.5rem;
+    font-size: 1rem;
+    border-radius: 0.4rem;
+}
+.button{
+    font-size: 1.4rem;
+    padding: 0.5rem 1.5rem;
+    border-radius: 5px;
+}
+.card .send-btn{
+    float: right;
+    font-size: 1rem;
+    padding: 0.3rem 1rem;
+    color:white;
+    background-color: var(--main-green);
+    border-radius: 3px;
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    margin:3%;
+}
+.card .back-btn{
+    float: left;
+    font-size: 1rem;
+    padding: 0.3rem 1rem;
+    color:white;
+    background-color: var(--main-blue);
+    border-radius: 3px;
+}
+.send-btn[disabled],.back-btn[disabled]{
+    background-color: var(--light-grey);
+}
+.card-next{
+    transform: translateX(125%);
+    transform-origin:top left;
+    
+}
+
+.card-done{
+    transform: translateX(-125%);
+    transform-origin:top left;
+    transition: transform 0.5s ease;
+}
+
+#personal-info-card form{
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: 1fr 1fr;
+    grid-template-areas: "fn ln" "em em";
+}
+
+#firstname{
+    grid-area: fn;
+}
+#lastname{
+    grid-area: ln;
+}
+#email{
+    grid-area: em;
+}
+
+
+#email-validation form div{
+    color:var(--main-blue);
+}
+#email-validation form div object{
+    height:5rem;
+}
+#email-validation form div h2{
+    font-size:1.2rem;
+    margin: 0;
+}
+#validation-success{
+    color:var(--main-green) !important;
+}
+
+#academic-info-card form{
+    display: grid;
+
+    grid-template-columns: 2fr 1fr 1fr;
+}
+
+a{
+    color:var(--main-blue);
+    
+}
+
+#appearance-card{
+    display: grid;
+    grid-template-columns: auto min-content;
+    grid-template-rows: 100%;
+    padding:0;
+    overflow: hidden;
+}
+
+#appearance-card .send-btn{
+    position:relative;
+    margin:0;
+}
+#generate-method-section button object{
+    height: 4rem;
+} 
+#appearance-card .sections{
+    display: grid;
+    grid-template-rows: min-content auto min-content;
+    align-content:space-between;
+    height: 100%;
+}
+#appearance-card .sections{
+    padding:3%;
+    box-sizing: border-box;
+}
+
+#manual-customize{
+    overflow-y:scroll;
+    height: 100%;
+    overflow-x: hidden;
+}
+
+.section-title{
+    background-color: var(--light-grey);
+    opacity: 0.4;
+    padding: 0.5rem 0;
+}
+
+#avatar-view:not([hidden]){
+    width: 20rem;
+    background: #CDEDF7;
+    position:relative;
+    display: grid;
+    align-items:flex-end;
+
+}
+
+#avatar-view .ground{
+    height: 30%;
+    background-color: var(--main-green);
+}
+#avatar{
+    position:absolute;
+    width: 100%;
+    height: 70%;
+    bottom: 0;
+
+}
+
+#avatar img{
+    height: 80%;
+}
+
+button{
+    cursor: pointer;
+}
+
+#appearance-card>div>h1{
+    text-align: left;
+}
+
+.roulette-select{
+    padding: 0 0;
+    width: 50%;
+    margin:auto;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.roulette-select button{
+    background-color: transparent;
+    color:var(--main-green);
+    font-weight: bolder;
+    font-size: 1.6rem;
+}
+
+#finished-card object{
+    height: 30%;
+}
+
+#go-campus{
+    background-color: var(--main-green);
+    color:white;
+}
+#go-friends{
+    background-color: var(--main-blue);
+    color:white;
+}
+
+/*LOADING*/
+main #loading{
+
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+    margin-top: 1%;
+}
+
+main #loading .step{
+    height: 1.5rem;
+    width:50px;
+    
+    flex:1;
+}
+
+main #loading .step>div{
+    background-color: #CFCFCF;
+    margin:0 5%;
+    height: 0.7rem;
+    border-radius: 50px;
+}
+
+
+main #loading .step.done>div{
+    background-color:var(--main-green);
+}

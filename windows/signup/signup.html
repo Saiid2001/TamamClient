@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Squada+One&display=swap" rel="stylesheet">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="../../css/main.css" />
+<link rel="stylesheet" href="css/main.css" />
+</head>
+<body>
+    <div class="head">
+        <img class="logo" src="../../assets/img/logo.svg" />
+        <div class="window-control">
+            <button id="min-window"><img src="../../assets/img/minimize-dark.svg" /></button>
+            <button id="max-window"><img src="../../assets/img/maximize-dark.svg" /></button>
+            <button id="close-window"><img src="../../assets/img/close-dark.svg" /></button>
+        </div>
+    </div>
+    <div class="view">
+    <header>
+        <div>
+            <span>
+                Weclome to your&nbsp;<em> VIRTUAL CAMPUS </em>
+            </span>
+        </div>
+        </header>
+    <main>
+
+        <div class="cards">
+            <div class="card" id='personal-info-card'>
+                <h1>Personal information</h1>
+                <form>
+    
+                    <div class="text-field" id="firstname">
+                        <label for="firstname">First Name</label>
+                        <input type="text" name="firstname"  placeholder=" " required>
+                    </div>
+    
+                    <div class="text-field" id="lastname">
+                        <label for="lastname">Last Name</label>
+                        <input type="text" name="lastname"  placeholder=" " required>
+                    </div>
+    
+                    <div class="text-field" id="email">
+                        <label for="email">University Email</label>
+                        <input type="email" name="email"  placeholder=" " required>
+                    </div>
+                    
+                </form>
+    
+                <footer>
+                    <button class='send-btn'>
+                        Next
+                    </button>
+                </footer>
+                
+            </div>
+    
+            <div class="card card-next" id='email-validation'>
+                <h1>Email Verification</h1>
+                <form>
+    
+                    <p>A confirmation Email has been sent to your inbox. Please check your inbox and follow the instructions in the email.</p>
+                    
+                    <div id='validation-pending' >
+                        <object data="../../assets/img/Infinity-0.9s-204px.svg"> </object>
+                        <h2>Awaiting Validation</h2>
+                    </div>
+
+                    <div id='validation-success' hidden>
+                        <object data="../../assets/img/cat-toast.png"> </object>
+                        <h2>Email Validated</h2>
+                    </div>
+
+                    <div id='validation-error' hidden>
+                        <object data="../../assets/img/error.svg"> </object>
+                        <h2>Validation Error</h2>
+                    </div>
+                    
+                </form>
+    
+                <footer>
+                    <button class='send-btn' disabled>
+                        Next
+                    </button>
+                </footer>
+                
+            </div>
+
+            <div class="card card-next" id='academic-info-card'>
+                <h1>Academic information</h1>
+                <form>
+    
+                    <div class="select-field" id="major">
+                        <label for="major">First Name</label>
+                        <select name="major" id="major">
+                            <option value="CCE" selected>Computer and Communication Engineering</option>
+                            <option value="ECE">Electrical and Communication Engineering</option>
+                        </select>
+                    </div>
+    
+                    <div class="text-field" id="enrollment-year">
+                        <label for="enrollment-year">Enrollment Year</label>
+                        <input type="number" min="1900" max="2099" step="1" placeholder="2016" name='enrollment-year' />
+                    </div>
+    
+                    <div class="text-field" id="grad-year">
+                        <label for="grad-year">Graduation Year</label>
+                        <input type="number" min="1900" max="2099" step="1" placeholder="2020" name='grad-year' />
+                    </div>
+                    
+                </form>
+    
+                <footer>
+                    <button class='send-btn'>
+                        Next
+                    </button>
+                </footer>
+                
+            </div>
+
+            <div class="card card-next " id='appearance-card'>
+
+                <div class='sections'>
+                <h1>Appearance</h1>
+                
+                <form id='generate-method-section' >
+    
+                    
+                    <button class='button' disabled>
+                        <object data=""></object>
+                        <p>
+                            Generate from Image
+                        </p> 
+                    </button>
+
+                    <p>
+                        or <a>edit manually</a>
+                    </p>
+                    
+                </form>
+
+                <form id='gender' hidden>
+    
+                    
+                    <button class='button' id ='male-btn'>
+                        Male
+                    </button>
+                    or
+                    <button class='button' id = 'female-btn'>
+                        Female
+                    </button>
+                </form>
+
+                <form id="manual-customize" class='black-scrollbar' hidden>
+                    <section id='face-features' >
+                        <div class="section-title">Face Features</div>
+                        <div class="roulette-select" id='face_proportions'>
+                            <button>
+                                &lt;
+                            </button>
+                            <span>
+                                Face Shape
+                            </span>
+                            <button>
+                                &gt;
+                            </button>
+                        </div>
+                        <div class="roulette-select" id='hair'>
+                            <button>
+                                &lt;
+                            </button>
+                            <span>
+                                Hair Style
+                            </span>
+                            <button>
+                                &gt;
+                            </button>
+                        </div>
+                        <div class="roulette-select" id='eyes-shape'>
+                            <button>
+                                &lt;
+                            </button>
+                            <span>
+                                Eyes Shape
+                            </span>
+                            <button>
+                                &gt;
+                            </button>
+                        </div>
+                        <div class="roulette-select" id='eyes-color'>
+                            <button>
+                                &lt;
+                            </button>
+                            <span>
+                                Eyes Color
+                            </span>
+                            <button>
+                                &gt;
+                            </button>
+                        </div>
+                        <div class="roulette-select" id='mouth-shape'>
+                            <button>
+                                &lt;
+                            </button>
+                            <span>
+                                Mouth Shape
+                            </span>
+                            <button>
+                                &gt;
+                            </button>
+                        </div>
+                    </section>
+                    <section id='body' hidden>
+                        <div class="section-title">Body</div>
+                        <div class="roulette-select" id='body-type'>
+                            <button>
+                                &lt;
+                            </button>
+                            <span>
+                                Body Type
+                            </span>
+                            <button>
+                                &gt;
+                            </button>
+                        </div>
+                        <div class="section-title">Wearables</div>
+                        <div class="roulette-select" id='head-wear'>
+                            <button>
+                                &lt;
+                            </button>
+                            <span>
+                                Head Wear
+                            </span>
+                            <button>
+                                &gt;
+                            </button>
+                        </div>
+                        <div class="roulette-select" id='eye-wear'>
+                            <button>
+                                &lt;
+                            </button>
+                            <span>
+                                Glasses
+                            </span>
+                            <button>
+                                &gt;
+                            </button>
+                        </div>
+                        <div class="roulette-select" id='top'>
+                            <button>
+                                &lt;
+                            </button>
+                            <span>
+                                Top
+                            </span>
+                            <button>
+                                &gt;
+                            </button>
+                        </div>
+                        <div class="roulette-select" id='bottoms'>
+                            <button>
+                                &lt;
+                            </button>
+                            <span>
+                                Bottoms
+                            </span>
+                            <button>
+                                &gt;
+                            </button>
+                        </div>
+                    </section>
+                    <section id='outfit' hidden>
+                    </section>
+                </form>
+    
+                <footer>
+                    <button class='back-btn' hidden>
+                        Back
+                    </button>
+                    <button class='send-btn' hidden>
+                        Next
+                    </button>
+                </footer>
+
+                </div>
+
+                <div id="avatar-view" hidden>
+                    
+                    <div id="avatar">
+                        <img src="../../assets/img/avatars_gen1/user_0.png" alt="">
+                    </div>
+                    <div class="ground">
+                        
+                    </div>
+                    
+                </div>
+                
+            </div>
+
+            <div class="card card-next" id='finished-card'>
+
+                <h1></h1>
+                <div>
+                    <object data="../../assets/img/cat-toast.png"></object>
+                    <h1>You are all done!</h1>
+                    <button class="button" id='go-campus'>
+                        Hop on campus
+                    </button>
+                </div>
+                
+                
+            </div>
+            </div>
+        
+
+
+        <div id="loading">
+            <div class="step ">
+                <div></div>
+            </div>
+            <div class="step ">
+                <div></div>
+            </div>
+            <div class="step">
+                <div></div>
+            </div>
+            <div class="step">
+                <div></div>
+            </div>
+        </div>
+    </main>
+</div>
+
+<script src="../../js/window-control.js"></script>
+<script src="js/validation.js"></script>
+<script src="js/avatar.js"></script>
+<script src="js/ui.js"></script>
+<script src="js/main.js"></script>
+</body>
+</html>
