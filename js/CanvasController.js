@@ -1,4 +1,7 @@
 
+const bitmojiService = require('../../services/bitmoji-service')
+
+
 
 class CanvasController {
 
@@ -48,6 +51,7 @@ class Avatar{
         let avatarData = userData['avatar'] 
         this.data = avatarData
         this.userID = userID
+        this.gender = userData.gender
         this.name = userData['firstName']
         this.cache = {}
     }
@@ -58,10 +62,9 @@ class Avatar{
         if ( this.cache['full-body'] == undefined ) {
             let sprite = new PIXI.Container()
 
-            let av = PIXI.Sprite.from('../../assets/img/avatars_gen1/'+Avatar.VARIANTS[this.data.index])
-
-            av.scale.set(1.2,1.2)
-            av.position.x = 0
+            let av = PIXI.Sprite.from(bitmojiService.getAvatarImage(this.data, this.gender,'body' ))
+            av.scale.set(0.8,0.8)
+            av.position.x = -50
             av.position.y = 0
             sprite.addChild(av)
             sprite.width  = av.width

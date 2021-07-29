@@ -20,13 +20,14 @@
     "jwt-decode": "^3.1.2",
     "keytar": "^7.7.0",
     "kurento-utils": "^6.16.0",
+    "libmoji": "^2.3.0",
     "onecolor": "^3.1.0",
     "pixi.js": "^5.3.10",
     "screenz": "^1.0.0",
     "socket.io-client": "^3.1.3"
   },
   "scripts": {
-    "start": "electron --trace-deprecation ."
+    "start": "electron ."
   },
   "devDependencies": {
     "eslint": "^5.0.0"

@@ -34,6 +34,11 @@ let pages = {
     },
     'chat':{
         'path': 'windows/chat/chat.html',
+        'required':[]
+    },
+    'signup':{
+        'path': 'windows/signup/signup.html',
+        'required':['email']
     }
 }
 
@@ -72,6 +77,9 @@ async function createMainWindow() {
     
     mainWindowHandler.setRatio(screenSize.width, screenSize.height, 10);
 
+
+    
+
     try {
         
         await authService.refreshTokens();
@@ -108,8 +116,14 @@ async function createAuthWindow(win) {
 
         webRequest.onBeforeRequest(filter, async ({ url }) => {
             
-            await authService.loadTokens(url);
-            return goTo('roomMap', { source: 'recommendation', 'extra-params': '' });
+            //check if needs signup
+            if(!authService.isNeedSignup(url)){
+                await authService.loadTokens(url);
+                return goTo('roomMap', { source: 'recommendation', 'extra-params': '' });
+            }else{
+                let email = authService.getSignupEmail(url);
+                goTo('signup', {'email': email});
+            }
         });
         win.on('authenticated', () => {
             goTo('roomMap', { source: 'recommendation', 'extra-params': '' });
