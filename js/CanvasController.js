@@ -56,13 +56,17 @@ class Avatar{
         this.cache = {}
     }
 
+    getFullBodyURL(){
+        return bitmojiService.getAvatarImage(this.data, this.gender,'body' )
+    }
+
     getFullBody(interactive = true, withusername = true) {
         const PIXI = require("pixi.js");
 
         if ( this.cache['full-body'] == undefined ) {
             let sprite = new PIXI.Container()
 
-            let av = PIXI.Sprite.from(bitmojiService.getAvatarImage(this.data, this.gender,'body' ))
+            let av = PIXI.Sprite.from(this.getFullBodyURL())
             av.scale.set(0.8,0.8)
             av.position.x = -50
             av.position.y = 0
@@ -93,7 +97,6 @@ class Avatar{
             
             txtBG.width = nameLabel.width+50, txtBG.height = nameLabel.height;
 
-
             const nameCage = new PIXI.Container();
             nameCage.addChild(txtBG, nameLabel)
 
@@ -122,6 +125,31 @@ class Avatar{
 
             //     })
             // }
+
+            this.cache['full-body'] = sprite
+        }
+        
+
+        return this.cache['full-body']
+    }
+
+    getFaceURL(){
+        return bitmojiService.getAvatarImage(this.data, this.gender,'face' )
+    }
+
+    getFace() {
+        const PIXI = require("pixi.js");
+
+        if ( this.cache['full-body'] == undefined ) {
+            let sprite = new PIXI.Container()
+
+            let av = PIXI.Sprite.from(this.getFaceURL())
+            av.scale.set(0.8,0.8)
+            av.position.x = 0
+            av.position.y = 0
+            sprite.addChild(av)
+            sprite.width  = av.width
+            sprite.position.set(50, 0)
 
             this.cache['full-body'] = sprite
         }
