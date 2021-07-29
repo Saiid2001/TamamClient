@@ -74,7 +74,7 @@ const posesPerSection = {
 const STYLE = 'cm'
 let currSec = ''
 const libmoji = require('libmoji')
-
+const  bitmojiService= require('../../services/bitmoji-service')
 function initAvatarView(){
 
     const _traits = libmoji.getTraits(STATE.gender, STYLE)
@@ -119,75 +119,9 @@ function updateAvatar(data){
     const rotation =0;
     
     
-    let outfit = STATE.avatar.outfit.outfit.value
-    let traits = []
-
-    if(STATE.gender == 'male'){
-    traits = [
-            ["beard", STATE.avatar['face-features']['beard'].value], 
-            ["brow", STATE.avatar['face-features']['brow'].value], 
-            ["cheek_details", STATE.avatar['face-features']['cheek_details'].value], 
-            ["eye_details", STATE.avatar['face-features']['eye_details'].value], 
-            ["ear", STATE.avatar['face-features']['ear'].value],
-            ["eyelash", STATE.avatar['face-features']['eyelash'].value],
-            ["face_lines", -1],
-            ["glasses", STATE.avatar['outfit']['glasses'].value],
-            ["hair", STATE.avatar['face-features']['hair'].value],
-            ["hat", STATE.avatar['outfit']['hat'].value],
-            ["mouth",  STATE.avatar['face-features']['mouth'].value], 
-            ["nose",  STATE.avatar['face-features']['nose'].value],
-            ["beard_tone", STATE.avatar['face-features']['beard_tone'].value],
-            ["blush_tone", -1],
-            ["brow_tone", -1],
-            ["eyeshadow_tone", -1],
-            ["hair_tone", STATE.avatar['face-features']['hair_tone'].value],
-            ["hair_treatment_tone", -1],
-            ["lipstick_tone", -1],
-            ["pupil_tone",  STATE.avatar['face-features']['pupil_tone'].value],
-            ["skin_tone",  STATE.avatar['face-features']['skin_tone'].value],
-            ["body", STATE.avatar['body']['body'].value],
-            ["face_proportion", STATE.avatar['face-features']['face_proportion'].value],
-            ["eye_spacing", 1],
-            ["eye_size", 1],
-            ["jaw", 1392]
-        ];
-    }else{
-
-        if(!('breast' in STATE.avatar['body'])){
-            STATE.avatar['body']['breast'] = {value:1}
-        }
-
-    traits = [
-        ["brow", STATE.avatar['face-features']['brow'].value], 
-        ["cheek_details", STATE.avatar['face-features']['cheek_details'].value], 
-        ["ear", STATE.avatar['face-features']['ear'].value],
-        ["eye", 1621],
-        ["eyelash", STATE.avatar['face-features']['eyelash'].value],
-        ["eye_details", STATE.avatar['face-features']['eye_details'].value], 
-        ["face_lines", -1],
-        ["glasses", STATE.avatar['outfit']['glasses'].value],
-        ["hair", STATE.avatar['face-features']['hair'].value],
-        ["hat", STATE.avatar['outfit']['hat'].value],
-        ["jaw", 1412],
-        ["mouth",  STATE.avatar['face-features']['mouth'].value], 
-        ["nose",  STATE.avatar['face-features']['nose'].value],
-        ["blush_tone", -1],
-        ["brow_tone", -1],
-        ["eyeshadow_tone", -1],
-        ["hair_tone", STATE.avatar['face-features']['hair_tone'].value],
-        ["hair_treatment_tone", -1],
-        ["lipstick_tone", -1],
-        ["pupil_tone",  STATE.avatar['face-features']['pupil_tone'].value],
-        ["skin_tone",  STATE.avatar['face-features']['skin_tone'].value],
-        ["body", STATE.avatar['body']['body'].value],
-        ["breast", STATE.avatar['body']['breast'].value],
-        ["face_proportion", STATE.avatar['face-features']['face_proportion'].value],
-        ["eye_spacing", 1],
-        ["eye_size", 1]
-    ]
-    }
-    
-    document.getElementById('avatar').querySelector('img').setAttribute('src', libmoji.buildPreviewUrl(pose,scale,gender,style,rotation,traits,outfit))
+    document.getElementById('avatar').querySelector('img').setAttribute('src',
+        bitmojiService.getAvatarImage(STATE.avatar, STATE.gender, pose, scale)
+    )
     
 }
 

@@ -5,6 +5,7 @@ const envVariables = require("../config/settings.json");
 const keytar = require("keytar");
 const os = require("os");
 const {session} = require('electron')
+const $ = require('jquery')
 
 const { SERVER_ADDRESS, AUTHENTICATE_ADDRESS, REFRESH_ADDRESS } = envVariables;
 
@@ -71,6 +72,19 @@ async function refreshTokens() {
         throw new Error("No available refresh token.");
     }
 }
+function isNeedSignup(callbackURL){
+    const urlParts = url.parse(callbackURL, true);
+    const query = urlParts.query;
+
+    return query['request_signup']
+}
+
+function getSignupEmail(callbackURL){
+    const urlParts = url.parse(callbackURL, true);
+    const query = urlParts.query;
+
+    return query['email']
+}
 
 async function loadTokens(callbackURL) {
     const urlParts = url.parse(callbackURL, true);
@@ -124,6 +138,64 @@ function getLogOutUrl() {
     return `https://${auth0Domain}/v2/logout`;
 }
 
+function sendPersonalInfo(data, onSuccess= ()=>{}, onFail = ()=>{}){
+    
+    $.ajax(
+        {
+            type: "POST",
+            url: SERVER_ADDRESS+"/authenticate/request-signup",
+            dataType: "json",
+            success: function (msg, status, data) {
+                
+                onSuccess(data.responseJSON)
+                
+            },
+            error: function (msg){
+                console.error(msg)
+                onFail()
+            },
+ 
+            data: data
+        }
+    )
+}
+function finalizeSignup(data, onSuccess= ()=>{}, onFail = ()=>{}){
+    
+    $.ajax(
+        {
+            type: "POST",
+            url: SERVER_ADDRESS+"/authenticate/finalize-signup",
+            dataType: "json",
+            contentType: 'application/json',
+            success: function (msg, status, data) {
+                
+                onSuccess(data.responseJSON)
+                
+            },
+            error: function (msg){
+                console.error(msg)
+                onFail()
+            },
+ 
+            data: data
+        }
+    )
+}
+function getUserStatus(userId, onSuccess, onFail = () => { }) {
+    $.ajax({
+        type: 'GET',
+        method: 'GET',
+        url: SERVER_ADDRESS + "/users/get-user-status/"+userId,
+        success: function (message, status, data) {
+            console.log(data)
+            onSuccess(data.responseJSON)
+        },
+        error: function (message, status, data) {
+            onFail();
+        }
+    });
+}
+
 module.exports = {
     getAccessToken,
     getAuthenticationURL,
@@ -132,4 +204,9 @@ module.exports = {
     loadTokens,
     logout,
     refreshTokens,
+    isNeedSignup,
+    getSignupEmail,
+    sendPersonalInfo,
+    getUserStatus,
+    finalizeSignup
 };

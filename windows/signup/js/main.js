@@ -3,11 +3,26 @@
 
 let STATE = {}
 
+const { ipcRenderer } = require('electron');
+const $ = require('jquery');
+const authService = require('../../services/auth-service')
+
+function getUrlData() { // Taken from room/js/main, should globalize and make it an import later
+    const querystring = require('querystring');
+    let query = querystring.parse(global.location.search);
+    return JSON.parse(query['?data'])
+}
+
+let urlData = getUrlData();
+
 function init(){
 
     let sendBtn = document.querySelector('#personal-info-card .send-btn');
 
     sendBtn.onclick = sendPersonalInfo
+
+    const email = document.querySelector('#email input');
+    email.value = urlData['email']
 
 }
 
@@ -59,22 +74,41 @@ function sendPersonalInfo(){
 
     //ajax call
 
-    //for testing
-    onPersonalInfoSent()
-
-
+    authService.sendPersonalInfo(data, onPersonalInfoSent)
+    initEmailVerification()
 }
 
-function onPersonalInfoSent(){
-    
-    initEmailVerification()
+function onPersonalInfoSent(data){
+    STATE.userId = data['_id']
 }
 
 function initEmailVerification(){
     updateLoading(1)
     showCard('email-validation')
 
-    setTimeout(()=>{onEmailVerification(false)}, 180000)
+    let i ;
+
+    function checkUserStatus(){
+
+
+        if(!STATE.userId) return; 
+
+        authService.getUserStatus(STATE.userId,
+            (status)=>{
+                if(status['status'] == 'confirmed'){
+                    clearInterval(i);
+                    onEmailVerification(true)
+                }
+            }
+            )
+    }
+
+    i = setInterval(checkUserStatus, 3000)
+
+    setTimeout(()=>{
+        clearInterval(i)
+        onEmailVerification(false)
+    }, 180000)
 }
 
 function onEmailVerification(isVerified ){
@@ -208,7 +242,19 @@ function signup(){
 
 
     //send the data and signup
-
+    authService.finalizeSignup(
+        JSON.stringify({
+            '_id': STATE.userId, 
+            'data':{
+            'major': STATE.major,
+            'gender': STATE.gender,
+            'avatar': STATE.avatar,
+            'enrollY': parseInt(STATE.enrollY),
+            'gradY': parseInt(STATE.gradY)
+            }
+        }),
+        onSignup
+    )
 
     //on signup
     function onSignup(){
@@ -218,20 +264,12 @@ function signup(){
         document.getElementById('go-campus').onclick = (e)=>{
             // go to the map
 
-            e.preventDefault();
-        }
-
-        document.getElementById('go-friends').onclick = (e)=>{
-
-            //go to friends
+            ipcRenderer.send('go-to', 'login')
 
             e.preventDefault();
         }
     }
     
-    //for testing
-    onSignup();
-
 }
 
 document.addEventListener('DOMContentLoaded', () => {
