@@ -20,9 +20,10 @@ class GlobalMap {
 
         console.log(canvas.getBoundingClientRect().width);
 
+        _this.heightFactor = 0.485;
         let app = new PIXI.Application({
             width: canvas.getBoundingClientRect().width,
-            height: canvas.getBoundingClientRect().width * 3 / 4,
+            height: canvas.getBoundingClientRect().width * _this.heightFactor,
             autoResize: true,
             resolution: devicePixelRatio
         });
@@ -31,8 +32,7 @@ class GlobalMap {
 
         app.loader.add([
             bg,
-            './assets/map_pin.svg',
-            './assets/location_on.png'
+            './assets/map_pin.svg'
         ])
             .load(setup);
 
@@ -43,11 +43,12 @@ class GlobalMap {
             background.height = background.width * 3 / 4;
             app.stage.addChild(background);
 
-            function resize() {
-                app.renderer.resize(canvas.getBoundingClientRect().width, canvas.getBoundingClientRect().width * 3 / 4);
+            function resize(stage) {
+                
+                app.renderer.resize(canvas.getBoundingClientRect().width, canvas.getBoundingClientRect().width * _this.heightFactor);
 
-                let oldHeight = app.stage.height / app.stage.scale.y;
-                let oldWidth = app.stage.width / app.stage.scale.x;
+                let oldHeight = stage.height / stage.scale.y;
+                let oldWidth = stage.width / stage.scale.x;
                 let width = document.body.getBoundingClientRect().width;
                 let height = document.body.getBoundingClientRect().height;
 
@@ -57,12 +58,21 @@ class GlobalMap {
                 let minScale = Math.max(scaleX, scaleY)
 
 
-                app.stage.scale.set(minScale);
+                stage.scale.set(minScale);
+                
             }
 
+            _this.zoom = document.getElementById("zoom");
+
+            _this.resizeOverlay();
+
             window.addEventListener('resize', () => {
-                console.log(canvas.getBoundingClientRect().width, canvas.getBoundingClientRect().width * 3 / 4);
-                resize()
+
+                resize(app.stage);
+
+                _this.originalScale = app.stage.scale.x;
+                _this.rebound(app.stage);
+                _this.resizeOverlay();
             })
             let foreground;
 
@@ -77,46 +87,117 @@ class GlobalMap {
                 console.log(_this.users)
             })
              
-            
+            canvas.addEventListener("wheel", (event) => {
+                event.preventDefault();
+                if (event.deltaY < 0) {
+                    _this.zoomIn(event, app.stage);
+                } else {
+                    _this.zoomOut(event, app.stage);
+                }
+                _this.rebound(app.stage);
 
+            })
+
+            let mouseDown = false;
+
+            canvas.addEventListener("mousedown", () => {
+                mouseDown = true;
+            });
+
+            canvas.addEventListener("mouseup", () => {
+                mouseDown = false;
+                _this.rebound(app.stage);
+            });
+
+            canvas.addEventListener("mousemove", (event) => {
+                if (mouseDown) {
+                    _this.pan(event, app.stage);
+                }
+            });
+
+            _this.zoomin = document.getElementById("zoom-in");
+            _this.zoomout = document.getElementById("zoom-out");
+
+            _this.zoomin.addEventListener("click", (event) => {
+                _this.zoomIn(event, app.stage, true);
+                _this.rebound(app.stage);
+            });
+
+
+            _this.zoomout.addEventListener("click", (event) => {
+                _this.zoomOut(event, app.stage, false);
+                _this.rebound(app.stage);
+            });
         }
-
-
 
         this.app = app;
         this.canvas = canvas;
         this.mapRooms = {};
         this.curUsers = {};
+        this.scaleFactor = this.canvas.getBoundingClientRect().width / 2000;
+        this.originalScale = this.app.stage.scale.x;
     }
 
     addRoom(info, position) {
+
         let _this = this;
-        let scaleFactor = _this.canvas.getBoundingClientRect().width / 2000;
 
-        let roomPin = new PIXI.Sprite(_this.app.loader.resources['./assets/map_pin.svg'].texture);
-        roomPin.width = roomPin.texture.baseTexture.realWidth * scaleFactor;
-        roomPin.height = roomPin.texture.baseTexture.realHeight * scaleFactor;
+        this.mapRooms[info["_id"]] = {
+            roomContainer: new PIXI.Container(),
+            roomObjects: new PIXI.Container(),
+        };
 
-        this.mapRooms[info["_id"]] = new PIXI.Container();
-        let roomContainer = this.mapRooms[info["_id"]];
+        // Positioning main room container on map
+
+        let roomContainer = this.mapRooms[info["_id"]].roomContainer;
         roomContainer.interactive = true;
         roomContainer.buttonMode = true;
-        roomContainer.x = position.x * scaleFactor;
-        roomContainer.y = position.y * scaleFactor;
-        roomContainer.on('mousedown', () => {
+        roomContainer.x = position.x * _this.scaleFactor;
+        roomContainer.y = position.y * _this.scaleFactor;
+
+        // Creating room name text object, on mouseenter it is added to the room container, on mouseleave it is removed
+
+        this.mapRooms[info["_id"]].roomName = new PIXI.Text(info["name"], {
+            fontFamily: "Roboto",
+            fontSize: 36 * _this.scaleFactor,
+            fill: "white",
+            align: 'center',
+            fontWeight: 'bolder',
+            dropShadow: true,
+            dropShadowBlur: 15
+        });
+        let roomName = this.mapRooms[info["_id"]].roomName;
+        roomName.y = 55 * _this.scaleFactor;
+        roomName.x = -5 * _this.scaleFactor;
+        //roomContainer.addChild(roomName);
+
+        
+        // Creating events
+
+        roomContainer.on('click', () => {
             socket.connectSocket(() => {
                 socket.exitRoom("map");
             })
             if (info['name'] == "Main Gate") {
-
                 let r = ipcRenderer.send('go-to', 'lobby')
-
             } else {
-
-                let r = ipcRenderer.send('go-to-room', info['_id'], urlData)
-
+                openRoomPreview(info);
             }
         });
+        roomContainer.on('mouseover', () => {
+            _this.mapRooms[info["_id"]].roomContainer.addChild(_this.mapRooms[info["_id"]].roomName);
+        });
+        roomContainer.on('mouseout', () => {
+            _this.mapRooms[info["_id"]].roomContainer.removeChild(_this.mapRooms[info["_id"]].roomName);
+        });
+
+        // Filling up roomObjects container with avatars or roomPin then adding it to main roomContainer
+
+        let roomPin = new PIXI.Sprite(_this.app.loader.resources['./assets/map_pin.svg'].texture);
+        roomPin.width = roomPin.texture.baseTexture.realWidth * _this.scaleFactor;
+        roomPin.height = roomPin.texture.baseTexture.realHeight * _this.scaleFactor;
+
+        let roomObjects = this.mapRooms[info["_id"]].roomObjects;
 
         if (info['users'].length != 0) {
             for (let i = 0; i < info['users'].length; ++i) {
@@ -124,14 +205,16 @@ class GlobalMap {
                 let avatar = new Avatar(info['users'][i], userData);
                 this.curUsers[info['users'][i]] = avatar.getFullBody(true, false);
                 let avatarBody = this.curUsers[info['users'][i]];
-                avatarBody.scale.set(0.6 * scaleFactor);
-                avatarBody.position.x = (-(info['users'].length-1)/2 + i) * 32 * scaleFactor;
-                avatarBody.position.y = -75 * scaleFactor;
-                roomContainer.addChild(avatarBody);
+                avatarBody.scale.set(0.6 * _this.scaleFactor);
+                avatarBody.position.x = (-(info['users'].length-1)/2 + i) * 32 * _this.scaleFactor;
+                avatarBody.position.y = -75 * _this.scaleFactor;
+                roomObjects.addChild(avatarBody);
             }
         } else {
-            roomContainer.addChild(roomPin);
+            roomObjects.addChild(roomPin);
         }
+
+        roomContainer.addChild(roomObjects);
 
         console.log(this.curUsers);
 
@@ -152,23 +235,22 @@ class GlobalMap {
 
         let room = _this.rooms.find((room) => room["_id"] == roomID);
         if (room.users.length == 0) {
-            _this.mapRooms[roomID].removeChildren();
+            _this.mapRooms[roomID].roomObjects.removeChildren();
         }
 
-        let scaleFactor = _this.canvas.getBoundingClientRect().width / 2000;
-        let roomContainer = this.mapRooms[roomID];
-        let newLength = roomContainer.children.length + 1;
+        let roomObjects = this.mapRooms[roomID].roomObjects;
+        let newLength = roomObjects.children.length + 1;
         for (let i = 0; i < newLength - 1; ++i) {
-            roomContainer.children[i].position.x = (-(newLength - 1) / 2 + i) * 32 * scaleFactor;
+            roomObjects.children[i].position.x = (-(newLength - 1) / 2 + i) * 32 * _this.scaleFactor;
         }
 
         let avatar = new Avatar(user["_id"], user);
         this.curUsers[user["_id"]] = avatar.getFullBody(true, false);
         let avatarBody = this.curUsers[user["_id"]];
-        avatarBody.scale.set(0.6 * scaleFactor);
-        avatarBody.position.x = (-(newLength - 1) / 2 + newLength - 1) * 32 * scaleFactor;
-        avatarBody.position.y = -75 * scaleFactor;
-        roomContainer.addChild(avatarBody);
+        avatarBody.scale.set(0.6 * _this.scaleFactor);
+        avatarBody.position.x = (-(newLength - 1) / 2 + newLength - 1) * 32 * _this.scaleFactor;
+        avatarBody.position.y = -75 * _this.scaleFactor;
+        roomObjects.addChild(avatarBody);
     }
 
     removeUserFromRoom(user, roomID) {
@@ -179,19 +261,18 @@ class GlobalMap {
 
         if (user["_id"] in this.curUsers) {
 
-            let roomContainer = _this.mapRooms[roomID];
-            roomContainer.removeChild(this.curUsers[user["_id"]]);
+            let roomObjects = _this.mapRooms[roomID].roomObjects;
+            roomObjects.removeChild(this.curUsers[user["_id"]]);
 
-            let newLength = roomContainer.children.length;
-            let scaleFactor = _this.canvas.getBoundingClientRect().width / 2000;
+            let newLength = roomObjects.children.length;
             if (newLength == 0) {
                 let roomPin = new PIXI.Sprite(_this.app.loader.resources['./assets/map_pin.svg'].texture);
-                roomPin.width = roomPin.texture.baseTexture.realWidth * scaleFactor;
-                roomPin.height = roomPin.texture.baseTexture.realHeight * scaleFactor;
-                roomContainer.addChild(roomPin);
+                roomPin.width = roomPin.texture.baseTexture.realWidth * _this.scaleFactor;
+                roomPin.height = roomPin.texture.baseTexture.realHeight * _this.scaleFactor;
+                roomObjects.addChild(roomPin);
             } else {
                 for (let i = 0; i < newLength; ++i) {
-                    roomContainer.children[i].position.x = (-(newLength - 1) / 2 + i) * 32 * scaleFactor;
+                    roomObjects.children[i].position.x = (-(newLength - 1) / 2 + i) * 32 * _this.scaleFactor;
                 }
             }
             delete this.curUsers[user["_id"]];
@@ -226,5 +307,110 @@ class GlobalMap {
             foreground.addChild(roomContainer);
         })
         return foreground
+    }
+
+    zoomIn(event, stage, fromButton = false) {
+        let _this = this;
+        let delta = fromButton ? -1250 : event.deltaY;
+
+        // Transforming coordinates to new coordinate system
+        let appBounds = {
+            width: _this.canvas.getBoundingClientRect().width,
+            height: _this.canvas.getBoundingClientRect().height,
+        }
+        let offsetX = fromButton ? appBounds.width / 2 : event.offsetX;
+        let offsetY = fromButton ? appBounds.height / 2 : event.offsetY;
+        let stagePos1 = stage.toLocal(new PIXI.Point(offsetX, offsetY));
+
+        if (delta > -100) {
+            delta *= 5;
+        }
+        if (stage.scale.x * (1 - delta / 2500) <= _this.originalScale * 2) {
+            stage.scale.set(stage.scale.x * (1 - delta / 2500));
+        } else {
+            stage.scale.set(_this.originalScale * 2);
+        }
+        
+        let stagePos2 = stage.toLocal(new PIXI.Point(offsetX, offsetY));
+        stage.pivot.x -= stagePos2.x - stagePos1.x;
+        stage.pivot.y -= stagePos2.y - stagePos1.y;
+        
+    }
+
+    zoomOut(event, stage, fromButton = false) {
+        let _this = this;
+        let delta = fromButton ? 1250 : event.deltaY;
+
+        // Transforming coordinates to new coordinate system
+        let appBounds = {
+            width: _this.canvas.getBoundingClientRect().width,
+            height: _this.canvas.getBoundingClientRect().height,
+        }
+        let offsetX = fromButton ? appBounds.width / 2 : event.offsetX;
+        let offsetY = fromButton ? appBounds.height / 2 : event.offsetY;
+        let stagePos1 = stage.toLocal(new PIXI.Point(offsetX, offsetY));
+
+        if (delta < 100) {
+            delta *= 5;
+        }
+        if (stage.scale.x / (1 + delta / 2500) > _this.originalScale) {
+            stage.scale.set(stage.scale.x / (1 + delta / 2500));
+        } else {
+           stage.scale.set(_this.originalScale);
+        }
+        
+        let stagePos2 = stage.toLocal(new PIXI.Point(offsetX, offsetY));
+        stage.pivot.x -= stagePos2.x - stagePos1.x;
+        stage.pivot.y -= stagePos2.y - stagePos1.y;
+        
+ 
+    }
+
+    rebound(stage) {
+        let _this = this;
+        let stageBounds = stage.getBounds();
+        let appBounds = {
+            width: _this.canvas.getBoundingClientRect().width,
+            height: _this.canvas.getBoundingClientRect().height,
+        }
+
+        if (stageBounds.x > 0) {
+            stage.x -= stageBounds.x;
+
+        } else if (stageBounds.x + stageBounds.width < appBounds.width) {
+            stage.x += appBounds.width - (stageBounds.x + stageBounds.width);
+        }
+        if (stageBounds.y > 0) {
+            stage.y -= stageBounds.y;
+
+        } else if (stageBounds.y + stageBounds.height < appBounds.height) {
+            stage.y += appBounds.height - (stageBounds.y + stageBounds.height);
+        }
+
+    }
+
+    pan(event, stage) {
+        let _this = this;
+        let stageBounds = stage.getBounds();
+        let appBounds = {
+            width: _this.canvas.getBoundingClientRect().width,
+            height: _this.canvas.getBoundingClientRect().height,
+        }
+        let panCst = 2.5;
+        if ((stageBounds.x <= 0 || stageBounds.x > 0 && event.movementX < 0) && (stageBounds.x + stageBounds.width >= appBounds.width || stageBounds.x + stageBounds.width < appBounds.width && event.movementX > 0)) {
+            stage.x += event.movementX / (panCst);
+        }
+        if ((stageBounds.y <= 0 || stageBounds.y > 0 && event.movementY < 0) && (stageBounds.y + stageBounds.height >= appBounds.height || stageBounds.y + stageBounds.height < appBounds.height && event.movementY > 0)) {
+            stage.y += event.movementY / (panCst);
+        }
+
+        _this.rebound(stage);
+    }
+
+    resizeOverlay() {
+        let _this = this;
+        _this.zoom.style.left = `${_this.canvas.getBoundingClientRect().width - 120}px`;
+        _this.zoom.style.top = `${_this.canvas.getBoundingClientRect().width * _this.heightFactor - 70}px`;
+        
     }
 }

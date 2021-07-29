@@ -1,3 +1,5 @@
+@import url('../node_modules/@fontsource/roboto/latin.css');
+
 body {
     background: linear-gradient(90.76deg, #00836B 0.6%, #006383 99.35%);
     margin: 0;
@@ -80,6 +82,7 @@ button{
 
 :root {
     --main-green: #00B494;
+    --dark-main-green: #009474;
     --main-blue: #0082AA;
     --main-red: #EC4B4B;
     --light-grey: #e9e9e9;
