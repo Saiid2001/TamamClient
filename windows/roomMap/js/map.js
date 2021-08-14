@@ -14,7 +14,7 @@ class GlobalMap {
         rooms.getRooms({ 'open': '' }, (rooms) => {
             _this.rooms = rooms;
         });
-        users.getAllUsers((users) => {
+        users.getFriends((users) => {
             _this.users = users
         })
 
@@ -62,17 +62,13 @@ class GlobalMap {
                 
             }
 
-            _this.zoom = document.getElementById("zoom");
-
-            _this.resizeOverlay();
-
             window.addEventListener('resize', () => {
 
                 resize(app.stage);
 
                 _this.originalScale = app.stage.scale.x;
                 _this.rebound(app.stage);
-                _this.resizeOverlay();
+
             })
             let foreground;
 
@@ -407,10 +403,4 @@ class GlobalMap {
         _this.rebound(stage);
     }
 
-    resizeOverlay() {
-        let _this = this;
-        _this.zoom.style.left = `${_this.canvas.getBoundingClientRect().width - 120}px`;
-        _this.zoom.style.top = `${_this.canvas.getBoundingClientRect().width * _this.heightFactor - 70}px`;
-        
-    }
 }

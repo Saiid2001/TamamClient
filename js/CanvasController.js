@@ -130,5 +130,12 @@ class Avatar{
         return this.cache['full-body']
     }
 
+    getHeadUrl() {
+        return bitmojiService.getAvatarImage(this.data, this.gender, 'head');
+    }
+
+    getBodyUrl() {
+        return bitmojiService.getAvatarImage(this.data, this.gender, 'body');
+    }
 }
 

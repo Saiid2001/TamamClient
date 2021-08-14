@@ -21,15 +21,6 @@
     </div>
     <div class="view">
         <div class="recommended">
-            <h1 id="cards-label">Recommended rooms</h1>
-            <div class="cards">
-                <!--<div class="room">
-                    <div>
-                        <h1><img src="./assets/location_on.png" /> Jaffet</h1>
-                        <p>12/30 <img src="./assets/supervisor_account.png" /></p>
-                    </div>
-                </div>-->
-            </div>
         </div>
         <div class="map">
             <div id="map-overlay">
@@ -46,8 +37,32 @@
 
             <div id="map"></div>
         </div>
+
         <div class="list" hidden>
             <h1>Room lists</h1>
+        </div>
+
+        <div id="friends-bar-btn">
+            <img src="../../assets/img/friends_bar/people.svg" />
+            <p>Connections</p>
+        </div>
+
+        <div id="friends-bar">
+            <img id="close-btn" src="../../assets/img/friends_bar/right_pointer.svg" />
+            <h1>Connections</h1>
+            <img id="friends-icon" src="../../assets/img/friends_bar/people.svg" />
+            <div class="search">
+                <img src="../../assets/img/friends_bar/search_green.svg" />
+                <input type="search" name="connections" placeholder="Find connected people" />
+            </div>
+            <p id="friends-list-type">On campus friends</p>
+            <div id="friends-list">
+                <div id="online-friends"></div>
+                <div id="offline-friends" style="display:none"></div>
+            </div>
+            <a id="show-friends" href="javascript:void(0)">view all friends</a>
+            <p>Connection requests</p>
+            <div id="requests-list"></div>
         </div>
     </div>
 
@@ -59,15 +74,13 @@
         <p hidden>Some info about Jaffet</p>
         <div class='people'>
             <div class='friends'>
-                <img src = '../../assets/img/avatars_gen1/user_0.png'>
-                <img src = '../../assets/img/avatars_gen1/user_1.png'>
             </div>
             <div class='num-people' hidden>
                 + 24 others
             </div>
         </div>
 
-        <button>Enter Room</button>
+        <button>Enter ></button>
     </div>
     </div>
 
@@ -77,6 +90,7 @@
     <script src="js/room-list.js"></script>
     <script src="js/map.js"></script>
     <script src="js/main.js"></script>
+    <script src="js/friends-bar.js"></script>
 
     <!--<script src="js/canvas.js"></script>
     <script src="js/lobby.js"></script>

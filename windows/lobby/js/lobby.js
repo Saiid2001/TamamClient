@@ -19,6 +19,10 @@ document.addEventListener('DOMContentLoaded', () => {
     
     canvasController = new CanvasController(new Canvas())
 
+    let mapButton = document.getElementById('map');
+    mapButton.addEventListener('click', () => {
+        ipcRenderer.send('go-to-roommap', 'default', '');
+    });
 
     function onRoom(roomId) {
         socket.connectSocket(() => {
