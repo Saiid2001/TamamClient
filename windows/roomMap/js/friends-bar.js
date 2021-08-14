@@ -74,7 +74,10 @@ function createRequestEntry(user, requestslist) {
             console.log(data);
             if (data == "Friend request accepted") {
                 acceptRequest.remove();
-                requestentry.innerHTML += `<p>Friend request accepted.</p>`;
+                requestentry.innerHTML += `<p>Friend request<br>accepted.</p>`;
+                window.setTimeout(() => {
+                    requestentry.style.display = "none";
+                }, 3000)
             }
         })
     })
@@ -125,7 +128,7 @@ function changeStatusDot(userID, status) {
     if (status == "online") {
         statusDot.src = "../../assets/img/friends_bar/greendot.svg";
     } else {
-        statusDot.src = "../../assets/img/friends_bar/grerdot.svg";
+        statusDot.src = "../../assets/img/friends_bar/greydot.svg";
     }
 }
 

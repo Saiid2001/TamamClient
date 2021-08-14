@@ -371,6 +371,11 @@
 }
 
 .friend-entry>p {
+    position: absolute;
+    left: 70%;
+    bottom: 0%;
+    font-size: 85%;
+    text-align: center;
     color: var(--dark-main-green);
 }
 
