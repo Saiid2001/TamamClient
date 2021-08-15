@@ -26,6 +26,8 @@ function getUserData(onSuccess, onFail = () => { }) {
     });
 }
 
+
+
 function getFriendsOnline(room = null, onSuccess, onFail = () => { }) {
     let token = ipcRenderer.sendSync('get-access-token');
     
