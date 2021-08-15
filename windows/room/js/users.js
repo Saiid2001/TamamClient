@@ -10,7 +10,21 @@ class User {
         this.lastName = config.lastName
         this.avatar = new Avatar(config._id, config)
         this.group = config.group ? config.group : "NONE";
+        this.major = config.major;
+        this.enrollY = config.enrollY;
+        this.gradY = config.gradY;
         console.log("config:", config)
+
+        var _this = this
+
+        this.avatar.onClick = ()=>{
+            UserHoverView.show(UserHoverView._getBestPosition(),_this)
+        }
+
+        this.onOut = ()=>{
+            UserHoverView.hide();
+        }
+
     }
 
 
@@ -41,6 +55,8 @@ class MyUser extends User {
         } else {
             myConversationInterface.close()
         }
+
+        this.onOut();
     }
 
     removeFromGroup() {
@@ -49,6 +65,8 @@ class MyUser extends User {
 
         // close the meeting interface
         myConversationInterface.close()
+
+        this.onOut();
         
     }
 }

@@ -54,6 +54,9 @@ class Avatar{
         this.gender = userData.gender
         this.name = userData['firstName']
         this.cache = {}
+        this.onHover = ()=>{}
+        this.onMouseOut = ()=>{}
+        this.onClick = ()=>{}
     }
 
     getFullBodyURL(){
@@ -66,6 +69,7 @@ class Avatar{
         if ( this.cache['full-body'] == undefined ) {
             let sprite = new PIXI.Container()
 
+            let _this = this;
             let av = PIXI.Sprite.from(this.getFullBodyURL())
             av.scale.set(0.8,0.8)
             av.position.x = -50
@@ -113,17 +117,20 @@ class Avatar{
             //     // sprite.on('mousedown', () => {
             //     //     document.dispatchEvent(new CustomEvent('request-call', { detail: { UID: this.userID } }))
             //     // })
-            //     sprite.on('mouseover', () => {
-                    
-            //         sprite.addChild(nameCage)
-            //         console.log(sprite)
+                sprite.interactive=true
+                //  sprite.on('mouseover', () => {
+                //      _this.onHover();
 
-            //     })
-            //     sprite.on('mouseout', () => {
+                //  })
+                //  sprite.on('mouseout', () => {
 
-            //         sprite.removeChild(nameCage)
+                //      _this.onMouseOut();
 
-            //     })
+                //  })
+
+                sprite.on('click', ()=>{
+                    _this.onClick();
+                })
             // }
 
             this.cache['full-body'] = sprite

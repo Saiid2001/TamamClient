@@ -26,7 +26,6 @@ function getUserData(onSuccess, onFail = () => { }) {
     });
 }
 
-
 function getAllUsers(onSuccess, params = null, onFail = () => { }) {
 
     let paramString = "";
@@ -54,7 +53,6 @@ function getAllUsers(onSuccess, params = null, onFail = () => { }) {
         }
     });
 }
-
 
 function getFriends(onSuccess, room = null, onFail = () => { }) {
     let token = ipcRenderer.sendSync('get-access-token');

@@ -6,6 +6,8 @@ const { logout } = require('../../services/auth-service')
 
 const { getUserData } = require('../../services/user-service')
 
+const $ = require('jquery');
+
 let roomData = null;
 let myRoom;
 
@@ -18,6 +20,12 @@ function getUrlData() {
 let urlData = getUrlData();
 
 document.addEventListener('DOMContentLoaded', () => {
+
+
+    $('#user-hover-view').load('../../widgets/hover_view/user_hover.html',()=>{
+        UserHoverView.init();
+    })
+    
 
 
     getUserData(myUserData => {
