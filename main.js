@@ -119,14 +119,14 @@ async function createAuthWindow(win) {
             //check if needs signup
             if(!authService.isNeedSignup(url)){
                 await authService.loadTokens(url);
-                return goTo('roomMap', { source: 'recommendation', 'extra-params': '' });
+                return goTo('roomMap', { source: 'default', 'extra-params': '' });
             }else{
                 let email = authService.getSignupEmail(url);
                 goTo('signup', {'email': email});
             }
         });
         win.on('authenticated', () => {
-            goTo('roomMap', { source: 'recommendation', 'extra-params': '' });
+            goTo('roomMap', { source: 'default', 'extra-params': '' });
         });
     })
 

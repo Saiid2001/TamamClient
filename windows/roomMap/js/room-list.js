@@ -21,15 +21,19 @@ const THUMBNAILS = {
 }
 
 
-function showRooms(container, rooms, label) {
+function showRooms(container, roomList, label) {
 
     container.innerHTML = `<div class="cardview">
                                 <img class="buildingimg" src="./assets/building_icon.svg" />
                                 <h1 class="label">${label}</h1>
+                                <div class="search">
+                                    <img src="../../assets/img/search.svg" />
+                                    <input type="search" name="rooms" placeholder="Find rooms or people on campus" />
+                                </div>
                                 <div class="cards"></div>
                            </div>`;
     let cards = document.querySelector(".cardview .cards");
-    rooms.forEach((room, i) => {
+    roomList.forEach((room, i) => {
 
         
         let box = document.createElement('div')
@@ -39,7 +43,7 @@ function showRooms(container, rooms, label) {
                             <p>${room['users'].length}/${room['maxCapacity']} <img src="./assets/supervisor_account.png" /></p>
                          </div>`;
 
-        box.style.backgroundImage = 'linear-gradient(180deg, rgba(0, 255, 210, 0.24) 0%, rgba(0, 163, 255, 0.880208) 100%), url(\'' + THUMBNAILS['thumbnail' in room? room['thumbnail']['id'] : 'default'].image + '\')'
+        box.style.backgroundImage = 'linear-gradient(180deg, rgba(0, 255, 210, 0.24) 0%, rgba(0, 163, 255, 0.98) 100%), url(\'' + THUMBNAILS['thumbnail' in room? room['thumbnail']['id'] : 'default'].image + '\')'
         if (room['name'] == "Main Gate") {
             box.onclick = () => {
                 let r = ipcRenderer.send('go-to', 'lobby')
@@ -57,11 +61,26 @@ function showRooms(container, rooms, label) {
     })
 
     document.querySelector(".cardview .buildingimg").addEventListener('click', () => {
-        showSearch(container, rooms);
+        showSearch(container);
     })
+
+    let searchbar = document.querySelector(".cardview .search input");
+    let searchbtn = document.querySelector(".cardview .search img");
+
+    searchbtn.addEventListener('click', () => {
+        rooms.getRooms({ 'open': '' }, (rooms) => {
+            showRooms(container, searchRooms(rooms, searchbar.value), `Search results for "${searchbar.value}"`);
+        });
+    });
+
+    searchbar.addEventListener('search', () => {
+        rooms.getRooms({ 'open': '' }, (rooms) => {
+            showRooms(container, searchRooms(rooms, searchbar.value), `Search results for "${searchbar.value}"`);
+        });
+    });
 }
 
-function showSearch(container, rooms) {
+function showSearch(container) {
     container.innerHTML = 
     `<div class="default">
         <img class="buildingimg" src="./assets/building_icon.svg" />
@@ -77,11 +96,15 @@ function showSearch(container, rooms) {
     let searchbar = document.querySelector(".default .search input");
     
     searchbtn.addEventListener('click', () => {
-        showRooms(container, searchRooms(rooms, searchbar.value), `Results for search: ${searchbar.value}`);
+        rooms.getRooms({ 'open': '' }, (rooms) => {
+            showRooms(container, searchRooms(rooms, searchbar.value), `Search results for "${searchbar.value}"`);
+        });
     });
 
     searchbar.addEventListener('search', () => {
-        showRooms(container, searchRooms(rooms, searchbar.value), `Results for search: ${searchbar.value}`);
+        rooms.getRooms({ 'open': '' }, (rooms) => {
+            showRooms(container, searchRooms(rooms, searchbar.value), `Search results for "${searchbar.value}"`);
+        });
     });
 
 }
@@ -100,7 +123,6 @@ function searchRooms(rooms, searchQuery) {
         if (searchedRooms.find((room) => room.name == "Main Gate") == undefined) {
             searchedRooms.unshift(rooms.find((room) => room.name == "Main Gate"));
         }
-        console.log(searchedRooms);
         return searchedRooms;
     } else {
         return rooms;

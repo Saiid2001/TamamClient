@@ -35,19 +35,26 @@ function createFriendEntry(user, onlinefriends, offlinefriends) {
         nameplate.innerHTML += `<img class="status-dot" src="../../assets/img/friends_bar/greydot.svg" />`;
     }
     friendentry.appendChild(nameplate);
-    friendentry.innerHTML += `<img class="msg" src="../../assets/img/friends_bar/msg_grey.svg" />
-                              <img class="location" src="../../assets/img/friends_bar/pin_grey.svg" />`;
+    friendentry.innerHTML += //`<img class="msg" src="../../assets/img/friends_bar/msg_grey.svg" />
+                              `<img class="location" src="../../assets/img/friends_bar/pin_grey.svg" />`;
     if (user["onlineStatus"] == "online") {
         onlinefriends.appendChild(friendentry);
     } else {
         offlinefriends.appendChild(friendentry);
     }
 
-    let tempRequestSender = document.querySelector(`#id-${user["_id"]}`);
-    tempRequestSender.addEventListener("click", () => {
-        users.sendFriendRequest(user["_id"], (data) => {
-            console.log(data);
-        })
+    //let tempRequestSender = document.querySelector(`#id-${user["_id"]}`);
+    //tempRequestSender.addEventListener("click", () => {
+    //    users.sendFriendRequest(user["_id"], (data) => {
+    //        console.log(data);
+    //    })
+    //})
+
+    let location = document.querySelector(`#id-${user["_id"]} .location`);
+    location.addEventListener("click", () => {
+        users.getAllUsers((users) => {
+            ipcRenderer.send('go-to-room', users[0]["room"], { 'source': 'default', 'extraParams': '' });
+        }, {"_id": user["_id"]})
     })
 }
 
@@ -72,13 +79,11 @@ function createRequestEntry(user, requestslist) {
     acceptRequest.addEventListener("click", () => {
         users.acceptFriendRequest(user["_id"], (data) => {
             console.log(data);
-            if (data == "Friend request accepted") {
-                acceptRequest.remove();
-                requestentry.innerHTML += `<p>Friend request<br>accepted.</p>`;
-                window.setTimeout(() => {
-                    requestentry.style.display = "none";
-                }, 3000)
-            }
+            acceptRequest.remove();
+            requestentry.innerHTML += `<p>Friend request<br>accepted.</p>`;
+            window.setTimeout(() => {
+                requestentry.style.display = "none";
+            }, 3000)
         })
     })
 }

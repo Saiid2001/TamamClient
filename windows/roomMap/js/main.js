@@ -25,11 +25,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
         } else if (urlData['source'] == 'search') { 
 
-            showRooms(document.querySelector('.recommended'), searchRooms(rooms, urlData['extra-params']), `Results for search: ${urlData['extra-params']}`)
+            showRooms(document.querySelector('.recommended'), searchRooms(rooms, urlData['extra-params']), `Search results for "${urlData['extra-params']}"`)
 
         } else if (urlData['source'] == 'default') {
             
-            showSearch(document.querySelector('.recommended'), rooms);
+            showSearch(document.querySelector('.recommended'));
 
         }
     })
@@ -51,6 +51,18 @@ document.addEventListener('DOMContentLoaded', () => {
                 console.log(`User ${data.user} left room ${data.room}`);
                 map.removeUserFromRoom(data.user, data.room);
             }
+        })
+
+        socket.getSocket().on('new-friend-request', (data) => {
+            console.log('new friend request')
+            users.getAllUsers((users) => {
+                createRequestEntry(users[0], requestslist);
+            }, { "_id": data['user'] });
+        })
+
+        socket.getSocket().on('friend-request-accepted', (data) => {
+            console.log('friend request has been accepted')
+            initializeLists(onlinefriends, offlinefriends, requestslist);
         })
 
         socket.enterMap();

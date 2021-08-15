@@ -27,12 +27,21 @@ function getUserData(onSuccess, onFail = () => { }) {
 }
 
 
-function getAllUsers(onSuccess, onFail = () => { }) {
+function getAllUsers(onSuccess, params = null, onFail = () => { }) {
+
+    let paramString = "";
+    if (params) {
+        paramString = `?`;
+        for (let param in params) {
+            paramString += `${param}=${params[param]}&`
+        }
+    }
+
     let token = ipcRenderer.sendSync('get-access-token');
     $.ajax({
         type: 'GET',
         method: 'GET',
-        url: SERVER_ADDRESS + "/users/get-users",
+        url: SERVER_ADDRESS + "/users/get-users" + paramString,
         headers: { 'Authorization': "Bearer " + token },
         success: function (message, status, data) {
             onSuccess(data.responseJSON);
