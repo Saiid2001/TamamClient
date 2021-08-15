@@ -1,4 +1,4 @@
-const {getFriendsOnline} = require('../../services/user-service')
+const {getFriends} = require('../../services/user-service')
 
 var roomPreview = document.querySelector('.room-card-overlay')
 
@@ -25,14 +25,17 @@ function openRoomPreview(room){
 
     var friendContainer = roomPreview.querySelector('.people .friends')
     friendContainer.innerHTML = ""
-    getFriendsOnline(room['_id'], friends=>{
+    getFriends(friends=>{
         friends.forEach(friend=>{
             elem = document.createElement('img')
-            elem.id = 'avatar-'+friend.id
-            elem.setAttribute('src','../../assets/img/avatars_gen1/'+Avatar.VARIANTS[friend.avatar.index])
+            elem.id = 'avatar-' + friend.id
+            let avatar = new Avatar(friend.id, friend);
+            elem.setAttribute('src', avatar.getBodyUrl());
+            elem.style.width = '30%';
+            elem.style.height = 'auto';
             friendContainer.appendChild(elem)
         })
-    })
+    }, room['_id'])
     
 
     var img = roomPreview.querySelector('.thumbnail img')

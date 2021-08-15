@@ -1,0 +1,234 @@
+#user-hover-view{
+    
+    width:17rem;
+    height: max-content;
+    position: fixed;
+    z-index: 20;
+    transform: scale(0.7);
+}
+
+#user-hover-view .round{
+    width: 2.7rem;
+    height: 2.7rem;
+    border-radius: 50%;
+    overflow: hidden;
+}
+#user-hover-view .round img{
+    width: 100%;
+}
+
+
+#user-hover-view h1{
+    font-size: 1rem;
+    font-weight: bolder;
+    margin: 0;
+    color: var(--main-blue);
+}
+
+#user-hover-view>header{
+    border-top-left-radius: 1rem;
+    border-top-right-radius: 1rem;
+
+    background-color: white;
+
+    display: grid;
+    grid-template-columns: min-content auto min-content;
+    align-content: center;
+    align-items: center;
+    padding: 5%;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+#user-hover-view .profileImage{
+    background-color: var(--main-blue);
+}
+
+#user-hover-view .nameGroup{
+    margin-left: 1rem;
+}
+
+#user-hover-view .cta{
+    background-color: var(--main-green);
+    padding: 20%;
+}
+
+#user-hover-view>main{
+    background-color: #F0F0F0;
+    padding: 1%;
+
+    width: 100%;
+    box-sizing: border-box;
+    
+}
+
+#user-hover-view>footer{
+    background-color: #F0F0F0;
+
+    border-bottom-left-radius: 1rem;
+    border-bottom-right-radius: 1rem;
+    width: 100%;
+    box-sizing: border-box;
+
+    display: grid;
+    
+}
+
+#user-hover-view .section{
+    background-color: #FAFAFA ;
+
+    border-radius: 0.5rem;
+    padding: 3%;
+    margin:2%;
+    width: max(max-content, 100%);
+    box-sizing: border-box;
+}
+
+
+#user-hover-view .section .summary:not(.section-row){
+    display: none;
+}
+
+#user-hover-view .section-row,#user-hover-view .summary{
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    box-sizing: border-box;
+}
+
+
+#user-hover-view .section-row p,#user-hover-view .summary p{
+   margin:0;
+   font-size: 0.8rem;
+   width: max-content;
+}
+
+
+#user-hover-view .section-row>img, #user-hover-view .summary>img{
+    height: 1.5rem;
+}
+
+#user-hover-view em,#user-hover-view a{
+    color:var(--main-green);
+    font-weight: bold;
+    font-style: normal;
+}
+
+#user-hover-view .section-row h2{
+    font-size: 0.8rem;
+    color:var(--main-green);
+    margin:0;
+}
+
+#user-hover-view .bubbles{
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+}
+
+#user-hover-view .bubble{
+    position: relative;
+}
+
+#user-hover-view .bubble small{
+    font-size: 0.5rem;
+    width: 100%;
+    text-align: center;
+    display: inline-block;
+    margin: 0;
+}
+
+#user-hover-view .user-bubble .online{
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    position: absolute;
+    right: 0;
+    top:60%;
+    background-color:var(--main-green);
+}
+
+
+
+#user-hover-view .course-bubble .round,#user-hover-view .activity-bubble .round{
+    
+    display: grid;
+}
+
+#user-hover-view .course-bubble .round{
+    background-color: #B9EEE5;
+}
+
+#user-hover-view .activity-bubble .round{
+    background-color: #C9F2FF;
+}
+
+#user-hover-view .course-bubble .round img,#user-hover-view .activity-bubble .round img{
+    width: 1.5rem;
+    margin: auto;
+}
+
+
+#user-hover-view button.bubble{
+    background-color: var(--main-blue);
+    color: white;
+    font-weight: bolder;
+    line-height: 0;
+    font-size: 1rem;
+}
+
+#user-hover-view button{
+    background-color: transparent;
+    
+}
+
+#user-hover-view>footer button{
+    height: 2rem;
+    transform: rotate(180deg);
+    
+    transition: transform 0.5s ease-in-out;
+}
+#user-hover-view>footer button img{
+    height: 100%;
+}
+
+#user-hover-view.compact .section .summary:not(.section-row), #user-hover-view.compact .section .summary{
+    display: flex;
+}
+
+#user-hover-view.compact .section .section-row:not(.summary){
+    display: none;
+}
+
+#user-hover-view.compact>footer button{
+    height: 2rem;
+    transform: rotate(0deg);
+    transition: transform 0.5s ease-in-out;
+}
+
+#user-hover-view.compact .summary{
+    text-align: right;
+}
+#user-hover-view.compact .section{
+    margin-bottom: 0.01rem;
+}
+
+
+#user-hover-view.compact .section[data-section="interests"] .summary,
+#user-hover-view.compact .section[data-section="friends"] .summary {
+    flex-direction: column;
+}
+
+#user-hover-view.compact .section[data-section="interests"],
+#user-hover-view.compact .section[data-section="friends"]{
+    width: 50%;
+    display: inline-block;
+}
+
+#user-hover-view.compact .section[data-section="interests"]{
+    margin-left: -0.5rem;
+}
+#user-hover-view.compact .section[data-section="friends"]{
+    margin-right: -0.5rem;
+}
