@@ -1,4 +1,3 @@
-const Fuse = require('fuse.js');
 const socket = require('../../services/socket-service');
 
 
@@ -19,33 +18,19 @@ document.addEventListener('DOMContentLoaded', () => {
 
     console.log(urlData['source']);
     rooms.getRooms({ 'open': '' }, (rooms) => {
-        if (urlData['source'] == 'recommendation') {
-            console.log(rooms);
-            showRooms(document.querySelector('.recommended .cards'), rooms);
 
-        } else if (urlData['source'] == 'search') { // NEW: Display cards after Fuse search
-            console.log(rooms);
-            document.getElementById('cards-label').innerHTML = `Results for search: ${urlData['extra-params']}`;
-            const searchOptions = {
-                keys: ['name'],
-            };
-            let searchQuery = urlData['extra-params'];
-            if (!(searchQuery == '')) {
-                let fuseObject = new Fuse(rooms, searchOptions);
-                let searchResult = fuseObject.search(searchQuery);
-                let searchedRooms = [];
-                for (let entry of searchResult) {
-                    searchedRooms.push(entry.item);
-                }
-                if (searchedRooms.find((room) => room.name == "Main Gate") == undefined) {
-                    searchedRooms.unshift(rooms.find((room) => room.name == "Main Gate"));
-                }
-                console.log(searchedRooms);
-                showRooms(document.querySelector('.recommended .cards'), searchedRooms);
-            } else {
-                showRooms(document.querySelector('.recommended .cards'), roomList);
-            }
-            //map.addRooms(rooms);
+        if (urlData['source'] == 'recommendation') {
+
+            showRooms(document.querySelector('.recommended'), rooms, `Recommended Rooms`);
+
+        } else if (urlData['source'] == 'search') { 
+
+            showRooms(document.querySelector('.recommended'), searchRooms(rooms, urlData['extra-params']), `Search results for "${urlData['extra-params']}"`)
+
+        } else if (urlData['source'] == 'default') {
+            
+            showSearch(document.querySelector('.recommended'));
+
         }
     })
 
@@ -68,7 +53,20 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         })
 
+        socket.getSocket().on('new-friend-request', (data) => {
+            console.log('new friend request')
+            users.getAllUsers((users) => {
+                createRequestEntry(users[0], requestslist);
+            }, { "_id": data['user'] });
+        })
+
+        socket.getSocket().on('friend-request-accepted', (data) => {
+            console.log('friend request has been accepted')
+            initializeLists(onlinefriends, offlinefriends, requestslist);
+        })
+
         socket.enterMap();
     });
+
     
 })

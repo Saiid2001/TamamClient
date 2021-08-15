@@ -110,6 +110,12 @@ body{
     margin: 0px;
 }
 
+.side-bar footer img {
+    position: relative;
+    display: inline;
+    cursor: pointer;
+}
+
 
 .top-menu{
     display:flex;
