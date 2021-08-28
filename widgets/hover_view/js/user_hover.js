@@ -45,7 +45,7 @@ const UserHoverView = {
         user
     ){
 
-        if(user.id == myUser.id) return;
+        //if(user.id == myUser.id) return;
         var container = document.getElementById('user-hover-view')
 
         container.style.top = position.y+"px";
@@ -57,7 +57,11 @@ const UserHoverView = {
         UserHoverView.isVisible =true;
         setTimeout(
             ()=>{window.addEventListener('click', UserHoverView._checkOutMouse)}
-            ,200)
+            , 200)
+
+        container.querySelector('.cta').addEventListener('click', () => {
+            UserHoverView.sendRequest(user);
+        })
 
 
     },
@@ -75,7 +79,7 @@ const UserHoverView = {
         var container = document.getElementById('user-hover-view')
         container.querySelector('.firstName').innerHTML = data.firstName;
         container.querySelector('.lastName').innerHTML = data.lastName;
-        container.querySelector('.profileImage img').src = data.avatar.getFaceURL();
+        container.querySelector('.profileImage img').src = data.avatar.getHeadUrl();
 
         let major = UserHoverView.MAJORS[data.major]
         let standing = UserHoverView.STANDINGS[(new Date()).getFullYear() - data.enrollY]
@@ -175,8 +179,11 @@ const UserHoverView = {
     },
      
 
-    sendRequest: function(){
+    sendRequest: function(user){
         //add the script here to send request
+        userService.sendFriendRequest(user.id, () => {
+            console.log("sent request");
+        })
 
         var container = document.getElementById('user-hover-view')
         container.querySelector('.cta').setAttribute('hidden', '')

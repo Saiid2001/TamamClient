@@ -32,6 +32,7 @@ function openRoomPreview(room){
             let avatar = new Avatar(friend.id, friend);
             elem.setAttribute('src', avatar.getBodyUrl());
             elem.style.width = '30%';
+            elem.style["margin-left"] = "-7%"
             elem.style.height = 'auto';
             friendContainer.appendChild(elem)
         })

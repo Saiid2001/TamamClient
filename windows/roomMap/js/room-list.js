@@ -21,18 +21,11 @@ const THUMBNAILS = {
 }
 
 
-function showRooms(container, roomList, label) {
+function showRooms(cardsContainer, roomList, labelContainer, label) {
 
-    container.innerHTML = `<div class="cardview">
-                                <img class="buildingimg" src="./assets/building_icon.svg" />
-                                <h1 class="label">${label}</h1>
-                                <div class="search">
-                                    <img src="../../assets/img/search.svg" />
-                                    <input type="search" name="rooms" placeholder="Find rooms or people on campus" />
-                                </div>
-                                <div class="cards"></div>
-                           </div>`;
-    let cards = document.querySelector(".cardview .cards");
+    console.log("showing rooms")
+    labelContainer.innerHTML = label;
+    cardsContainer.innerHTML = "";
     roomList.forEach((room, i) => {
 
         
@@ -57,55 +50,8 @@ function showRooms(container, roomList, label) {
         }
         
 
-        cards.appendChild(box)
+        cardsContainer.appendChild(box)
     })
-
-    document.querySelector(".cardview .buildingimg").addEventListener('click', () => {
-        showSearch(container);
-    })
-
-    let searchbar = document.querySelector(".cardview .search input");
-    let searchbtn = document.querySelector(".cardview .search img");
-
-    searchbtn.addEventListener('click', () => {
-        rooms.getRooms({ 'open': '' }, (rooms) => {
-            showRooms(container, searchRooms(rooms, searchbar.value), `Search results for "${searchbar.value}"`);
-        });
-    });
-
-    searchbar.addEventListener('search', () => {
-        rooms.getRooms({ 'open': '' }, (rooms) => {
-            showRooms(container, searchRooms(rooms, searchbar.value), `Search results for "${searchbar.value}"`);
-        });
-    });
-}
-
-function showSearch(container) {
-    container.innerHTML = 
-    `<div class="default">
-        <img class="buildingimg" src="./assets/building_icon.svg" />
-        <h1>ROOM MAP</h1>
-        <div class="search">
-            <img class="searchbtn" src="../../assets/img/search.svg" />
-            <input type="search" name="rooms" placeholder="Find rooms or people on campus" />
-            <div class="search-dropdown"></div>
-        </div>
-    </div>`;
-
-    let searchbtn = document.querySelector(".default .search .searchbtn");
-    let searchbar = document.querySelector(".default .search input");
-    
-    searchbtn.addEventListener('click', () => {
-        rooms.getRooms({ 'open': '' }, (rooms) => {
-            showRooms(container, searchRooms(rooms, searchbar.value), `Search results for "${searchbar.value}"`);
-        });
-    });
-
-    searchbar.addEventListener('search', () => {
-        rooms.getRooms({ 'open': '' }, (rooms) => {
-            showRooms(container, searchRooms(rooms, searchbar.value), `Search results for "${searchbar.value}"`);
-        });
-    });
 
 }
 
@@ -127,5 +73,91 @@ function searchRooms(rooms, searchQuery) {
     } else {
         return rooms;
     }
+
+}
+
+function initializeRecommended(urlData) {
+    let mainsearchbtn = document.querySelector(".default .search .searchbtn");
+    let mainsearchbar = document.querySelector(".default .search input");
+    let subsearchbar = document.querySelector(".cardview .search input");
+    let subsearchbtn = document.querySelector(".cardview .search img");
+    let mainSearchContainer = document.querySelector(".default");
+    let cardviewContainer = document.querySelector(".cardview");
+    let cardviewLabelContainer = document.querySelector(".cardview .label");
+    let cardsContainer = document.querySelector(".cards");
+    let topbar = document.querySelector(".recommended");
+    let topbarButton = document.getElementById("display-topbar");
+    let campusMap = document.getElementById("map");
+
+
+    function createRoomsOnSearch(searchbar) {
+        rooms.getRooms({ 'open': '' }, (rooms) => {
+            let label = searchbar.value ? `Search results for "${searchbar.value}"` : "Rooms";
+            showRooms(cardsContainer, searchRooms(rooms, searchbar.value), cardviewLabelContainer, label);
+        });
+    }
+
+    // Initialize event listeners for main search screen
+
+    mainsearchbtn.addEventListener('click', () => {
+        mainSearchContainer.style.display = "none";
+        cardviewContainer.style.display = "block";
+        createRoomsOnSearch(mainsearchbar);
+    });
+
+    mainsearchbar.addEventListener('search', () => {
+        mainSearchContainer.style.display = "none";
+        cardviewContainer.style.display = "block";
+        createRoomsOnSearch(mainsearchbar);
+    });
+
+    // Initialize event listeners for card screen
+
+    document.querySelector(".cardview .buildingimg").addEventListener('click', () => {
+        cardviewContainer.style.display = "none";
+        mainSearchContainer.style.display = "block";
+    })
+
+    subsearchbtn.addEventListener('click', () => {
+        createRoomsOnSearch(subsearchbar);
+    });
+
+    subsearchbar.addEventListener('search', () => {
+        createRoomsOnSearch(subsearchbar);
+    });
+
+    function closeTopbar() {
+        topbarButton.style.height = "60px";
+        topbar.style.height = "0";
+        campusMap.removeEventListener("click", closeTopbar);
+    }
+
+    topbarButton.addEventListener("click", () => {
+        topbarButton.style.height = "0%";
+        topbar.style.height = "auto";
+        campusMap.addEventListener("click", closeTopbar);
+    })
+
+
+    // Display either search view or cards view based on urlData
+
+    rooms.getRooms({ 'open': '' }, (rooms) => {
+
+        if (urlData["source"] == 'recommendation') {
+
+            cardviewContainer.style.display = "block";
+            showRooms(document.querySelector('.recommended'), rooms, labelContainer, `Recommended Rooms`);
+
+        } else if (urlData["source"] == 'search') {
+
+            cardviewContainer.style.display = "block";
+            showRooms(document.querySelector('.recommended'), searchRooms(rooms, urlData['extra-params']), labelContainer, `Search results for "${urlData['extra-params']}"`)
+
+        } else if (urlData["source"] == 'default') {
+
+            mainSearchContainer.style.display = "block";
+
+        }
+    })
 
 }

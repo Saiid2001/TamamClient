@@ -6,6 +6,7 @@
     <title></title>
     <link rel="stylesheet" href="../../css/main.css" />
     <link rel="stylesheet" href="./css/roomMap.css" />
+    <link rel="stylesheet" href="../../widgets/friends_bar/css/friends-bar.css" />
     <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Squada+One&display=swap" rel="stylesheet">
@@ -21,12 +22,33 @@
     </div>
     <div class="view">
         <div class="recommended">
+            <div class="default">
+                <img class="buildingimg" src="./assets/building_icon.svg" />
+                <h1>ROOM MAP</h1>
+                <div class="search">
+                    <img class="searchbtn" src="../../assets/img/search.svg" />
+                    <input type="search" name="rooms" placeholder="Find rooms on campus" />
+                    <div class="search-dropdown"></div>
+                </div>
+            </div>
+            <div class="cardview">
+                <img class="buildingimg" src="./assets/building_icon.svg" />
+                <h1 class="label"></h1>
+                <div class="search">
+                    <img src="../../assets/img/search.svg" />
+                    <input type="search" name="rooms" placeholder="Find rooms on campus" />
+                </div>
+                <div class="cards"></div>
+            </div>
         </div>
         <div class="map">
             <div id="map-overlay">
                 <div id="map-name">
                     <img src="./assets/map_icon.svg" align="left" />
                     <h1>Campus Map</h1>
+                </div>
+                <div id="display-topbar">
+                    <img src="./assets/building_icon_green.svg" />
                 </div>
                 <div id="zoom">
                     <img id="zoom-in" src="./assets/zoom_in.svg" />
@@ -42,58 +64,36 @@
             <h1>Room lists</h1>
         </div>
 
-        <div id="friends-bar-btn">
-            <img src="../../assets/img/friends_bar/people.svg" />
-            <p>Connections</p>
-        </div>
-
-        <div id="friends-bar">
-            <img id="close-btn" src="../../assets/img/friends_bar/right_pointer.svg" />
-            <h1>Connections</h1>
-            <img id="friends-icon" src="../../assets/img/friends_bar/people.svg" />
-            <div class="search">
-                <img src="../../assets/img/friends_bar/search_green.svg" />
-                <input type="search" name="connections" placeholder="Find connected people" />
-            </div>
-            <p id="friends-list-type">On campus friends</p>
-            <div id="friends-list">
-                <div id="online-friends"></div>
-                <div id="offline-friends" style="display:none"></div>
-            </div>
-            <a id="show-friends" href="javascript:void(0)">view all friends</a>
-            <p>Connection requests</p>
-            <div id="requests-list"></div>
-        </div>
+        <div id="friends-bar-widget"></div>
     </div>
 
-    <div class = 'room-card-overlay'>
+    <div class='room-card-overlay'>
         <div>
-        <div class='thumbnail'><img src = './assets/Group 442.png'></div>
-        <h1>Jaffet Upper</h1>
-        <div class='attributes'><small class='attribute-social'></small><small class='attribute-study'></small></div>
-        <p hidden>Some info about Jaffet</p>
-        <div class='people'>
-            <div class='friends'>
+            <div class='thumbnail'><img src='./assets/Group 442.png'></div>
+            <h1>Jaffet Upper</h1>
+            <div class='attributes'><small class='attribute-social'></small><small class='attribute-study'></small></div>
+            <p hidden>Some info about Jaffet</p>
+            <div class='people'>
+                <div class='friends'>
+                </div>
+                <div class='num-people' hidden>
+                    + 24 others
+                </div>
             </div>
-            <div class='num-people' hidden>
-                + 24 others
-            </div>
-        </div>
 
-        <button>Enter ></button>
-    </div>
+            <button>Enter ></button>
+        </div>
     </div>
 
     <script src="../../js/window-control.js"></script>
     <script src="../../js/CanvasController.js"></script>
+    <script src="../../widgets/friends_bar/js/friends-bar.js"></script>
+
     <script src="js/card-view.js"></script>
     <script src="js/room-list.js"></script>
     <script src="js/map.js"></script>
     <script src="js/main.js"></script>
-    <script src="js/friends-bar.js"></script>
 
-    <!--<script src="js/canvas.js"></script>
-    <script src="js/lobby.js"></script>
-    <script src="js/ui.js"></script>-->
+
 </body>
 </html>

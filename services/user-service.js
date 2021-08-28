@@ -136,6 +136,28 @@ function acceptFriendRequest(userID, onSuccess, onFail = () => { }) {
     })
 }
 
+function searchUsers(searchQuery, onSuccess, onFail = () => { }) {
+
+    let paramString = `?search=${encodeURIComponent(searchQuery)}`;
+
+    let token = ipcRenderer.sendSync('get-access-token');
+    $.ajax({
+        type: 'GET',
+        method: 'GET',
+        url: SERVER_ADDRESS + "/users/search-users" + paramString,
+        headers: { 'Authorization': "Bearer " + token },
+        success: function (message, status, data) {
+            onSuccess(data.responseJSON);
+
+        },
+        error: function (message, status, data) {
+            //onAssessmentLoaded();
+            console.log(message);
+            onFail();
+        }
+    });
+}
+
 module.exports = {
     getUserData,
     getAllUsers,
@@ -143,5 +165,6 @@ module.exports = {
     getIncomingFriendRequests,
     getOutgoingFriendRequests,
     sendFriendRequest,
-    acceptFriendRequest
+    acceptFriendRequest,
+    searchUsers
 }

@@ -1,0 +1,220 @@
+#friends-bar-btn {
+    position: fixed;
+    top: 45%;
+    right: 0px;
+    background-color: white;
+    border-radius: 5px 0 0 5px;
+    box-shadow: 0 0 5px black;
+    width: 90px;
+    transition: width 0.2s;
+    z-index: 1;
+}
+#friends-bar-btn:hover {
+    width: 120px;
+    transition: width 0.2s;
+    cursor: pointer;
+}
+#friends-bar-btn p {
+    position: relative;
+    color: var(--main-green);
+    text-align: left;
+    font-size: 75%;
+    margin-left: 10px;
+    margin-right: 10px;
+    opacity: 100%;
+}
+#friends-bar-btn img {
+    position: relative;
+    display: block;
+    margin-top: 15px;
+    margin-bottom: -10px;
+    margin-left: 25px;
+}
+
+#friends-bar {
+    height: 100%; 
+    width: 0; 
+    position: fixed; 
+    z-index: 2;
+    top: 0;
+    right: 0;
+    background-color: white;
+    overflow-x: hidden; 
+    overflow-y: scroll;
+    padding-top: 60px; 
+    transition: 0.5s; 
+    box-shadow: 0 0 5px black;
+}
+
+#close-btn {
+    cursor: pointer;
+    position: absolute;
+    left: 10px;
+    top: 65px;
+    width: 20px;
+    height: 20px;
+}
+
+#friends-bar h1 {
+    position: absolute;
+    right: 50px;
+    color: var(--main-green);
+    font-size: 110%;
+    opacity: 100%;
+    top: 53px;
+}
+
+#friends-icon {
+    position: absolute;
+    right: 10px;
+    top: 60px;
+    width: 30px;
+    height: 30px;
+}
+
+#friends-bar .search {
+    position: relative;
+    margin-top: 50px;
+    margin-bottom: 10px;
+    margin-left: 13px;
+    background: #FFFFFF;
+    box-shadow: 0px 0px 9px rgba(0, 0, 0, 0.1);
+    border-radius: 7px;
+    width: 90%;
+    height: 35px;
+}
+
+#friends-bar .search input {
+    position: absolute;
+    top: 10px;
+    border: none;
+    outline: none;
+    left: 30px;
+    font-size: 85%;
+    width: 85%;
+}
+
+#friends-bar .search input::placeholder {
+    color: #BFBFBF;
+}
+
+#friends-bar .search img {
+    position: absolute;
+    top: 4px;
+    left: 4px;
+    width: 25px;
+    height: 25px;
+}
+
+#friends-bar>h2 {
+    position: relative;
+    color: var(--main-green);
+    opacity: 100%;
+    font-size: 100%;
+    font-weight: normal;
+    left: 13px;
+}
+
+#friends-bar>p {
+    color: var(--dark-grey);
+    text-align: center;
+    padding: 10px 20px;
+}
+
+#friends-bar > a {
+    position: relative;
+    color: #0082AA;
+    font-size: 80%;
+    left: calc(50% - 40px);
+}
+ 
+.friend-entry {
+    position: relative;
+    width: 90%;
+    margin-left: 10px;
+    margin-top: 10px;
+    margin-bottom: 10px;
+    left: 3px;
+    height: 60px;
+    background: #FAFAFA;
+    border-radius: 48px;
+}
+
+.friend-entry .friend-profile {
+    position: relative;
+    width: 60px;
+    height: 60px;
+    background: #0082AA;
+    border-style: none;
+    border-radius: 100%;
+    display: inline-block;
+}
+
+.friend-entry .friend-profile img {
+    height: 52px;
+    width: auto;
+    display: block;
+    margin: auto;
+    padding: 4px 0px 4px 0px;
+}
+
+.friend-entry .name-plate {
+    position: relative;
+    display: inline-block;
+    bottom: 40%;
+    left: 15px;
+}
+
+.friend-entry .name-plate .name {
+    display: inline;
+    font-size: 100%;
+    color: #AEAEAE;
+    font-weight: bold;
+}
+
+.friend-entry .name-plate .status-dot {
+    position: relative;
+    display: inline-block;
+    left: 10px;
+}
+
+.friend-entry .msg,.location {
+    position: absolute;
+    bottom: 30%;
+    cursor: pointer
+}
+
+.friend-entry .msg {
+    right: 45px;
+}
+
+.friend-entry .location {
+    right: 20px;
+}
+
+.friend-entry .accept-request {
+    position: absolute;
+    right: 15px;
+    bottom: 28%;
+    background-color: var(--main-green);
+    border-style: none;
+    border-radius: 30px;
+    color: white;
+    padding: 5px 10px;
+    transition: background-color 0.2s;
+}
+
+.friend-entry .accept-request:hover {
+    background-color: var(--dark-main-green);
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.friend-entry>p {
+    position: absolute;
+    left: 70%;
+    bottom: 0%;
+    font-size: 85%;
+    text-align: center;
+    color: var(--dark-main-green);
+}

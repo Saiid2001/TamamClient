@@ -26,7 +26,9 @@ document.addEventListener('DOMContentLoaded', () => {
         UserHoverView.init();
     })
     
-
+    $('#friends-bar-widget').load('../../widgets/friends_bar/friends_bar.html', () => {
+        friendsBar.init();
+    });
 
     getUserData(myUserData => {
 

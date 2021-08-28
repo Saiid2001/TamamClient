@@ -8,6 +8,7 @@
     <link rel="stylesheet" href="css/room.css" />
     <link rel='stylesheet' href="../../widgets/conversation/css/conversation.css" />
     <link rel='stylesheet' href="../../widgets/hover_view/css/user_hover.css" />
+    <link rel="stylesheet" href="../../widgets/friends_bar/css/friends-bar.css" />
 </head>
 <body>
     <div class="head">
@@ -33,11 +34,11 @@
 
             <div class="video_on">
                 <!--<div class="window">
-    <video id="test" autoplay playsinline width="70%" height="50%" />
-    </div>-->
+                <video id="test" autoplay playsinline width="70%" height="50%" />
+                </div>-->
                 <div class="window" id="local">
-                    
-                    <video autoplay playsinline width="70%" height="50%"  muted />
+
+                    <video autoplay playsinline width="70%" height="50%" muted />
                 </div>
                 <!-- <div class="window" id="remote">
                     <video autoplay playsinline width="70%" height="50%"  />
@@ -53,17 +54,18 @@
             <button class="leave"><img src="../../widgets/conversation/assets/img/skip_previous.png" width="40px" /></button>
             <button class="voice on"><img class="on" src="../../widgets/conversation/assets/img/mic.png" width="40px" /><img class="off" src="../../widgets/conversation/assets/img/mic_off.png" width="40px" /></button>
             <button class="video on"><img class="on" src="../../widgets/conversation/assets/img/videocam.png" width="40px" /><img class="off" src="../../widgets/conversation/assets/img/videocam_off.png" width="40px" /></button>
-            <button class="chat"><img  src="../../widgets/conversation/assets/img/chat.png" width="40px" /></button>
+            <button class="chat"><img src="../../widgets/conversation/assets/img/chat.png" width="40px" /></button>
         </div>
 
     </div>
 
     <div class='notification-collection'>
-        
+
     </div>
 
     <div id="user-hover-view" hidden class="compact"></div>
 
+    <div id="friends-bar-widget"></div>
 
     <script src="../../js/window-control.js"></script>
     <script src="../../js/CanvasController.js"></script>
@@ -76,6 +78,8 @@
     <script src="../../widgets/conversation/js/canvas.js"></script>
     <script src="../../widgets/conversation/js/conversation.js"></script>
     <script src="../../widgets/hover_view/js/user_hover.js"></script>
+    <script src="../../widgets/friends_bar/js/friends-bar.js"></script>
+
 
 </body>
 </html>
