@@ -155,39 +155,6 @@ class GlobalMap {
 
         // Creating room name text object, on mouseenter it is added to the room container, on mouseleave it is removed
 
-        this.mapRooms[info["_id"]].roomName = new PIXI.Text(info["name"], {
-            fontFamily: "Roboto",
-            fontSize: 36 * _this.scaleFactor,
-            fill: "white",
-            align: 'center',
-            fontWeight: 'bolder',
-            dropShadow: true,
-            dropShadowBlur: 15
-        });
-        let roomName = this.mapRooms[info["_id"]].roomName;
-        roomName.y = 55 * _this.scaleFactor;
-        roomName.x = -5 * _this.scaleFactor;
-        //roomContainer.addChild(roomName);
-
-        
-        // Creating events
-
-        roomContainer.on('pointertap', () => {
-            socket.connectSocket(() => {
-                socket.exitRoom("map");
-            })
-            if (info['name'] == "Main Gate") {
-                let r = ipcRenderer.send('go-to', 'lobby')
-            } else {
-                openRoomPreview(info);
-            }
-        });
-        roomContainer.on('mouseover', () => {
-            _this.mapRooms[info["_id"]].roomContainer.addChild(_this.mapRooms[info["_id"]].roomName);
-        });
-        roomContainer.on('mouseout', () => {
-            _this.mapRooms[info["_id"]].roomContainer.removeChild(_this.mapRooms[info["_id"]].roomName);
-        });
 
         // Filling up roomObjects container with avatars or roomPin then adding it to main roomContainer
 
@@ -213,6 +180,40 @@ class GlobalMap {
         }
 
         roomContainer.addChild(roomObjects);
+
+        this.mapRooms[info["_id"]].roomName = new PIXI.Text(info["name"], {
+            fontFamily: "Roboto",
+            fontSize: 36 * _this.scaleFactor,
+            fill: "white",
+            align: 'center',
+            fontWeight: 'bolder',
+            dropShadow: true,
+            dropShadowBlur: 15
+        });
+        let roomName = this.mapRooms[info["_id"]].roomName;
+        roomName.y = 55 * _this.scaleFactor;
+        roomName.x = -(roomName.width / 2 - roomContainer.width / 2) * _this.scaleFactor;
+        //roomContainer.addChild(roomName);
+
+
+        // Creating events
+
+        roomContainer.on('pointertap', () => {
+            socket.connectSocket(() => {
+                socket.exitRoom("map");
+            })
+            if (info['name'] == "Main Gate") {
+                let r = ipcRenderer.send('go-to', 'lobby')
+            } else {
+                openRoomPreview(info);
+            }
+        });
+        roomContainer.on('mouseover', () => {
+            _this.mapRooms[info["_id"]].roomContainer.addChild(_this.mapRooms[info["_id"]].roomName);
+        });
+        roomContainer.on('mouseout', () => {
+            _this.mapRooms[info["_id"]].roomContainer.removeChild(_this.mapRooms[info["_id"]].roomName);
+        });
 
         return roomContainer;
         

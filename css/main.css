@@ -91,17 +91,15 @@ button{
     --light-green: #caf5ed;
 }
 
-
-
-    /* Works on Chrome, Edge, and Safari */
-    *::-webkit-scrollbar {
-        width: 8px;
+/* Works on Chrome, Edge, and Safari */
+*::-webkit-scrollbar {
+    width: 8px;
         
-    }
+}
 
-    *::-webkit-scrollbar-track {
-        background: transparent;
-    }
+*::-webkit-scrollbar-track {
+    background: transparent;
+}
 
 *::-webkit-scrollbar-thumb {
     background-color: white;
