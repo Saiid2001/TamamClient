@@ -156,6 +156,8 @@ function searchUsers(searchQuery, onSuccess, onFail = () => { }) {
             onFail();
         }
     });
+
+}
 function getMutualFriends(otherUser, onSuccess, onFail = () => { }) {
     let token = ipcRenderer.sendSync('get-access-token');
 
@@ -194,7 +196,7 @@ module.exports = {
     getOutgoingFriendRequests,
     sendFriendRequest,
     acceptFriendRequest,
-    searchUsers
+    searchUsers,
     getMutualFriends,
     getLastInteraction
 }

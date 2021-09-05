@@ -52,7 +52,7 @@ document.addEventListener('DOMContentLoaded', () => {
             ipcRenderer.on('UserEnteredRoom', (event, { user }) => {
                 console.log("user joined : ", user)
 
-                let uuser = myRoom.findUser(userId)
+                let uuser = myRoom.findUser(user._id)
                 if(uuser)
                     myRoom.removeUser(uuser)
 
