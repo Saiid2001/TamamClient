@@ -14,7 +14,7 @@
     transition: width 0.2s;
     cursor: pointer;
 }
-#friends-bar-btn p {
+#friends-bar-btn p { 
     position: relative;
     color: var(--main-green);
     text-align: left;
