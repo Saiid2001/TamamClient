@@ -43,7 +43,7 @@ document.addEventListener('DOMContentLoaded', ()=>{
     buildSchedule()
 
     document.querySelector('#sidebar .back').addEventListener('click', ()=>{
-        let r = ipcRenderer.send('go-to-roommap')
+        let r = ipcRenderer.send('go-to-roommap', 'default', {})
     })
     
 })

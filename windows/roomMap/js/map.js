@@ -1,7 +1,5 @@
 
-const PIXI = require('pixi.js');
-const rooms = require('../../services/room-service');
-const users = require('../../services/user-service.js');
+
 
 class GlobalMap {
 

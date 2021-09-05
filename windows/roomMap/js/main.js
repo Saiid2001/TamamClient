@@ -1,7 +1,11 @@
 
 const $ = require('jquery')
 const { ipcRenderer } = require('electron');
+const PIXI = require('pixi.js');
+const rooms = require('../../services/room-service');
+const users = require('../../services/user-service.js');
 
+const bitmoji_service = require('../../services/bitmoji-service')
 
 function getUrlData() { // Taken from room/js/main, should globalize and make it an import later
     const querystring = require('querystring');
@@ -73,6 +77,21 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     ipcRenderer.send('socketConnection')
+
+
+    users.getUserData(myUser=>{
+        $("#profile-preview h2").html(myUser.firstName+" "+myUser.lastName)
+        document.querySelector('#profile-preview img').src = bitmoji_service.getAvatarImage(
+            myUser.avatar,
+            myUser.gender,
+            'head'
+        )
+        document.querySelector('#profile-preview').addEventListener('click', ()=>{
+            //ipcRenderer.send('go-to-roommap',urlData.source, urlData['extra-params'] )
+            ipcRenderer.send('go-to', 'settings' )
+        })
+
+    })
 
     
 })

@@ -14,6 +14,34 @@
     height: 0;
 }
 
+#profile-preview{
+    position: fixed;
+    z-index: 20;
+    top:0;
+    right:0;
+    padding: 2rem 1rem;
+    padding-bottom: 0;
+    display: flex;
+    flex-direction: row;
+    cursor: pointer;
+    -webkit-backdrop-filter: drop-shadow(0,1,1);
+}
+
+#profile-preview h2{
+    font-weight: normal;
+    font-size: 1rem;
+}
+.round{
+    width: 2.5rem;
+    height: 2.5rem;
+    border-radius: 50%;
+    text-align: center;
+    overflow: hidden;
+    background-color: black;
+}
+.round img{
+    height: 90%;
+}
 .default {
     position: relative;
     background-image: linear-gradient(180deg, rgba(0, 130, 170, 0.01) 0%, rgba(0, 180, 148, 0.37) 100%), url('../assets/Bliss_bldg.png');
