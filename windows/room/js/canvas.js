@@ -20,7 +20,7 @@ let scene = {
     scene: new PIXI.Container
 }
 
-function createApp(config = {}) { 
+function createApp(config = {}, onSuccess) { 
     
 
     let container = document.querySelector('.room')
@@ -110,6 +110,7 @@ function createApp(config = {}) {
 
 
             app.stage.scale.set(minScale)
+            
         }
 
         //dynamic resize
@@ -118,6 +119,9 @@ function createApp(config = {}) {
         })
 
         resize();
+
+        console.log("Has setup canvas");
+        setTimeout(onSuccess,100)
         
         app.ticker.add(delta => update(delta));
         

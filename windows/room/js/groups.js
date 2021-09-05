@@ -13,7 +13,8 @@ function waveToGroup( group, onSuccess = ()=>{}){
         showNotification(`Waiting for ${group.users[0].firstName} and friends to see you!`, {
             'confirm': null,
             'cancel': ()=>{
-                socket.getSocket.emit('canceled-waving', {user: myUser.id, room: group.id})
+                ipcRenderer.send('socketEmit','canceled-waving', {user: myUser.id, room: group.id})
+                
                 myUser.wavingTo = null;
                 myUser.waveToCallback = null;
                 hideNotification();
@@ -23,7 +24,7 @@ function waveToGroup( group, onSuccess = ()=>{}){
         showNotification(`Waiting for ${group.users[0].firstName} to see you!`, {
             'confirm': null,
             'cancel': ()=>{
-                socket.getSocket().emit('canceled-waving', {user: myUser.id, room: group.id})
+                ipcRenderer.send('socketEmit','canceled-waving', {user: myUser.id, room: group.id})
                 myUser.wavingTo = null;
                 myUser.waveToCallback = null;
                 hideNotification();
@@ -31,7 +32,7 @@ function waveToGroup( group, onSuccess = ()=>{}){
         }, group.id)
     }
 
-    socket.getSocket().emit("waving-to-group", {user: myUser.id, room: group.id});
+    ipcRenderer.send('socketEmit',"waving-to-group", {user: myUser.id, room: group.id});
 }
 
 

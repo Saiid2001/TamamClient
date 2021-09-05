@@ -1,4 +1,4 @@
-const { ipcRenderer } = require('electron')
+
 const Fuse = require('fuse.js');
 
 const THUMBNAILS = {

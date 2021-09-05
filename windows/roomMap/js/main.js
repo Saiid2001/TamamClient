@@ -1,5 +1,6 @@
-const socket = require('../../services/socket-service');
+
 const $ = require('jquery')
+const { ipcRenderer } = require('electron');
 
 
 function getUrlData() { // Taken from room/js/main, should globalize and make it an import later
@@ -23,10 +24,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
     initializeRecommended(urlData);
 
-    socket.connectSocket(() => {
+    ipcRenderer.on('socketConnection', () => {
         console.log("Connected to socket")
 
-        socket.getSocket().on('user-joined-room-to-map', (data) => {
+        ipcRenderer.on('user-joined-room-to-map', (e,data) => {
             if (data.room != "NONE") {
                 console.log(data)
                 console.log(`User ${data.user} joined room ${data.room}`)
@@ -40,7 +41,9 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         })
 
-        socket.getSocket().on('user-left-room-to-map', (data) => {
+        ipcRenderer.send('socketListener', 'user-joined-room-to-map')
+
+        ipcRenderer.on('user-left-room-to-map', (e,data) => {
             if (data.room != "NONE") {
                 console.log(data);
                 console.log(`User ${data.user} left room ${data.room}`);
@@ -48,20 +51,28 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         })
 
-        socket.getSocket().on('new-friend-request', (data) => {
+        ipcRenderer.send('socketListener', 'user-left-room-to-map')
+
+        ipcRenderer.on('new-friend-request', (e,data) => {
             console.log('new friend request')
             users.getAllUsers((users) => {
                 friendsBar.createRequestEntry(users[0]);
             }, { "_id": data['user'] });
         })
 
-        socket.getSocket().on('friend-request-accepted', (data) => {
+        ipcRenderer.send('socketListener', 'new-friend-request')
+
+        ipcRenderer.on('friend-request-accepted', (e,data) => {
             console.log('friend request has been accepted')
             friendsBar.initializeLists(friendsBar.friendSearch.data);
         })
 
-        socket.enterMap();
+        ipcRenderer.send('socketListener', 'friend-request-accepted')
+
+        ipcRenderer.send('socketEmit', 'EnterMap')
     });
+
+    ipcRenderer.send('socketConnection')
 
     
 })

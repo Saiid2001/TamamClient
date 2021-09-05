@@ -1,3 +1,4 @@
+
 const PIXI = require('pixi.js');
 const rooms = require('../../services/room-service');
 const users = require('../../services/user-service.js');
@@ -199,9 +200,10 @@ class GlobalMap {
         // Creating events
 
         roomContainer.on('pointertap', () => {
-            socket.connectSocket(() => {
-                socket.exitRoom("map");
-            })
+            
+            
+            ipcRenderer.send('socketEmit', 'ExitRoom', {roomId:"map"});
+
             if (info['name'] == "Main Gate") {
                 let r = ipcRenderer.send('go-to', 'lobby')
             } else {
@@ -251,6 +253,7 @@ class GlobalMap {
     }
 
     removeUserFromRoom(user, roomID) {
+        console.log('Removing user', user ,' from ', roomID)
         let _this = this;
         rooms.getRooms({ 'open': '' }, (rooms) => {
             _this.rooms = rooms;

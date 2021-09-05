@@ -89,6 +89,9 @@ button{
     --light-grey: #e9e9e9;
     --dark-grey: #a9a9a9;
     --light-green: #caf5ed;
+    --main-gradient-h: linear-gradient(90.76deg, #00836B 0.6%, #006383 99.35%);
+    --main-gradient-v: linear-gradient(0deg, #00836B 0.6%, #006383 99.35%);
+
 }
 
 /* Works on Chrome, Edge, and Safari */

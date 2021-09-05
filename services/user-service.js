@@ -156,6 +156,34 @@ function searchUsers(searchQuery, onSuccess, onFail = () => { }) {
             onFail();
         }
     });
+function getMutualFriends(otherUser, onSuccess, onFail = () => { }) {
+    let token = ipcRenderer.sendSync('get-access-token');
+
+    $.ajax({
+        type: 'GET',
+        method: 'GET',
+        url: SERVER_ADDRESS + "/relations/friendships/mutuals/" + otherUser,
+        headers: { 'Authorization': "Bearer " + token },
+        success: function (message, status, data) {
+            console.log(message)
+            onSuccess(data.responseJSON)
+        }
+    })
+}
+
+function getLastInteraction(otherUser, onSuccess, onFail = () => { }) {
+    let token = ipcRenderer.sendSync('get-access-token');
+
+    $.ajax({
+        type: 'GET',
+        method: 'GET',
+        url: SERVER_ADDRESS + "/relations/interactions/last/" + otherUser,
+        headers: { 'Authorization': "Bearer " + token },
+        success: function (message, status, data) {
+            console.log(message)
+            onSuccess(data.responseJSON)
+        }
+    })
 }
 
 module.exports = {
@@ -167,4 +195,6 @@ module.exports = {
     sendFriendRequest,
     acceptFriendRequest,
     searchUsers
+    getMutualFriends,
+    getLastInteraction
 }
