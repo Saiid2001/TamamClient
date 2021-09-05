@@ -1,15 +1,15 @@
 
-const socket = require('../../services/socket-service')
+//const socket = require('../../services/socket-service')
 let canvasController
-
 const { logout } = require('../../services/auth-service')
-
 const { getUserData } = require('../../services/user-service')
+const rooms = require('../../services/room-service')
 
 const $ = require('jquery');
 
 let roomData = null;
 let myRoom;
+let urlData;
 
 function getUrlData() {
     const querystring = require('querystring');
@@ -17,60 +17,57 @@ function getUrlData() {
     return JSON.parse(query['?data'])
 }
 
-let urlData = getUrlData();
-
 document.addEventListener('DOMContentLoaded', () => {
 
+    urlData = getUrlData();
 
-    $('#user-hover-view').load('../../widgets/hover_view/user_hover.html',()=>{
-        UserHoverView.init();
-    })
-    
-
+    //$('#user-hover-view').load('../../widgets/hover_view/user_hover.html',()=>{
+   //     UserHoverView.init();
+   // })
 
     getUserData(myUserData => {
 
-    
     const { ipcRenderer } = require('electron')
-    const rooms = require('../../services/room-service')
-
     rooms.getRooms({ '_id': urlData['room'] }, (rooms) => {
-        console.log(urlData['room'])
         roomData = rooms[0]
-        console.log(roomData);
-        console.log(rooms[0]['_id'], rooms[0]['layout']);
         onRoom(rooms[0]['_id'], rooms[0]['layout'])
     })
 
-    
-    
-
-
-
     function onRoom(roomId, roomConf) {
-        createApp(roomConf)
+        console.log('got room')
+        createApp(roomConf,()=>{
+
         
-        socket.connectSocket(() => {
+        ipcRenderer.on('socketConnection', () => {
             
             console.log('connected to socket')
 
             myRoom = new Room(roomConf)
             myRoom.build(scene)
 
-            socket.onUserEnteredRoom(({ user }) => {
+            ipcRenderer.on('UserEnteredRoom', (event, { user }) => {
                 console.log("user joined : ", user)
+
+                let uuser = myRoom.findUser(userId)
+                if(uuser)
+                    myRoom.removeUser(uuser)
+
                 uuser = new User(user)
                 myRoom.addUser(uuser)
 
             })
 
-            socket.onUserLeftRoom((userId) => {
+            ipcRenderer.send('socketListener', 'UserEnteredRoom')
+
+            ipcRenderer.on('UserLeftRoom',(event, userId) => {
                 console.log("user left : ", userId)
                 uuser = myRoom.findUser(userId)
                 myRoom.removeUser(uuser)
             })
 
-            socket.onUserEnteredGroup((user, group ) => {
+            ipcRenderer.send('socketListener', 'UserLeftRoom')
+
+            ipcRenderer.on('UserEnteredGroup',(event, user, group ) => {
 
                 var uuser = myRoom.findUser(user)
                 if (uuser && uuser.id != myUser.id) {
@@ -100,13 +97,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
             })
 
-            socket.onUserLeftGroup((user, group) => {
-                console.log("user left group", group, ": ", user)
-            })
+            ipcRenderer.send('socketListener', 'UserEnteredGroup')
 
-            socket.getSocket().on('waving-to-group', (event)=>{
+            ipcRenderer.on('waving-to-group', (e, event)=>{
                 showNotification(`${myRoom.findUser(event.user).firstName} is trying to join your table!`, {'confirm': ()=>{
-                    socket.getSocket().emit("accepted-to-group", {user: event.user, room: myUser.group});
+                    ipcRenderer.send('socketEmit', "accepted-to-group", {user: event.user, room: myUser.group});
                     hideNotification(event.user);
                 },
                 'cancel': ()=>{
@@ -117,8 +112,10 @@ document.addEventListener('DOMContentLoaded', () => {
                 event.user
                 )
             })
+
+            ipcRenderer.send('socketListener', 'waving-to-group')
             
-            socket.getSocket().on('accepted-to-group', (event)=>{
+            ipcRenderer.on('accepted-to-group', (e, event)=>{
             
                 if(event.user == myUser.id && event.room == myUser.wavingTo){
                     showNotification(`They waved back. Have fun!!`, {})
@@ -133,8 +130,10 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
             
             })
+
+            ipcRenderer.send('socketListener', 'accepted-to-group')
             
-            socket.getSocket().on('rejected-from-group', (event)=>{
+            ipcRenderer.on('rejected-from-group', (e, event)=>{
                 if(event.room == myUser.wavingTo){
                     showNotification(`Oups! they seem to be busy at the moment!`, {})
                     myUser.waveToCallback = null;
@@ -142,19 +141,19 @@ document.addEventListener('DOMContentLoaded', () => {
                     setTimeout(()=>hideNotification(), 5000);
                 }
             })
+
+            ipcRenderer.send('socketListener', 'rejected-from-group')
             
-            socket.getSocket().on('canceled-waving', (event)=>{
+            ipcRenderer.on('canceled-waving', (e, event)=>{
                 
                     showNotification(`Oups ${myRoom.findUser(event.user).firstName} decided to leave.}`, {}, event.user)
                     setTimeout(()=>hideNotification(event.user), 5000);
                 
             })
 
-            socket.onDisconnect(() => {
-                console.log('disconnected')
-            })
+            ipcRenderer.send('socketListener', 'canceled-waving')
 
-            socket.enterRoom(roomId, users => {
+            ipcRenderer.on('EnterRoom', (event, users) => {
                 users.forEach((user, i) => {
                     console.log("user existing:", user)
                 })
@@ -170,25 +169,23 @@ document.addEventListener('DOMContentLoaded', () => {
 
             });
 
+            ipcRenderer.send('socketEmit', 'EnterRoom', {"roomId": roomId})
+
             document.dispatchEvent(new Event('connected-to-socket'))
 
             document.getElementById('room-title').innerHTML = roomData['name']
             document.getElementById('exit-room').onclick = () => {
-                myConversationInterface.close()
-                let r = ipcRenderer.send('go-to-roommap', urlData['return-data']['source'], urlData['return-data']['extra-params'])
+             myConversationInterface.close()
+            let r = ipcRenderer.send('go-to-roommap', urlData['return-data']['source'], urlData['return-data']['extra-params'])
             }
             
         })
 
+        ipcRenderer.send('socketConnection');
 
+    })
 
-
-        //event listeners
-
-        //if user is requesting a call
-        document.addEventListener('request-call', e => {
-            ipcRenderer.send('request-call', e.detail.UID)
-        })
+        
 
         }
 

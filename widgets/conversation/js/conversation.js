@@ -1,4 +1,3 @@
-const { ipcRenderer } = require("electron");
 
 class ConversationInterface {
     constructor(view, preferences = {}) {
@@ -233,7 +232,7 @@ class ConversationInterface {
             throw 'No call id provided'
         } else {
             this.room = room
-            socket.enterCall(room)
+            ipcRenderer.send('socketEmit','EnterCall', {roomId: room})
         }
     }
     async _setLocalStream(mediaConstraints) {
@@ -281,7 +280,7 @@ class ConversationInterface {
                         _this.showAvatar(myUser)
                     }
 
-                    socket.getSocket().emit('track-status-changed', {
+                    ipcRenderer.send('socketEmit', 'track-status-changed', {
                         room: _this.room,
                         status: track.enabled,
                         id: track.id, 
@@ -310,7 +309,7 @@ class ConversationInterface {
                         _this.audioControlView.classList.remove('on')
                     }
 
-                    socket.getSocket().emit('track-status-changed', {
+                    ipcRenderer.send('socketEmit','track-status-changed', {
                         room: _this.room,
                         status: track.enabled,
                         id: track.id,
@@ -388,7 +387,7 @@ class ConversationInterface {
                     destination: destinationUser
             
             }
-        socket.getSocket().emit('webrtc-ice-candidate', data)
+            ipcRenderer.send('socketEmit','webrtc-ice-candidate', data)
         }
 
     }
@@ -401,9 +400,12 @@ class ConversationInterface {
     } catch (error) {
         console.error(error)
         }
-    socket.getSocket().emit('webrtc-answer', {
+        ipcRenderer.send('socketEmit','webrtc-answer', {
         type: 'webrtc_answer',
-        sdp: sessionDescription,
+        sdp: {
+            sdp: sessionDescription.sdp,
+            type: sessionDescription.type
+        },
         room: roomId,
         user: myUser.id,
         destination:destinationUser
@@ -431,9 +433,12 @@ class ConversationInterface {
         destination:destinationUser
     })
 
-    socket.getSocket().emit('webrtc-offer', {
+    ipcRenderer.send('socketEmit','webrtc-offer', {
         type: 'webrtc_offer',
-        sdp: sessionDescription,
+        sdp: {
+            sdp:sessionDescription.sdp,
+            type: sessionDescription.type
+        },
         room: roomId,
         user: myUser.id,
         destination:destinationUser
@@ -493,21 +498,26 @@ let myConversationInterface = new ConversationInterface(document.getElementById(
 
 document.addEventListener("connected-to-socket", async => {
     
-    socket.getSocket().on('call-room-created', async () => {
+    ipcRenderer.on('call-room-created', async () => {
         console.log('Socket event callback: room_created')
 
         await myConversationInterface._setLocalStream(myConversationInterface.mediaConstraints)
         myConversationInterface.isRoomCreator = true
     })
 
-    socket.getSocket().on('call-room-joined', async () => {
+    ipcRenderer.send('socketListener', 'call-room-created')
+
+
+    ipcRenderer.on('call-room-joined', async () => {
         console.log('Socket event callback: room_joined')
 
         await myConversationInterface._setLocalStream(myConversationInterface.mediaConstraints)
-        socket.getSocket().emit('start-call', { room: myConversationInterface.room, user: myUser.id })
+        ipcRenderer.send('socketEmit','start-call', { room: myConversationInterface.room, user: myUser.id })
     })
 
-    socket.getSocket().on('start-call', async (event) => {
+    ipcRenderer.send('socketListener', 'call-room-joined')
+
+    ipcRenderer.on('start-call', async (e, event) => {
 
         if(myConversationInterface.callStarted) 
         {
@@ -553,7 +563,9 @@ document.addEventListener("connected-to-socket", async => {
         }
     })
 
-    socket.getSocket().on('webrtc-offer', async (event) => {
+    ipcRenderer.send('socketListener', 'start-call')
+
+    ipcRenderer.on('webrtc-offer', async (e, event) => {
 
 
         if(event.user == myUser.id) return;
@@ -583,7 +595,9 @@ document.addEventListener("connected-to-socket", async => {
         }
     })
 
-    socket.getSocket().on('webrtc-answer', async (event) => {
+    ipcRenderer.send('socketListener', 'webrtc-offer')
+
+    ipcRenderer.on('webrtc-answer', async (e, event) => {
 
         if(event.user == myUser.id) return;
         if(event.destination!= myUser.id) return;
@@ -593,7 +607,9 @@ document.addEventListener("connected-to-socket", async => {
         await myConversationInterface.remoteUsers[event.user].rtcPeerConnection.setRemoteDescription(new RTCSessionDescription(event.sdp))
     })
 
-    socket.getSocket().on('webrtc-ice-candidate', (event) => {
+    ipcRenderer.send('socketListener', 'webrtc-answer')
+
+    ipcRenderer.on('webrtc-ice-candidate', (e, event) => {
 
         if(event.user == myUser.id) return;
         if(event.destination != myUser.id) return;
@@ -611,7 +627,9 @@ document.addEventListener("connected-to-socket", async => {
         
     })
 
-    socket.getSocket().on('track-status-changed', (event) => {
+    ipcRenderer.send('socketListener', 'webrtc-ice-candidate')
+
+    ipcRenderer.on('track-status-changed', (e, event) => {
 
         try{
         var track = myConversationInterface.remoteUsers[event.user].remoteStream.getTrackById(event.id)
@@ -628,14 +646,18 @@ document.addEventListener("connected-to-socket", async => {
     }
     })
 
+    ipcRenderer.send('socketListener', 'track-status-changed')
+
     ipcRenderer.on('send_message', (event, message)=>{
-        socket.getSocket().emit('chat-send-message', message)
+        ipcRenderer.send('socketEmit', 'chat-send-message', message)
     })
 
-    socket.getSocket().on('chat-message-recv', event=>{
+    ipcRenderer.on('chat-message-recv', (e,event)=>{
         myConversationInterface.showMessagePopup(event)
         ipcRenderer.send('message_recv', event)
     })
+
+    ipcRenderer.send('socketListener', 'chat-message-recv')
 
 })
 
