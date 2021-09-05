@@ -146,7 +146,7 @@ let onSocketConnectCallbacks = []
 function goToDefaultLandingPage(){
     //goTo('roomMap', { source: 'default', 'extra-params': '' });
 
-    onSocketConnectCallbacks.push(()=>{goTo('settings')})
+    onSocketConnectCallbacks.push(()=>{goTo('roomMap')})
 
     socketService.connectSocket(()=>{
         onSocketConnectCallbacks.forEach((callback,i)=>{
