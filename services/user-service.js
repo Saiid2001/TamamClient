@@ -136,6 +136,26 @@ function acceptFriendRequest(userID, onSuccess, onFail = () => { }) {
     })
 }
 
+function searchUsers(searchQuery, onSuccess, onFail = () => { }) {
+
+    let paramString = `?search=${encodeURIComponent(searchQuery)}`;
+
+    let token = ipcRenderer.sendSync('get-access-token');
+    $.ajax({
+        type: 'GET',
+        method: 'GET',
+        url: SERVER_ADDRESS + "/users/search-users" + paramString,
+        headers: { 'Authorization': "Bearer " + token },
+        success: function (message, status, data) {
+            onSuccess(data.responseJSON);
+
+        },
+        error: function (message, status, data) {
+            //onAssessmentLoaded();
+            console.log(message);
+            onFail();
+        }
+    });
 function getMutualFriends(otherUser, onSuccess, onFail = () => { }) {
     let token = ipcRenderer.sendSync('get-access-token');
 
@@ -174,6 +194,7 @@ module.exports = {
     getOutgoingFriendRequests,
     sendFriendRequest,
     acceptFriendRequest,
+    searchUsers
     getMutualFriends,
     getLastInteraction
 }

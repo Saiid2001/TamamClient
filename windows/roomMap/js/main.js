@@ -1,5 +1,6 @@
-const { ipcRenderer } = require('electron');
 
+const $ = require('jquery')
+const { ipcRenderer } = require('electron');
 
 
 function getUrlData() { // Taken from room/js/main, should globalize and make it an import later
@@ -17,23 +18,11 @@ document.addEventListener('DOMContentLoaded', () => {
         './assets/map.jpg',
     );
 
-    console.log(urlData['source']);
-    rooms.getRooms({ 'open': '' }, (rooms) => {
+    $('#friends-bar-widget').load('../../widgets/friends_bar/friends_bar.html', () => {
+        friendsBar.init();
+    });
 
-        if (urlData['source'] == 'recommendation') {
-
-            showRooms(document.querySelector('.recommended'), rooms, `Recommended Rooms`);
-
-        } else if (urlData['source'] == 'search') { 
-
-            showRooms(document.querySelector('.recommended'), searchRooms(rooms, urlData['extra-params']), `Search results for "${urlData['extra-params']}"`)
-
-        } else if (urlData['source'] == 'default') {
-            
-            showSearch(document.querySelector('.recommended'));
-
-        }
-    })
+    initializeRecommended(urlData);
 
     ipcRenderer.on('socketConnection', () => {
         console.log("Connected to socket")
@@ -42,7 +31,13 @@ document.addEventListener('DOMContentLoaded', () => {
             if (data.room != "NONE") {
                 console.log(data)
                 console.log(`User ${data.user} joined room ${data.room}`)
-                map.addUserToRoom(data.user, data.room);
+                users.getFriends((friends) => {
+                    console.log(data.user["_id"])
+                    if (friends.find(friend => friend["_id"] == data.user["_id"]) != undefined) {
+                        
+                        map.addUserToRoom(data.user, data.room);
+                    }
+                })
             }
         })
 
@@ -61,7 +56,7 @@ document.addEventListener('DOMContentLoaded', () => {
         ipcRenderer.on('new-friend-request', (e,data) => {
             console.log('new friend request')
             users.getAllUsers((users) => {
-                createRequestEntry(users[0], requestslist);
+                friendsBar.createRequestEntry(users[0]);
             }, { "_id": data['user'] });
         })
 
@@ -69,7 +64,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         ipcRenderer.on('friend-request-accepted', (e,data) => {
             console.log('friend request has been accepted')
-            initializeLists(onlinefriends, offlinefriends, requestslist);
+            friendsBar.initializeLists(friendsBar.friendSearch.data);
         })
 
         ipcRenderer.send('socketListener', 'friend-request-accepted')

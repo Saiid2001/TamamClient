@@ -21,9 +21,13 @@ document.addEventListener('DOMContentLoaded', () => {
 
     urlData = getUrlData();
 
-    //$('#user-hover-view').load('../../widgets/hover_view/user_hover.html',()=>{
-   //     UserHoverView.init();
-   // })
+    $('#user-hover-view').load('../../widgets/hover_view/user_hover.html',()=>{
+        UserHoverView.init();
+    })
+    
+    $('#friends-bar-widget').load('../../widgets/friends_bar/friends_bar.html', () => {
+        friendsBar.init();
+    });
 
     getUserData(myUserData => {
 
