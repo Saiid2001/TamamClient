@@ -7,6 +7,7 @@ const authService = require('./services/auth-service');
 const aspect = require('electron-aspectratio')
 const { session } = require('electron');
 const { getAccessToken } = require('./services/auth-service');
+const socketService = require('./services/socket-service')
 
 var chatWindowOpen = false;
 
@@ -39,6 +40,11 @@ let pages = {
     'signup':{
         'path': 'windows/signup/signup.html',
         'required':['email']
+    },
+    'settings':{
+        'path':'windows/settings/settings.html',
+        
+        'required':[]
     }
 }
 
@@ -51,6 +57,8 @@ function goTo(pageKey, args) {
     for (var arg of pages[pageKey]['required']) {
         query[arg] = args[arg]
     }
+
+    socketService.resetSocketListeners();
 
     console.log("going to ", pageKey, "with args", args)
 
@@ -119,18 +127,34 @@ async function createAuthWindow(win) {
             //check if needs signup
             if(!authService.isNeedSignup(url)){
                 await authService.loadTokens(url);
-                return goTo('roomMap', { source: 'default', 'extra-params': '' });
+                return goToDefaultLandingPage()
             }else{
                 let email = authService.getSignupEmail(url);
                 goTo('signup', {'email': email});
             }
         });
         win.on('authenticated', () => {
-            goTo('roomMap', { source: 'default', 'extra-params': '' });
+            goToDefaultLandingPage()
         });
     })
 
     goTo('login');
+}
+
+let onSocketConnectCallbacks = []
+
+function goToDefaultLandingPage(){
+    //goTo('roomMap', { source: 'default', 'extra-params': '' });
+
+    onSocketConnectCallbacks.push(()=>{goTo('roomMap')})
+
+    socketService.connectSocket(()=>{
+        onSocketConnectCallbacks.forEach((callback,i)=>{
+            callback()
+            onSocketConnectCallbacks.splice(i,1)
+        })
+    });
+    
 }
 
 let chatWindow = null;
@@ -245,6 +269,114 @@ ipcMain.on('close-chat-window', (event)=>{
     chatWindow.destroy();
     chatWindowOpen = false;
 })
+
+
+
+
+//socket service IPC
+
+ipcMain.on('socketConnection', (event)=>{
+
+
+    socketService.resetSocketListeners();
+
+    function checkConnect(){
+    if(socketService.getSocket() && socketService.getSocket().connected){
+        event.reply('socketConnection')
+    }
+    else{
+
+        onSocketConnectCallbacks.push(checkConnect)
+
+        socketService.connectSocket(()=>{
+            onSocketConnectCallbacks.forEach((callback,i)=>{
+                callback()
+                onSocketConnectCallbacks.splice(i,1)
+            })
+        }
+        )
+    }
+    }
+
+    checkConnect();
+
+})
+
+ipcMain.on('socketListener', (event, event_name, args)=>{
+    
+    
+
+    switch (event_name) {
+        case "UserEnteredRoom":
+            console.log("Socket Listener: ",event_name, args)
+            socketService.onUserEnteredRoom(({user})=>{
+                event.reply('UserEnteredRoom', {user:user})
+            })
+            break;
+
+        case "UserLeftRoom":
+            console.log("Socket Listener: ",event_name, args)
+            socketService.onUserLeftRoom((user)=>{
+                event.reply('UserLeftRoom', user)
+            })
+            break;
+
+        case "UserEnteredGroup":
+            console.log("Socket Listener: ",event_name, args)
+            socketService.onUserEnteredGroup((user,group)=>{
+                event.reply('UserEnteredGroup', user, group)
+            })
+            break;
+    
+        default:
+
+            socketService.getSocket().on(event_name, (event_data)=>{
+                event.reply(event_name, event_data)
+            })
+            break;
+    }
+
+})
+
+ipcMain.on('socketEmit', (event, event_name, args)=>{
+
+    
+    console.log("Socket Emit: ",event_name, args)
+
+    switch (event_name) {
+        case "EnterRoom":
+            socketService.enterRoom(args.roomId, users =>{
+                event.reply('EnterRoom', users)
+            })
+            break;
+
+        case "EnterGroup":
+            socketService.enterGroup(args.groupId)
+            break;
+
+        case "ExitGroup":
+            socketService.exitGroup(args.groupId)
+            break;
+
+        case "EnterCall":
+            socketService.enterCall(args.roomId)
+            break;
+
+        case "EnterMap":
+            socketService.enterMap()
+            break;
+        default:
+
+            socketService.getSocket().emit(event_name, args)
+
+            break;
+        }
+})
+
+
+
+
+
 
 
 //dealing with cookies

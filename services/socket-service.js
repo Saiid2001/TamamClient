@@ -1,6 +1,7 @@
 const {SERVER_ADDRESS} = require('../config/settings.json')
 const io = require('socket.io-client')
-const { ipcRenderer } = require('electron')
+const { ipcRenderer } = require('electron');
+const { getAccessToken } = require('./auth-service');
 
 var socket = null;
 
@@ -9,15 +10,54 @@ function getSocket() {
 }
 
 
+function getToken(){
+    let token;
+    if(ipcRenderer)
+      token = ipcRenderer.sendSync('get-access-token');
+    else
+      token = getAccessToken();
+    
+      return token;
+}
+
+function resetSocketListeners(){
+    if(socket && socket.connected){
+        socket.removeAllListeners()
+
+    }
+}
 function connectSocket(onSuccess) {
-    const token  = ipcRenderer.sendSync('get-access-token');
-    socket = io.connect(SERVER_ADDRESS, {
+    const token = getToken();
+    
+    
+
+    if(!socket){
+
+    console.log('Connecting socket ')
+    
+    socket = io(SERVER_ADDRESS, {
         extraHeaders: {
             Authorization: "Bearer " + token
 
-        }
+        },
+        autoConnect: false
     })
-    socket.on('connect', onSuccess)
+
+    socket.on('connect', ()=>{
+        console.log('Connected socket ', socket.id)
+        onSuccess();
+    })
+
+    socket.on('error', ()=>{
+        console.log('Error Connecting Socket')
+    })
+
+    socket.connect();
+
+    }else{
+        console.log('Connected socket ', socket.id)
+        onSuccess();
+    }
 }
 
 function enterRoom(roomID, callback = () => { }) {
@@ -117,5 +157,6 @@ module.exports = {
     sendMessage,
     enterGroup,
     exitGroup,
-    socket
+    socket,
+    resetSocketListeners
 }

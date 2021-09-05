@@ -1,3 +1,4 @@
+
 const PIXI = require('pixi.js');
 const rooms = require('../../services/room-service');
 const users = require('../../services/user-service.js');
@@ -20,10 +21,10 @@ class GlobalMap {
 
         console.log(canvas.getBoundingClientRect().width);
 
-        _this.heightFactor = 0.485;
+        //_this.heightFactor = 0.485;
         let app = new PIXI.Application({
-            width: canvas.getBoundingClientRect().width,
-            height: canvas.getBoundingClientRect().width * _this.heightFactor,
+            width: window.innerWidth,
+            height: window.innerHeight - 35,
             autoResize: true,
             resolution: devicePixelRatio
         });
@@ -45,7 +46,7 @@ class GlobalMap {
 
             function resize(stage) {
                 
-                app.renderer.resize(canvas.getBoundingClientRect().width, canvas.getBoundingClientRect().width * _this.heightFactor);
+                app.renderer.resize(window.innerWidth, window.innerHeight - 35);
 
                 let oldHeight = stage.height / stage.scale.y;
                 let oldWidth = stage.width / stage.scale.x;
@@ -76,11 +77,9 @@ class GlobalMap {
                 _this.rooms = rooms
                 foreground =  _this.addRooms(_this.rooms);
                 app.stage.addChild(foreground);
-                console.log(_this.rooms)
             })
             users.getAllUsers((users) => {
                 _this.users = users;
-                console.log(_this.users)
             })
              
             canvas.addEventListener("wheel", (event) => {
@@ -94,18 +93,22 @@ class GlobalMap {
 
             })
 
+            // TODO: Add pinch zoom events
+
             let mouseDown = false;
 
-            canvas.addEventListener("mousedown", () => {
+            canvas.addEventListener("pointerdown", () => {
+                canvas.style.cursor = "grabbing";
                 mouseDown = true;
             });
 
-            canvas.addEventListener("mouseup", () => {
+            canvas.addEventListener("pointerup", () => {
                 mouseDown = false;
+                canvas.style.cursor = "grab";
                 _this.rebound(app.stage);
             });
 
-            canvas.addEventListener("mousemove", (event) => {
+            canvas.addEventListener("pointermove", (event) => {
                 if (mouseDown) {
                     _this.pan(event, app.stage);
                 }
@@ -153,39 +156,6 @@ class GlobalMap {
 
         // Creating room name text object, on mouseenter it is added to the room container, on mouseleave it is removed
 
-        this.mapRooms[info["_id"]].roomName = new PIXI.Text(info["name"], {
-            fontFamily: "Roboto",
-            fontSize: 36 * _this.scaleFactor,
-            fill: "white",
-            align: 'center',
-            fontWeight: 'bolder',
-            dropShadow: true,
-            dropShadowBlur: 15
-        });
-        let roomName = this.mapRooms[info["_id"]].roomName;
-        roomName.y = 55 * _this.scaleFactor;
-        roomName.x = -5 * _this.scaleFactor;
-        //roomContainer.addChild(roomName);
-
-        
-        // Creating events
-
-        roomContainer.on('click', () => {
-            socket.connectSocket(() => {
-                socket.exitRoom("map");
-            })
-            if (info['name'] == "Main Gate") {
-                let r = ipcRenderer.send('go-to', 'lobby')
-            } else {
-                openRoomPreview(info);
-            }
-        });
-        roomContainer.on('mouseover', () => {
-            _this.mapRooms[info["_id"]].roomContainer.addChild(_this.mapRooms[info["_id"]].roomName);
-        });
-        roomContainer.on('mouseout', () => {
-            _this.mapRooms[info["_id"]].roomContainer.removeChild(_this.mapRooms[info["_id"]].roomName);
-        });
 
         // Filling up roomObjects container with avatars or roomPin then adding it to main roomContainer
 
@@ -201,7 +171,7 @@ class GlobalMap {
                 let avatar = new Avatar(info['users'][i], userData);
                 this.curUsers[info['users'][i]] = avatar.getFullBody(true, false);
                 let avatarBody = this.curUsers[info['users'][i]];
-                avatarBody.scale.set(0.6 * _this.scaleFactor);
+                avatarBody.scale.set(0.55 * _this.scaleFactor);
                 avatarBody.position.x = (-(info['users'].length-1)/2 + i) * 32 * _this.scaleFactor;
                 avatarBody.position.y = -75 * _this.scaleFactor;
                 roomObjects.addChild(avatarBody);
@@ -212,7 +182,40 @@ class GlobalMap {
 
         roomContainer.addChild(roomObjects);
 
-        console.log(this.curUsers);
+        this.mapRooms[info["_id"]].roomName = new PIXI.Text(info["name"], {
+            fontFamily: "Roboto",
+            fontSize: 36 * _this.scaleFactor,
+            fill: "white",
+            align: 'center',
+            fontWeight: 'bolder',
+            dropShadow: true,
+            dropShadowBlur: 15
+        });
+        let roomName = this.mapRooms[info["_id"]].roomName;
+        roomName.y = 55 * _this.scaleFactor;
+        roomName.x = -(roomName.width / 2 - roomContainer.width / 2) * _this.scaleFactor;
+        //roomContainer.addChild(roomName);
+
+
+        // Creating events
+
+        roomContainer.on('pointertap', () => {
+            
+            
+            ipcRenderer.send('socketEmit', 'ExitRoom', {roomId:"map"});
+
+            if (info['name'] == "Main Gate") {
+                let r = ipcRenderer.send('go-to', 'lobby')
+            } else {
+                openRoomPreview(info);
+            }
+        });
+        roomContainer.on('mouseover', () => {
+            _this.mapRooms[info["_id"]].roomContainer.addChild(_this.mapRooms[info["_id"]].roomName);
+        });
+        roomContainer.on('mouseout', () => {
+            _this.mapRooms[info["_id"]].roomContainer.removeChild(_this.mapRooms[info["_id"]].roomName);
+        });
 
         return roomContainer;
         
@@ -250,6 +253,7 @@ class GlobalMap {
     }
 
     removeUserFromRoom(user, roomID) {
+        console.log('Removing user', user ,' from ', roomID)
         let _this = this;
         rooms.getRooms({ 'open': '' }, (rooms) => {
             _this.rooms = rooms;
@@ -278,8 +282,6 @@ class GlobalMap {
     addRooms(roomList) {
         const _this = this
 
-        console.log(roomList)
-
         let buildingRooms = roomList.sort((a, b) => {
             if (a.mapInfo.layer < b.mapInfo.layer) {
                 return -1
@@ -290,8 +292,6 @@ class GlobalMap {
             }
         }
         )
-
-        console.log(buildingRooms)
 
         let foreground = new PIXI.Container();
         buildingRooms.forEach((room, i) => {

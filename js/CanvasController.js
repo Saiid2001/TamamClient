@@ -148,17 +148,13 @@ class Avatar{
         return bitmojiService.getAvatarImage(this.data, this.gender, 'body');
     }
 
-    getFaceURL(){
-        return bitmojiService.getAvatarImage(this.data, this.gender,'face' )
-    }
-
-    getFace() {
+    getHead() {
         const PIXI = require("pixi.js");
 
         if ( this.cache['full-body'] == undefined ) {
             let sprite = new PIXI.Container()
 
-            let av = PIXI.Sprite.from(this.getFaceURL())
+            let av = PIXI.Sprite.from(this.getHeadUrl())
             av.scale.set(0.8,0.8)
             av.position.x = 0
             av.position.y = 0

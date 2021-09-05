@@ -136,6 +136,56 @@ function acceptFriendRequest(userID, onSuccess, onFail = () => { }) {
     })
 }
 
+function searchUsers(searchQuery, onSuccess, onFail = () => { }) {
+
+    let paramString = `?search=${encodeURIComponent(searchQuery)}`;
+
+    let token = ipcRenderer.sendSync('get-access-token');
+    $.ajax({
+        type: 'GET',
+        method: 'GET',
+        url: SERVER_ADDRESS + "/users/search-users" + paramString,
+        headers: { 'Authorization': "Bearer " + token },
+        success: function (message, status, data) {
+            onSuccess(data.responseJSON);
+
+        },
+        error: function (message, status, data) {
+            //onAssessmentLoaded();
+            console.log(message);
+            onFail();
+        }
+    });
+function getMutualFriends(otherUser, onSuccess, onFail = () => { }) {
+    let token = ipcRenderer.sendSync('get-access-token');
+
+    $.ajax({
+        type: 'GET',
+        method: 'GET',
+        url: SERVER_ADDRESS + "/relations/friendships/mutuals/" + otherUser,
+        headers: { 'Authorization': "Bearer " + token },
+        success: function (message, status, data) {
+            console.log(message)
+            onSuccess(data.responseJSON)
+        }
+    })
+}
+
+function getLastInteraction(otherUser, onSuccess, onFail = () => { }) {
+    let token = ipcRenderer.sendSync('get-access-token');
+
+    $.ajax({
+        type: 'GET',
+        method: 'GET',
+        url: SERVER_ADDRESS + "/relations/interactions/last/" + otherUser,
+        headers: { 'Authorization': "Bearer " + token },
+        success: function (message, status, data) {
+            console.log(message)
+            onSuccess(data.responseJSON)
+        }
+    })
+}
+
 module.exports = {
     getUserData,
     getAllUsers,
@@ -143,5 +193,8 @@ module.exports = {
     getIncomingFriendRequests,
     getOutgoingFriendRequests,
     sendFriendRequest,
-    acceptFriendRequest
+    acceptFriendRequest,
+    searchUsers
+    getMutualFriends,
+    getLastInteraction
 }

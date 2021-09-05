@@ -30,7 +30,6 @@ const UserHoverView = {
 
     },
     _checkOutMouse(e){
-        console.log('click to out')
         var container = document.querySelector('#user-hover-view')
         var x = container.getBoundingClientRect().x;
         var y = container.getBoundingClientRect().y;
@@ -45,20 +44,29 @@ const UserHoverView = {
         user
     ){
 
-        if(user.id == myUser.id) return;
+        //if(user.id == myUser.id) return;
         var container = document.getElementById('user-hover-view')
 
         container.style.top = position.y+"px";
         container.style.left = position.x+"px";
 
         UserHoverView._fillBasicInfo(user)
+        userService.getMutualFriends(user.id,UserHoverView._fillFriendsInfo)
+        userService.getLastInteraction(user.id, UserHoverView._fillInteractionInfo)
 
         container.removeAttribute('hidden')
         UserHoverView.isVisible =true;
         setTimeout(
             ()=>{window.addEventListener('click', UserHoverView._checkOutMouse)}
-            ,200)
+            , 200)
 
+        container.querySelector('.cta').addEventListener('click', () => {
+            UserHoverView.sendRequest(user);
+        })
+
+        container.querySelector('.cta').addEventListener('click', ()=>{
+            UserHoverView.sendRequest(user)
+        })
 
     },
     hide: function (
@@ -75,7 +83,7 @@ const UserHoverView = {
         var container = document.getElementById('user-hover-view')
         container.querySelector('.firstName').innerHTML = data.firstName;
         container.querySelector('.lastName').innerHTML = data.lastName;
-        container.querySelector('.profileImage img').src = data.avatar.getFaceURL();
+        container.querySelector('.profileImage img').src = data.avatar.getHeadUrl();
 
         let major = UserHoverView.MAJORS[data.major]
         let standing = UserHoverView.STANDINGS[(new Date()).getFullYear() - data.enrollY]
@@ -87,9 +95,75 @@ const UserHoverView = {
 
 
     },
-    _fillFriendsInfo: function (data){},
+    _fillFriendsInfo: function (data){
+
+        var container = document.getElementById('user-hover-view')
+        container.querySelector('[data-section="friends"]').innerHTML = ''
+        function _addFriendBtn(friendData, hidden= false){
+            let template = `
+                <div class="profileImage round">
+                    <img src="${(new User(friendData)).avatar.getFaceURL()}" alt="" >
+                </div>
+                <small>${friendData.firstName}</small>
+                <div class="online"></div>
+            `;
+
+            let obj = document.createElement('div')
+            obj.className='bubble user-bubble'
+            obj.innerHTML = template
+
+            if(hidden){
+                obj.setAttribute('hidden','')
+            }
+            container.querySelector('[data-section="friends"]').appendChild(obj)
+        }
+        let num = 0;
+        data.forEach(friend => {
+
+            if(num<5){
+                _addFriendBtn(friend)
+            }else{
+                _addFriendBtn(friend, true)
+            }
+            num++;
+        });
+
+        container.querySelector('[data-section="friends"] button').onclick = toggleViewMore
+
+        var viewMore = false
+        function toggleViewMore(){
+            viewMore = !viewMore
+
+            if(viewMore){
+                container.querySelectorAll('[data-section="friends"] .user-bubble').forEach(elem=>elem.removeAttribute('hidden'))
+            }else{
+
+
+                container.querySelectorAll('[data-section="friends"] .user-bubble').forEach((elem,i)=>{
+                    if(i>=5){
+                        elem.setAttribute('hidden','')
+                    }
+                })
+            }
+        }
+
+        //summary
+        container.querySelector('[data-section="friends"] .summary em').innerHTML = data.length()? data.length(): "No";
+    },
     _fillInterestsInfo: function (data){},
-    _fillInteractionInfo: function (data){},
+    _fillInteractionInfo: function (data){
+       
+        var row = document.getElementById('user-hover-view [data-section="interaction"]')
+        if(!('date' in data)){
+            row.setAttribute('hidden',"")
+            return;
+        }
+        row.removeAttribute('hidden')
+        var container = document.getElementById('user-hover-view')
+            container.querySelector('[data-section="interaction"] em').innerHTML= data.date
+            container.querySelector('[data-section="interaction"] a').innerHTML= data.room.name
+            
+    },
 
 
     startHover(user){
@@ -175,8 +249,11 @@ const UserHoverView = {
     },
      
 
-    sendRequest: function(){
+    sendRequest: function(user){
         //add the script here to send request
+        userService.sendFriendRequest(user.id, () => {
+            console.log("sent request");
+        })
 
         var container = document.getElementById('user-hover-view')
         container.querySelector('.cta').setAttribute('hidden', '')

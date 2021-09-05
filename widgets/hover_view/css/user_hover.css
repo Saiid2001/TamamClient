@@ -44,6 +44,13 @@
     background-color: var(--main-blue);
 }
 
+#user-hover-view .profileImage img {
+    height: 2.7rem;
+    width: auto;
+    margin: auto;
+    display: block;
+}
+
 #user-hover-view .nameGroup{
     margin-left: 1rem;
 }

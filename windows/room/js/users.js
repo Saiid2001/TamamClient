@@ -1,3 +1,5 @@
+const { ipcRenderer } = require("electron");
+const { groupD8 } = require("pixi.js");
 
 
 
@@ -13,7 +15,6 @@ class User {
         this.major = config.major;
         this.enrollY = config.enrollY;
         this.gradY = config.gradY;
-        console.log("config:", config)
 
         var _this = this
 
@@ -43,8 +44,7 @@ class MyUser extends User {
     
     addToGroup(group) {
         super.addToGroup(group)
-        socket.enterGroup(group.id, error => { console.log(error) })
-
+        ipcRenderer.send('socketEmit','EnterGroup', {groupId: group.id})
         //console.log(0+group.users.length)
         //activating the meeting
 
@@ -61,8 +61,7 @@ class MyUser extends User {
 
     removeFromGroup() {
         super.removeFromGroup()
-        socket.exitGroup(this.group, error => { console.log(error)})
-
+        ipcRenderer.send('socketEmit','ExitGroup', {groupId: this.group} )
         // close the meeting interface
         myConversationInterface.close()
 
