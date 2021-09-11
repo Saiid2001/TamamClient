@@ -22,7 +22,7 @@ function createDropdown(searchResult, searchQuery) {
     document.getElementById('search-dropdown').innerHTML = innerHTML;
     for (let i = 0; i < numEntries; ++i) {
         document.getElementById(`entry-${i}`).addEventListener('click', () => {
-            ipcRenderer.send('go-to-room', searchResult[i]['item']['_id'], { 'source': 'search', 'extra-params': searchQuery });
+            ipcRenderer.send('go-to', 'room', { room: searchResult[i]['item']['_id'], 'return-data': { 'source': 'search', 'extra-params': searchQuery } });
         });
     }
 }
@@ -53,7 +53,7 @@ function instantSearch() {
 function fullSearch() {
     let searchQuery = document.getElementById("search-query").value;
     console.log(searchQuery);
-    ipcRenderer.send('go-to-roommap', 'search', searchQuery);
+    ipcRenderer.send('go-to', 'roomMap', { source: 'search', 'extra-params': searchQuery });
 }
 
 document.getElementById('search-query').addEventListener('input', instantSearch);

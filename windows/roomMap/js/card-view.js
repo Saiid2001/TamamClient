@@ -45,7 +45,7 @@ function openRoomPreview(room){
     var goBtn = roomPreview.querySelector('button')
 
     goBtn.onclick = ()=>{
-        let r = ipcRenderer.send('go-to-room', room['_id'], urlData)
+        let r = ipcRenderer.send('go-to', 'room', { room: room['_id'], 'return-data': urlData })
     }
 
     roomPreview.classList.add('visible')

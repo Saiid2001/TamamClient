@@ -44,7 +44,7 @@ let pages = {
     'settings':{
         'path':'windows/settings/settings.html',
         
-        'required':[]
+        'required':['window', 'return-data']
     }
 }
 
@@ -188,15 +188,15 @@ async function createChatWindow(data){
 ipcMain.on('goTo', (event, pageKey) => {
     event.returnValue = rootPath+'\\'+pages[pageKey]['path']
 })
-ipcMain.on('go-to', (event, pageKey) => {
-    goTo(pageKey)
+ipcMain.on('go-to', (event, pageKey, args) => {
+    goTo(pageKey, args)
 })
-ipcMain.on('go-to-roommap', (event, source, extraParams) => {
-    goTo('roomMap', { source: source, 'extra-params': extraParams });
-})
-ipcMain.on('go-to-room', (event, roomId, returnData) => {
-    goTo('room', { room: roomId, 'return-data': returnData })
-})
+//ipcMain.on('go-to-roommap', (event, source, extraParams) => {
+//    goTo('roomMap', { source: source, 'extra-params': extraParams });
+//})
+//ipcMain.on('go-to-room', (event, roomId, returnData) => {
+//    goTo('room', { room: roomId, 'return-data': returnData })
+//})
 ipcMain.on('request-call', (event, userID) => {
 
     app.emit('request-call', userID)
