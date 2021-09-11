@@ -510,6 +510,7 @@ class Room {
         for (var group of Object.keys(this.objects)) {
 
             for (var obj of this.objects[group]) {
+                console.log('obj', obj)
                 var user = obj.findUser(userId);
                 if (user) {
                     return user;
