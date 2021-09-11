@@ -4,6 +4,7 @@ let canvasController
 const { logout } = require('../../services/auth-service')
 const { getUserData } = require('../../services/user-service')
 const rooms = require('../../services/room-service')
+const bitmoji_service = require('../../services/bitmoji-service')
 
 const $ = require('jquery');
 
@@ -186,6 +187,20 @@ document.addEventListener('DOMContentLoaded', () => {
         })
 
         ipcRenderer.send('socketConnection');
+
+        getUserData(myUser=>{
+            $("#profile-preview h2").html(myUser.firstName+" "+myUser.lastName)
+            document.querySelector('#profile-preview img').src = bitmoji_service.getAvatarImage(
+                myUser.avatar,
+                myUser.gender,
+                'head'
+            )
+            // document.querySelector('#profile-preview').addEventListener('click', ()=>{
+            //     //ipcRenderer.send('go-to-roommap',urlData.source, urlData['extra-params'] )
+            //     ipcRenderer.send('go-to', 'settings' )
+            // })
+    
+        })
 
     })
 

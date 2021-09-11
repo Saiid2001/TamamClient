@@ -1,10 +1,13 @@
 body{
     background:white;
+    display: grid;
+    grid-template-rows: min-content auto;
+    width: 100%;
 }
 
 .view{
     position: relative;
-    height: 90%;
+    overflow: hidden;
 }
 
 .room-head{
@@ -34,6 +37,7 @@ body{
 }
 canvas{
     width:100%;
+    overflow: hidden;
 }
 
 .conversation embed {

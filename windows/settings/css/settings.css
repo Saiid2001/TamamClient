@@ -6,7 +6,6 @@ body{
 
 }
 .head{
-    padding-top: 0.5rem;
     position: fixed;
     width: 100%;
 }
@@ -88,6 +87,8 @@ main{
     margin:1rem;
     font-size: 0.8rem;
     height: 0.9rem;
+    cursor: default;
+    margin-left: 1.5rem;
 }
 #sidebar .back img{
     height: 0.9rem;

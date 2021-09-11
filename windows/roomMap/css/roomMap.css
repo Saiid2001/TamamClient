@@ -1,9 +1,10 @@
-
+body{
+    display: grid;
+    grid-template-rows: min-content auto;
+}
 .view {
     overflow-y: scroll;
     overflow-x: hidden;
-    margin-top: 10px;
-    height: 100%;
     position: relative;
 }
 
@@ -11,44 +12,15 @@
     display: block;
     overflow: hidden;
     transition: 1s;
-    height: 0;
 }
 
-#profile-preview{
-    position: fixed;
-    z-index: 20;
-    top:0;
-    right:0;
-    padding: 2rem 1rem;
-    padding-bottom: 0;
-    display: flex;
-    flex-direction: row;
-    cursor: pointer;
-    -webkit-backdrop-filter: drop-shadow(0,1,1);
-}
 
-#profile-preview h2{
-    font-weight: normal;
-    font-size: 1rem;
-}
-.round{
-    width: 2.5rem;
-    height: 2.5rem;
-    border-radius: 50%;
-    text-align: center;
-    overflow: hidden;
-    background-color: black;
-}
-.round img{
-    height: 90%;
-}
 .default {
     position: relative;
     background-image: linear-gradient(180deg, rgba(0, 130, 170, 0.01) 0%, rgba(0, 180, 148, 0.37) 100%), url('../assets/Bliss_bldg.png');
     background-position: center;
     height: 350px;
     background-position-y: bottom;
-    display: none;
 }
 
 .default .buildingimg {
@@ -155,7 +127,6 @@
 
 .cardview {
     position: relative;
-    display: none;
     margin-top: 10px;
 }
 
@@ -252,9 +223,9 @@
 
 #display-topbar {
     position: absolute;
-    right: 35px;
+    right: 0px;
     top: 0%;
-    background: white;
+    background: transparent;
     border-radius: 0 0 10px 10px;
     width: 60px;
     height: 60px;
@@ -271,10 +242,19 @@
     width: auto;
 }
 
+#display-topbar .off{
+    display: none;
+}
+
+#display-topbar.closed .off{
+    display: block;
+}
+#display-topbar.closed .on{
+    display: none;
+}
+
 #display-topbar:hover {
-    height: 80px !important;
-    transition: height 0.2s;
-    cursor: pointer;
+    cursor: default;
 }
 
 .room-card-overlay{

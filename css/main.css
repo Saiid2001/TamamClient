@@ -23,10 +23,13 @@ button{
 .head{
     position: relative;
     color:white;
-    margin:5px;
-    height: 20px;
+    min-height: 20px;
     -webkit-app-region: drag;
     z-index:10;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
 }
 
 .head .logo {
@@ -35,27 +38,99 @@ button{
 }
 
 .head .window-control {
-    float: right;
+    
     align-items: center;
-    padding: 3px 10px;
+    padding: 0px 10px;
+    padding-right: 0;
     z-index: 10;
+    box-sizing: border-box;
     -webkit-app-region: no-drag;
+    display:flex;
+    flex-direction: row;
 }
 .head .window-control button {
    margin:0;
    padding:0;
-   background:none;
+   background-color: transparent;
    border:none;
    outline:none;
-   margin:0px 3px;
-   opacity: 0.6;
+   margin:0px 0px;
+   width: 2.5rem;
+   height: 2.5rem;
+   
+   transition: background-color 0.2s;
 }
+.head.dark .window-control button:hover {
+    background-color: rgba(143, 143, 143, 0.123);
+    transition: background-color 0.2s;
+}
+
 .head .window-control button:hover {
-    opacity:1;
-    transition: opacity 0.5s;
+    background-color: rgba(255, 255, 255, 0.123);
+    transition: background-color 0.2s;
+}
+
+.head .window-control #close-window:hover {
+    background-color: rgba(255, 55, 55, 0.795);
+    transition: background-color 0.2s;
+}
+
+.head.dark  #close-window .hoverimage {
+    display: none;
+}
+.head.dark  #close-window:hover .hoverimage {
+    display: inline;
+}
+.head.dark  #close-window:hover img:not(.hoverimage) {
+    display: none;
 }
 .head .window-control img{
     width:20px;
+}
+
+#profile-preview{
+    
+    display: inline-flex;
+    flex-direction: row;
+    align-items: center;
+    padding:0.3rem 0.2rem;
+    margin-right: 0.5rem;
+    -webkit-backdrop-filter: drop-shadow(0,1,1);
+    background-blend-mode: exclusion;
+    transition: background-color 0.2s;
+    cursor:default;
+    
+}
+
+#profile-preview:hover{
+    background-color: rgba(255, 255, 255, 0.123);
+    transition: background-color 0.2s;
+}
+
+.head.dark #profile-preview:hover{
+    background-color: rgba(143, 143, 143, 0.123);
+}
+
+#profile-preview h2{
+    font-weight: normal;
+    font-size: 0.8rem;
+    margin:0;
+    padding: 0 1rem
+}
+.head.dark #profile-preview h2{
+    color:gray;
+}
+.round{
+    width: 1.7rem;
+    height: 1.7rem;
+    border-radius: 50%;
+    text-align: center;
+    overflow: hidden;
+    background-color: black;
+    vertical-align: middle;
+}
+.round img{
+    height: 90%;
 }
 
 .view{

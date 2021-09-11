@@ -25,11 +25,16 @@ const friendsBar = {
 
         let friendsbar = this.friendsBar; // Dirty, but functional for now
         function openSidebar() {
-            friendsbar.style.width = "370px";
+            console.log('opening')
+            friendsbar.style.height = "90%";
             let view = document.querySelector('.view');
-            view.addEventListener('click', () => {
-                if (event.pageX < view.getBoundingClientRect().width - 370) {
-                    friendsbar.style.width = "0%";
+            view.addEventListener('click', (event) => {
+                
+                if (event.pageY < view.getBoundingClientRect().height - _this.friendsBar.getBoundingClientRect().height && 
+                _this.friendsBar.getBoundingClientRect().height>=view.getBoundingClientRect().height /10 ||
+                event.pageX> 370
+                ) {
+                    friendsbar.style.height = "0%";
                     view.removeEventListener('click', openSidebar);
                 }
             })
@@ -38,7 +43,7 @@ const friendsBar = {
         this.friendsBtn.addEventListener('click', openSidebar);
 
         this.closeBtn.addEventListener('click', () => {
-            _this.friendsBar.style.width = "0%";
+            _this.friendsBar.style.height = "0%";
         })
 
         this.initializeLists();

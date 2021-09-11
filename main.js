@@ -78,12 +78,14 @@ async function createMainWindow() {
         }
     })
 
+    mainWindow.setAspectRatio(screenSize.width/screenSize.height)
+
     //Create a new handler for the mainWindow
-    mainWindowHandler = new aspect(mainWindow);
+    //mainWindowHandler = new aspect(mainWindow);
 
     //define the ratio
     
-    mainWindowHandler.setRatio(screenSize.width, screenSize.height, 10);
+    //mainWindowHandler.setRatio(screenSize.width, screenSize.height, 10);
 
 
     

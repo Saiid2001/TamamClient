@@ -88,6 +88,7 @@ function initializeRecommended(urlData) {
     let topbar = document.querySelector(".recommended");
     let topbarButton = document.getElementById("display-topbar");
     let campusMap = document.getElementById("map");
+    let view = document.querySelector('.view');
 
 
     function createRoomsOnSearch(searchbar) {
@@ -101,13 +102,13 @@ function initializeRecommended(urlData) {
 
     mainsearchbtn.addEventListener('click', () => {
         mainSearchContainer.style.display = "none";
-        cardviewContainer.style.display = "block";
+        cardviewContainer.style.display = "";
         createRoomsOnSearch(mainsearchbar);
     });
 
     mainsearchbar.addEventListener('search', () => {
         mainSearchContainer.style.display = "none";
-        cardviewContainer.style.display = "block";
+        cardviewContainer.style.display = "";
         createRoomsOnSearch(mainsearchbar);
     });
 
@@ -115,7 +116,7 @@ function initializeRecommended(urlData) {
 
     document.querySelector(".cardview .buildingimg").addEventListener('click', () => {
         cardviewContainer.style.display = "none";
-        mainSearchContainer.style.display = "block";
+        mainSearchContainer.style.display = "";
     })
 
     subsearchbtn.addEventListener('click', () => {
@@ -127,16 +128,57 @@ function initializeRecommended(urlData) {
     });
 
     function closeTopbar() {
-        topbarButton.style.height = "60px";
-        topbar.style.height = "0";
-        campusMap.removeEventListener("click", closeTopbar);
+        topbarButton.classList.add('closed')
+        //campusMap.removeEventListener("click", closeTopbar);
+        topbarButton.addEventListener("click", openTopbar)
+        topbarButton.removeEventListener("click", closeTopbar)
+        mainSearchContainer.parentElement.scrollIntoView({ behavior: 'smooth' })
+    }
+    function openTopbar() {
+        topbarButton.classList.remove('closed');
+        topbarButton.addEventListener("click", closeTopbar)
+        topbarButton.removeEventListener("click", openTopbar)
+        campusMap.scrollIntoView({ behavior: 'smooth'})
     }
 
-    topbarButton.addEventListener("click", () => {
-        topbarButton.style.height = "0%";
-        topbar.style.height = "auto";
-        campusMap.addEventListener("click", closeTopbar);
-    })
+
+    topbarButton.addEventListener("click", closeTopbar)
+    campusMap.scrollIntoView()
+    openTopbar()
+
+    let last_known_scroll_position = 0;
+    let ticking = false;
+    let campus_full_screen = true;
+
+    function onScroll(scroll_pos) {
+    // Do something with the scroll position
+    if(!campus_full_screen && last_known_scroll_position<=0){ 
+        topbarButton.classList.remove('closed');
+        topbarButton.addEventListener("click", closeTopbar)
+        topbarButton.removeEventListener("click", openTopbar)
+        campus_full_screen = true
+    }
+    else if(campus_full_screen && last_known_scroll_position>0){
+        topbarButton.classList.add('closed');
+        topbarButton.removeEventListener("click", closeTopbar)
+        topbarButton.addEventListener("click", openTopbar)
+        campus_full_screen = false
+    }
+
+    }
+
+    view.addEventListener('scroll', function(e) {
+    last_known_scroll_position = campusMap.getBoundingClientRect().y - view.getBoundingClientRect().y;
+
+    if (!ticking) {
+        window.requestAnimationFrame(function() {
+        onScroll(last_known_scroll_position);
+        ticking = false;
+        });
+
+        ticking = true;
+    }
+    });
 
 
     // Display either search view or cards view based on urlData
@@ -145,17 +187,17 @@ function initializeRecommended(urlData) {
 
         if (urlData["source"] == 'recommendation') {
 
-            cardviewContainer.style.display = "block";
+            mainSearchContainer.style.display = "none";
             showRooms(document.querySelector('.recommended'), rooms, labelContainer, `Recommended Rooms`);
 
         } else if (urlData["source"] == 'search') {
 
-            cardviewContainer.style.display = "block";
+            mainSearchContainer.style.display = "block";
             showRooms(document.querySelector('.recommended'), searchRooms(rooms, urlData['extra-params']), labelContainer, `Search results for "${urlData['extra-params']}"`)
 
-        } else if (urlData["source"] == 'default') {
+        } else {
 
-            mainSearchContainer.style.display = "block";
+            cardviewContainer.style.display = "none";
 
         }
     })

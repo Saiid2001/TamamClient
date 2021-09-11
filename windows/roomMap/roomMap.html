@@ -14,21 +14,23 @@
 <body>
     <div class="head">
         <img class="logo" src="../../assets/img/logo.svg" />
+        
         <div class="window-control">
-            <button id="min-window"><img src="../../assets/img/minimize-dark.svg" /></button>
-            <button id="max-window"><img src="../../assets/img/maximize-dark.svg" /></button>
-            <button id="close-window"><img src="../../assets/img/close-dark.svg" /></button>
+            <div id="profile-preview">
+                <div class="bubble">
+                    <div class="round">
+                        <img src="" alt="" >
+                    </div>
+                </div>
+                <h2></h2>
+            </div>
+            <button id="min-window"><img src="../../assets/img/minimize.svg" /></button>
+            <button id="max-window" ><img src="../../assets/img/maximize.svg" /></button>
+            <button id="close-window" ><img src="../../assets/img/close.svg" /></button>
         </div>
     </div>
     <div class="view">
-        <div id="profile-preview">
-            <div class="bubble">
-                <div class="round">
-                    <img src="" alt="" >
-                </div>
-            </div>
-            <h2></h2>
-        </div>
+        
         <div class="recommended">
             <div class="default">
                 <img class="buildingimg" src="./assets/building_icon.svg" />
@@ -56,7 +58,8 @@
                     <h1>Campus Map</h1>
                 </div>
                 <div id="display-topbar">
-                    <img src="./assets/building_icon_green.svg" />
+                    <img class='on' src="./assets/fullscreen_exit.svg" />
+                    <img class='off' src="./assets/fullscreen.svg" />
                 </div>
                 <div id="zoom">
                     <img id="zoom-in" src="./assets/zoom_in.svg" />
