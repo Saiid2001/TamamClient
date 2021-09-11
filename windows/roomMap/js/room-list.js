@@ -77,18 +77,23 @@ function searchRooms(rooms, searchQuery) {
 }
 
 function initializeRecommended(urlData) {
+    let view = document.querySelector('.view');
+
+    let topbar = document.querySelector(".topbar");
+    let topbarButton = document.getElementById("display-topbar");
+
+    let mainSearchContainer = document.querySelector(".default");
     let mainsearchbtn = document.querySelector(".default .search .searchbtn");
     let mainsearchbar = document.querySelector(".default .search input");
-    let subsearchbar = document.querySelector(".cardview .search input");
-    let subsearchbtn = document.querySelector(".cardview .search img");
-    let mainSearchContainer = document.querySelector(".default");
+
     let cardviewContainer = document.querySelector(".cardview");
     let cardviewLabelContainer = document.querySelector(".cardview .label");
+    let subsearchbar = document.querySelector(".cardview .search input");
+    let subsearchbtn = document.querySelector(".cardview .search img");
     let cardsContainer = document.querySelector(".cards");
-    let topbar = document.querySelector(".recommended");
-    let topbarButton = document.getElementById("display-topbar");
+
     let campusMap = document.getElementById("map");
-    let view = document.querySelector('.view');
+
 
 
     function createRoomsOnSearch(searchbar) {
@@ -132,7 +137,7 @@ function initializeRecommended(urlData) {
         //campusMap.removeEventListener("click", closeTopbar);
         topbarButton.addEventListener("click", openTopbar)
         topbarButton.removeEventListener("click", closeTopbar)
-        mainSearchContainer.parentElement.scrollIntoView({ behavior: 'smooth' })
+        topbar.scrollIntoView({ behavior: 'smooth' })
     }
     function openTopbar() {
         topbarButton.classList.remove('closed');
@@ -188,16 +193,19 @@ function initializeRecommended(urlData) {
         if (urlData["source"] == 'recommendation') {
 
             mainSearchContainer.style.display = "none";
-            showRooms(document.querySelector('.recommended'), rooms, labelContainer, `Recommended Rooms`);
+            cardviewContainer.style.display = "block";
+            showRooms(cardsContainer, rooms, cardviewLabelContainer, `Recommended Rooms`);
 
         } else if (urlData["source"] == 'search') {
 
-            mainSearchContainer.style.display = "block";
-            showRooms(document.querySelector('.recommended'), searchRooms(rooms, urlData['extra-params']), labelContainer, `Search results for "${urlData['extra-params']}"`)
+            mainSearchContainer.style.display = "none";
+            cardviewContainer.style.display = "block";
+            showRooms(cardsContainer, searchRooms(rooms, urlData['extra-params']), cardviewLabelContainer, `Search results for "${urlData['extra-params']}"`)
 
         } else {
 
             cardviewContainer.style.display = "none";
+            mainSearchContainer.style.display = "block";
 
         }
     })

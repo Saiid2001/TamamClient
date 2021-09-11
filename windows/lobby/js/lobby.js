@@ -21,7 +21,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     let mapButton = document.getElementById('map');
     mapButton.addEventListener('click', () => {
-        ipcRenderer.send('go-to-roommap', 'default', '');
+        ipcRenderer.send('go-to', 'roomMap', { source: 'default', 'extra-params': '' });
     });
 
     function onRoom(roomId) {

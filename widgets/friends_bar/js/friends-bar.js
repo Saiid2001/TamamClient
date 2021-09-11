@@ -119,7 +119,7 @@ const friendsBar = {
         location?.addEventListener("click", () => {
             _this.userService.getAllUsers((users) => {
                 if (users[0]["room"] != "NONE" && users[0]["room"] != "map") {
-                    ipcRenderer.send('go-to-room', users[0]["room"], { 'source': 'default', 'extraParams': '' });
+                    ipcRenderer.send('go-to', 'room', { room: users[0]["room"], 'return-data': { 'source': 'default', 'extraParams': '' }});
                 } else {
                     console.log("User not in valid room.")
                 }

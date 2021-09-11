@@ -8,7 +8,7 @@ body{
     position: relative;
 }
 
-.recommended {
+.topbar {
     display: block;
     overflow: hidden;
     transition: 1s;

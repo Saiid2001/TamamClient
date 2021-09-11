@@ -88,7 +88,7 @@ document.addEventListener('DOMContentLoaded', () => {
         )
         document.querySelector('#profile-preview').addEventListener('click', ()=>{
             //ipcRenderer.send('go-to-roommap',urlData.source, urlData['extra-params'] )
-            ipcRenderer.send('go-to', 'settings' )
+            ipcRenderer.send('go-to', 'settings', { window: 'roomMap', 'return-data': urlData } )
         })
 
     })
