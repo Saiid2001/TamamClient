@@ -195,10 +195,10 @@ document.addEventListener('DOMContentLoaded', () => {
                 myUser.gender,
                 'head'
             )
-            // document.querySelector('#profile-preview').addEventListener('click', ()=>{
-            //     //ipcRenderer.send('go-to-roommap',urlData.source, urlData['extra-params'] )
-            //     ipcRenderer.send('go-to', 'settings' )
-            // })
+             document.querySelector('#profile-preview').addEventListener('click', ()=>{
+                 //ipcRenderer.send('go-to-roommap',urlData.source, urlData['extra-params'] )
+                 ipcRenderer.send('go-to', 'settings', { window: 'room', 'return-data': urlData } )
+             })
     
         })
 
