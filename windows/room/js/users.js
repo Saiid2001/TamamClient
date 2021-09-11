@@ -35,6 +35,9 @@ class User {
     }
 
     removeFromGroup() {
+
+        if(this.group == myUser.group && this.g)
+
         this.group = "NONE"
     }
 }
@@ -60,10 +63,11 @@ class MyUser extends User {
     }
 
     removeFromGroup() {
-        super.removeFromGroup()
+        
         ipcRenderer.send('socketEmit','ExitGroup', {groupId: this.group} )
         // close the meeting interface
         myConversationInterface.close()
+        this.group = "NONE"
 
         this.onOut();
         

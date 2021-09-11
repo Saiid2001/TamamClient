@@ -64,9 +64,6 @@ const UserHoverView = {
             UserHoverView.sendRequest(user);
         })
 
-        container.querySelector('.cta').addEventListener('click', ()=>{
-            UserHoverView.sendRequest(user)
-        })
 
     },
     hide: function (
@@ -92,13 +89,19 @@ const UserHoverView = {
         container.querySelector('.major').innerHTML = major;
         container.querySelector('.standing').innerHTML = standing;
         container.querySelector('.major-summary').innerHTML = standing+ " in "+major;
-
-
     },
     _fillFriendsInfo: function (data){
-
         var container = document.getElementById('user-hover-view')
-        container.querySelector('[data-section="friends"]').innerHTML = ''
+        if(data.length == 0){
+            container.querySelector('[data-section="friends"] .bubbles').innerHTML = `No mutual friends`;
+            container.querySelector('[data-section="friends"] .summary em').innerHTML = 'No';
+            return;
+        }
+        container.querySelector('[data-section="friends"] .bubbles').innerHTML = `<button class="bubble round">
+        ...
+    </button>`;
+
+        
         function _addFriendBtn(friendData, hidden= false){
             let template = `
                 <div class="profileImage round">
@@ -129,7 +132,7 @@ const UserHoverView = {
         });
 
         container.querySelector('[data-section="friends"] button').onclick = toggleViewMore
-
+        
         var viewMore = false
         function toggleViewMore(){
             viewMore = !viewMore
@@ -148,19 +151,19 @@ const UserHoverView = {
         }
 
         //summary
-        container.querySelector('[data-section="friends"] .summary em').innerHTML = data.length()? data.length(): "No";
+        container.querySelector('[data-section="friends"] .summary em').innerHTML = data.length;
     },
     _fillInterestsInfo: function (data){},
     _fillInteractionInfo: function (data){
        
-        var row = document.getElementById('user-hover-view [data-section="interaction"]')
+        var row = document.querySelector('#user-hover-view [data-section="interaction"]')
         if(!('date' in data)){
             row.setAttribute('hidden',"")
             return;
         }
         row.removeAttribute('hidden')
         var container = document.getElementById('user-hover-view')
-            container.querySelector('[data-section="interaction"] em').innerHTML= data.date
+            container.querySelector('[data-section="interaction"] em').innerHTML= fuzzyDuration(data.secondsSinceToday)
             container.querySelector('[data-section="interaction"] a').innerHTML= data.room.name
             
     },
@@ -260,6 +263,34 @@ const UserHoverView = {
     }
 
 
+
+
+
+}
+
+function fuzzyDuration(secs){
+
+    if(secs<60)
+        return "Now"
+    if(secs<60*60)
+        return Math.floor(secs/60) + " minutes ago"
+    if(secs<60*60*24)
+        return Math.floor(secs/60/60) + ' hours ago'
+    if(secs<60*60*24*7)
+    {
+        let days= Math.floor(secs/(60*60*24))
+        if(days ==1)
+            return 'yesterday'
+        return days+ " days ago"
+    }
+        
+    if(secs<60*60*24*7*4)
+        return Math.floor(secs/(60*60*24*7))+ " weeks ago"
+    if(secs<60*60*24*7*4*12)
+        return Math.floor(secs/(60*60*24*7*4))+ " months ago"
+
+    return Math.floor(secs/(60*60*24*7*4*12))+ " years ago"
+    
 
 
 

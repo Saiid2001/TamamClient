@@ -18,6 +18,9 @@ body {
     margin:0px;
     right:0px;
 
+    display: flex;
+    justify-content: center;
+
 }
     .control button {
         border: none;
@@ -28,6 +31,9 @@ body {
         box-shadow: black 0px 0px 50px -20px;
         cursor: pointer;
         transform: scale(0.7);
+        display: flex;
+        justify-content: center;
+        align-items: center;
     }
 
 .leave{
