@@ -28,10 +28,7 @@ function resetSocketListeners(){
 }
 function connectSocket(onSuccess) {
     const token = getToken();
-    
-    
-
-    if(!socket){
+    if(!socket || !(socket.connected)){
 
     console.log('Connecting socket ')
     
