@@ -75,13 +75,13 @@ button{
     transition: background-color 0.2s;
 }
 
-.head.dark  #close-window .hoverimage {
+.head  #close-window .hoverimage {
     display: none;
 }
-.head.dark  #close-window:hover .hoverimage {
+.head #close-window:hover .hoverimage {
     display: inline;
 }
-.head.dark  #close-window:hover img:not(.hoverimage) {
+.head #close-window:hover img:not(.hoverimage) {
     display: none;
 }
 .head .window-control img{

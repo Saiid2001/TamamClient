@@ -36,7 +36,7 @@ function waveToGroup( group, onSuccess = ()=>{}){
 }
 
 
-
+const OFFSETY = 100;
 
 
 class Static{
@@ -57,7 +57,7 @@ class Static{
     }
 
     build(scene) {
-        this.pixi.group.position.set(this.position.x, this.position.y)
+        this.pixi.group.position.set(this.position.x, this.position.y + OFFSETY)
         this.pixi.group.addChild(this.pixi.sprite)
         scene.scene.addChild(this.pixi.group)
         
@@ -79,7 +79,7 @@ class Group {
     build(scene) {
 
         var _this = this;
-        this.pixi.group.position.set(this.position.x, this.position.y)
+        this.pixi.group.position.set(this.position.x, this.position.y+ OFFSETY)
 
         //interactivity
         this.pixi.group.interactive = true

@@ -11,8 +11,12 @@
     <link rel="stylesheet" href="../../widgets/friends_bar/css/friends-bar.css" />
 </head>
 <body>
-    <div class="head dark">
-        <img class="logo" src="../../assets/img/logo-dark.svg" />
+    <div class="head">
+        <div class='left'>
+            <button id="exit-room"><img src="../../assets/img/map.png" /></button>
+            <h1 id="room-title"></h1>
+        </div>
+        
         <div class="window-control">
             <div id="profile-preview">
                 <div class="bubble">
@@ -22,19 +26,19 @@
                 </div>
                 <h2></h2>
             </div>
-            <button id="min-window"><img src="../../assets/img/minimize-dark.svg" /></button>
-            <button id="max-window"><img src="../../assets/img/maximize-dark.svg" /></button>
-            <button id="close-window"><img src="../../assets/img/close-dark.svg" /><img class="hoverimage" src="../../assets/img/close.svg" /></button>
+            <button id="min-window"><img src="../../assets/img/minimize.svg" /></button>
+            <button id="max-window"><img src="../../assets/img/maximize.svg" /></button>
+            <button id="close-window"><img src="../../assets/img/close.svg" /><img class="hoverimage" src="../../assets/img/close.svg" /></button>
         </div>
     </div>
     <div class="view">
         <div class="room-head">
-            <h1 id="room-title"></h1>
+            
 
         </div>
 
         <div class="room"></div>
-        <button id="exit-room"><img src="../../assets/img/map.png" /></button>
+        
     </div>
 
     <div class="conversation" id="call" hidden>

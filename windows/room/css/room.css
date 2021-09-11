@@ -1,8 +1,15 @@
 body{
     background:white;
-    display: grid;
-    grid-template-rows: min-content auto;
+    display: block;
     width: 100%;
+}
+
+.head{
+    position: absolute;
+    width: 100%;
+    z-index: 100;
+    background: linear-gradient(180deg, rgba(0, 0, 0, 0.47) 0%, rgba(55, 55, 55, 0) 100%);
+
 }
 
 .view{
@@ -17,18 +24,17 @@ body{
     text-align:center;
 }
 #room-title{
-    color: var(--main-blue);
+    color: white;
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    display: inline;
-    font-size: 22px;
-    margin:0px auto;
+    font-size: 20px;
+    padding-left: 1rem;
 }
 
 #exit-room, #exit-room img{
     background: none;
     position: absolute;
-    top: 0px;
-    right: 0;
+    top: 1rem;
+    left: 0;
     height: 40px;
     vertical-align: middle;
     float: right;

@@ -381,9 +381,25 @@ body{
 }
 
 .room-card-overlay{
-    display: none;
+    height: 0;
+    
+    backdrop-filter: blur(0px);
+    transition: height 0s 0.1s, backdrop-filter 0.1s ;
+    overflow: hidden;
+}
+
+.room-card-overlay:not(.visible)>div{
+    transform: translateY(150%);
+    transition: transform 0.1s ease;
+}
+.room-card-overlay.visible>div{
+    transform: translateY(0%);
+    transition: transform 0.1s ease;
 }
 
 .room-card-overlay.visible{
-    display: block;
+    height:100%;
+    
+    backdrop-filter: blur(3px);
+    transition: height 0s 0s , backdrop-filter 0.1s ;
 }
