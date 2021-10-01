@@ -1,5 +1,6 @@
 const { proxy } = require('jquery');
 const userService = require('../../services/user-service')
+const scheduleService = require('../../services/schedule-service')
 
 const UserHoverView = {
 
@@ -22,7 +23,12 @@ const UserHoverView = {
         var container = document.querySelector('#user-hover-view')
 
         document.querySelector('#user-hover-view footer').addEventListener('click', ()=>{
+            window.removeEventListener('click', UserHoverView._checkOutMouse)
             container.classList.toggle('compact')
+            setTimeout(
+                ()=>{window.addEventListener('click', UserHoverView._checkOutMouse)}
+                , 200)
+
         })
 
         window.addEventListener('mousemove', UserHoverView._trackMouseMovement)
@@ -35,6 +41,7 @@ const UserHoverView = {
         var y = container.getBoundingClientRect().y;
         var w = container.getBoundingClientRect().width;
         var h = container.getBoundingClientRect().height;
+        console.log(w,h)
         if(UserHoverView.isVisible && (e.clientX<= x ||e.clientX>= x+w) || (e.clientY<=y || e.clientY>=y+h)){
             UserHoverView.hide();
         }
@@ -51,8 +58,17 @@ const UserHoverView = {
         container.style.left = position.x+"px";
 
         UserHoverView._fillBasicInfo(user)
+
         userService.getMutualFriends(user.id,UserHoverView._fillFriendsInfo)
+        
         userService.getLastInteraction(user.id, UserHoverView._fillInteractionInfo)
+
+        scheduleService.getCommonCourses(user.id, (courses)=>{
+            UserHoverView._fillInterestsInfo({
+                'courses':courses,
+                'clubs':[]
+            })
+        })
 
         container.removeAttribute('hidden')
         UserHoverView.isVisible =true;
@@ -105,7 +121,7 @@ const UserHoverView = {
         function _addFriendBtn(friendData, hidden= false){
             let template = `
                 <div class="profileImage round">
-                    <img src="${(new User(friendData)).avatar.getFaceURL()}" alt="" >
+                    <img src="${(new User(friendData)).avatar.getHeadUrl()}" alt="" >
                 </div>
                 <small>${friendData.firstName}</small>
                 <div class="online"></div>
@@ -118,17 +134,15 @@ const UserHoverView = {
             if(hidden){
                 obj.setAttribute('hidden','')
             }
-            container.querySelector('[data-section="friends"]').appendChild(obj)
+            container.querySelector('[data-section="friends"] .bubbles').insertBefore(obj , container.querySelector('[data-section="friends"] .bubbles').children[0])
         }
-        let num = 0;
-        data.forEach(friend => {
+        data.forEach((friend,i) => {
 
-            if(num<5){
+            if(i<4){
                 _addFriendBtn(friend)
             }else{
                 _addFriendBtn(friend, true)
             }
-            num++;
         });
 
         container.querySelector('[data-section="friends"] button').onclick = toggleViewMore
@@ -143,7 +157,7 @@ const UserHoverView = {
 
 
                 container.querySelectorAll('[data-section="friends"] .user-bubble').forEach((elem,i)=>{
-                    if(i>=5){
+                    if(i>=4){
                         elem.setAttribute('hidden','')
                     }
                 })
@@ -153,7 +167,81 @@ const UserHoverView = {
         //summary
         container.querySelector('[data-section="friends"] .summary em').innerHTML = data.length;
     },
-    _fillInterestsInfo: function (data){},
+    _fillInterestsInfo: function (data){
+
+        var container = document.querySelector('#user-hover-view [data-section="interests"] ')
+        if(data.courses.length == 0 && data.clubs.length == 0){
+            container.querySelector('.bubbles').innerHTML = `No mutual interests`;
+            container.querySelector('.summary em').innerHTML = 'No';
+            return;
+        }
+        container.querySelector('.bubbles').innerHTML = `<button class="bubble round">
+        ...
+    </button>`;
+        function _addInterestBtn(actData,isCourse, hidden= false){
+            
+            let template = `
+                <div class="round">
+                    <img src="${isCourse?"../../assets/img/book.png":"../../assets/img/grade.png"}" alt="" >
+                </div>
+                <small>${actData.name}</small>
+            `;
+
+            let obj = document.createElement('div')
+            obj.className=isCourse?'bubble course-bubble':"bubble activity-bubble"
+            obj.innerHTML = template
+
+            if(hidden){
+                obj.setAttribute('hidden','')
+            }
+            container.querySelector('.bubbles').insertBefore(obj , container.querySelector('.bubbles').children[0])
+        }
+
+        let num = 0;
+
+        data.courses.forEach((act,i) => {
+
+            if(num<4){
+                _addInterestBtn(act, true)
+            }else{
+                _addInterestBtn(act, true, true)
+            }
+            num+=1;
+        });
+
+        data.clubs.forEach((act,i) => {
+
+            if(num<4){
+                _addInterestBtn(act, false)
+            }else{
+                _addInterestBtn(act, false, true)
+            }
+            num+=1;
+        });
+
+        container.querySelector('button').onclick = toggleViewMore
+        
+        var viewMore = false
+        function toggleViewMore(){
+            viewMore = !viewMore
+
+            if(viewMore){
+                container.querySelectorAll('.bubble').forEach(elem=>elem.removeAttribute('hidden'))
+            }else{
+
+
+                container.querySelectorAll('.bubble').forEach((elem,i)=>{
+                    if(i>=4){
+                        elem.setAttribute('hidden','')
+                    }
+                })
+            }
+        }
+
+        //summary
+        container.querySelector('.summary em').innerHTML = data.courses.length +data.clubs.length;
+
+    },
     _fillInteractionInfo: function (data){
        
         var row = document.querySelector('#user-hover-view [data-section="interaction"]')
@@ -261,11 +349,6 @@ const UserHoverView = {
         var container = document.getElementById('user-hover-view')
         container.querySelector('.cta').setAttribute('hidden', '')
     }
-
-
-
-
-
 }
 
 function fuzzyDuration(secs){

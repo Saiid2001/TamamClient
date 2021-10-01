@@ -44,6 +44,11 @@ class User {
 
 
 class MyUser extends User {
+
+    constructor(config){
+        super(config)
+        this.avatar.onClick = ()=>{};
+    }
     
     addToGroup(group) {
         super.addToGroup(group)

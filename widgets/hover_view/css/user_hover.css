@@ -131,11 +131,20 @@
 #user-hover-view .bubbles{
     display: flex;
     flex-direction: row;
-    justify-content: space-between;
+    justify-content:flex-start;
+    overflow-x: scroll;
+    overflow-y: hidden;
 }
 
 #user-hover-view .bubble{
     position: relative;
+    padding-right: 0.2rem;
+    width:  min-content;
+    min-width: 2.7rem;
+}
+
+#user-hover-view .bubble[hidden]{
+    display: none;
 }
 
 #user-hover-view .bubble small{
@@ -174,6 +183,7 @@
 #user-hover-view .course-bubble .round img,#user-hover-view .activity-bubble .round img{
     width: 1.5rem;
     margin: auto;
+    height: auto;
 }
 
 

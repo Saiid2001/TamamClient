@@ -46,7 +46,28 @@ function setUserCourses(crns, onSuccess=()=>{}, onFail = ()=>{}){
     )
 }
 
+function getCommonCourses(user, onSuccess=()=>{}, onFail=()=>{}){
+    let token = ipcRenderer.sendSync('get-access-token');
+    $.ajax(
+        {
+            type: "GET",
+            url: SERVER_ADDRESS+"/courses/common/"+user,
+            headers: { 'Authorization': "Bearer " + token },
+            success: function (msg, status, data) {
+                
+                onSuccess(data.responseJSON)
+                
+            },
+            error: function (msg){
+                console.error(msg)
+                onFail()
+            },
+        }
+    )
+}
+
 module.exports = {
     getUserCourses,
-    setUserCourses
+    setUserCourses,
+    getCommonCourses
 }
