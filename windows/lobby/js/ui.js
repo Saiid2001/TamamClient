@@ -1,23 +1,15 @@
-const { getUserData } = require('../../services/user-service')
 
-let User = null;
-getUserData(user => {
 
-    User = user;
-    populateUserLabels(user)
-    document.dispatchEvent(new Event('user-ready'))
-})
-function populateUserLabels(user) {
-    function greetUser(user) {
-        console.log(user)
-        document.getElementById('header-greeting').innerHTML = `Hello ${user['firstName']}!`
-    }
-    function fillUsername(user) {
-        document.getElementById('username').innerHTML = user['firstName']+" "+user['lastName']
-    }
-    greetUser(user)
-    fillUsername(user)
-}
+
+let mapButton = document.getElementById('map');
+    mapButton.addEventListener('click', () => {
+        ipcRenderer.send('go-to', 'roomMap', { source: 'default', 'extra-params': '' });
+    });
+
+let schedButton = document.getElementById('schedule')
+    schedButton.addEventListener('click', ()=>{
+        ipcRenderer.send('go-to', 'settings', { window: 'lobby', 'return-data': urlData } )
+    })
 
 
 

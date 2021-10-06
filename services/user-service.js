@@ -188,6 +188,51 @@ function getLastInteraction(otherUser, onSuccess, onFail = () => { }) {
     })
 }
 
+function getInteractionRecommendations(onSuccess){
+    let token = ipcRenderer.sendSync('get-access-token');
+
+    $.ajax({
+        type: 'GET',
+        method: 'GET',
+        url: SERVER_ADDRESS + "/relations/interactions/recommendation",
+        headers: { 'Authorization': "Bearer " + token },
+        success: function (message, status, data) {
+            console.log(message)
+            onSuccess(data.responseJSON)
+        }
+    })
+}
+
+function getGroupRecommendations(onSuccess){
+    let token = ipcRenderer.sendSync('get-access-token');
+
+    $.ajax({
+        type: 'GET',
+        method: 'GET',
+        url: SERVER_ADDRESS + "/relations/groups/recommended",
+        headers: { 'Authorization': "Bearer " + token },
+        success: function (message, status, data) {
+            console.log(message)
+            onSuccess(data.responseJSON)
+        }
+    })
+}
+
+function getFriendRecommendations(onSuccess){
+    let token = ipcRenderer.sendSync('get-access-token');
+
+    $.ajax({
+        type: 'GET',
+        method: 'GET',
+        url: SERVER_ADDRESS + "/relations/friendships/recommended",
+        headers: { 'Authorization': "Bearer " + token },
+        success: function (message, status, data) {
+            console.log(message)
+            onSuccess(data.responseJSON)
+        }
+    })
+}
+
 module.exports = {
     getUserData,
     getAllUsers,
@@ -198,5 +243,8 @@ module.exports = {
     acceptFriendRequest,
     searchUsers,
     getMutualFriends,
-    getLastInteraction
+    getLastInteraction,
+    getInteractionRecommendations,
+    getGroupRecommendations,
+    getFriendRecommendations
 }

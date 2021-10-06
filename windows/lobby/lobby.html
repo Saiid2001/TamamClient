@@ -6,92 +6,227 @@
     <title></title>
     <link rel="stylesheet" href="../../css/main.css" />
     <link rel="stylesheet" href="./css/lobby.css" />
+    <link rel="stylesheet" href="../../widgets/friends_bar/css/friends-bar.css" />
     
 </head>
 <body>
-    <div class="head">
-        <img class="logo" src="../../assets/img/logo.svg" />
+    <div class="head dark">
+        <div class='left'>
+            <img class="logo" src="../../assets/img/logo.svg" />
+        </div>
+        
         <div class="window-control">
+            <div id="profile-preview">
+                <div class="bubble">
+                    <div class="round">
+                        <img src="" alt="" >
+                    </div>
+                </div>
+                <h2></h2>
+            </div>
             <button id="min-window"><img src="../../assets/img/minimize-dark.svg" /></button>
             <button id="max-window"><img src="../../assets/img/maximize-dark.svg" /></button>
-            <button id="close-window"><img src="../../assets/img/close-dark.svg" /></button>
+            <button id="close-window"><img src="../../assets/img/close-dark.svg" /><img class='hoverimage' src="../../assets/img/close.svg" /></button>
         </div>
     </div>
     <div class="view">
-        <header>
-            <h1 id="header-greeting"></h1>
-            <div class="search">
-                <img src="../../assets/img/search.png" id="search-btn" height="15px" width="15px" />
-                <input type="search" id="search-query" name="rooms" placeholder="Find Rooms..." />
-                <div class="search-dropdown" id="search-dropdown"></div>
-            </div>
-        </header>
+        
         <div class="lobby">
+            <header>
+                <h1 id="header-greeting">Dashboard</h1>
+                <div class="search">
+                    <img src="../../assets/img/search.png" id="search-btn" height="15px" width="15px" />
+                    <input type="search" id="search-query" name="rooms" placeholder="Search campus ..." />
+                    <div class="search-dropdown" id="search-dropdown"></div>
+                </div>
+            </header>
 
+            <div class="sections">
+                <h1 >Rooms</h1>
+                <section class="room-recommendation">
+                    <div class="room card" data-image = "">
+                        
+                        <img src="../roomMap/assets/Jaffet_bg.png" alt="" class="background">
+                        <div class="content">
+                            <h1>
+                                <svg width="5rem" height="1rem">
+                                <rect width="300" height="100" style="fill:rgba(255, 255, 255, 0.788);stroke-width:0;" />
+                              </svg>
+                            </h1>
+                            <small>
+                                <svg width="2rem" height="0.5rem">
+                                    <rect width="300" height="100" style="fill:rgba(255, 255, 255, 0);stroke-width:0;" />
+                                  </svg>
+                            </small>
+                        </div>
+                        
+                    </div>
+                    <div class="room card">
+                        <img src="../roomMap/assets/Jaffet_bg.png" alt="" class="background">
+                        <div class="content">
+                            <h1>
+                                <svg width="5rem" height="1rem">
+                                <rect width="300" height="100" style="fill:rgba(255, 255, 255, 0.788);stroke-width:0;" />
+                              </svg>
+                            </h1>
+                            <small>
+                                <svg width="2rem" height="0.5rem">
+                                    <rect width="300" height="100" style="fill:rgba(255, 255, 255, 0);stroke-width:0;" />
+                                  </svg>
+                            </small>
+                        </div>
+                    </div>
+                    <div class="room card">
+                        <img src="../roomMap/assets/Jaffet_bg.png" alt="" class="background">
+                        <div class="content">
+                            <h1>
+                                <svg width="5rem" height="1rem">
+                                <rect width="300" height="100" style="fill:rgba(255, 255, 255, 0.788);stroke-width:0;" />
+                              </svg>
+                            </h1>
+                            <small>
+                                <svg width="2rem" height="0.5rem">
+                                    <rect width="300" height="100" style="fill:rgba(255, 255, 255, 0);stroke-width:0;" />
+                                  </svg>
+                            </small>
+                        </div>
+                    </div>
+                    <div class='room card' id='to-map-entry'>
+                        <h1>
+                            View more rooms
+                        </h1>
+                    </div>
+                </section>
+    
+                <h1 >Groups</h1>
+                <section class="group-recommendation">
+                    <div class="large-group card">
+                        <img src="" alt="" class="bg">
+                        <div class="content">
+                            <h1><svg width="10rem" height="1rem">
+                                <rect width="700" height="100" style="fill:rgba(255, 255, 255, 0.788);stroke-width:0;" />
+                              </svg></h1>
+                            <h2><svg width="5rem" height="1rem">
+                                <rect width="300" height="100" style="fill:rgba(255, 255, 255, 0.568);stroke-width:0;" />
+                              </svg></h2>
+                            
+                            <div class="people">
+                            </div>
+                        </div>
+                        
+                    </div>
+                    <div class="small-groups">
+                        <div class="small-group card">
+                            <h1><svg width="10rem" height="1rem">
+                                <rect width="700" height="100" style="fill:rgba(189, 189, 189, 0.788);stroke-width:0;" />
+                              </svg></h1>
+                            <h2><svg width="5rem" height="1rem">
+                                <rect width="700" height="100" style="fill:rgba(189, 189, 189, 0.788);stroke-width:0;" />
+                              </svg></h2>
+                            <div class="people">
+                            </div>
+                        </div>
+                        <div class="small-group card">
+                            <h1><svg width="10rem" height="1rem">
+                                <rect width="700" height="100" style="fill:rgba(189, 189, 189, 0.788);stroke-width:0;" />
+                              </svg></h1>
+                            <h2><svg width="5rem" height="1rem">
+                                <rect width="700" height="100" style="fill:rgba(189, 189, 189, 0.788);stroke-width:0;" />
+                              </svg></h2>
+                            <div class="people">
+                            </div>
+                        </div>
+                        <div class="small-group card" hidden id='to-groups-entry'>
+                            <h1>View more groups</h1>
+                            
+                        </div>
+                    </div>
+                </section>
+                <h1 >People</h1>
+                <section class="friend-recommendation">
+                    <div class="person card">
+                        <img src="../../assets/img/steve.png" alt="">
+                        <small>Karim</small>
+                        <h1>From History Class</h1>
+                    </div>
+                    <div class="person card">
+                        <img src="../../assets/img/steve.png" alt="">
+                        <small>Karim</small>
+                        <h1>From History Class</h1>
+                    </div>
+                    <div class="person card">
+                        <img src="../../assets/img/steve.png" alt="">
+                        <small>Karim</small>
+                        <h1>From History Class</h1>
+                    </div>
+                    <div class="person card">
+                        <img src="../../assets/img/steve.png" alt="">
+                        <small>Karim</small>
+                        <h1>From History Class</h1>
+                    </div>
+                    <div class="person card">
+                        <img src="../../assets/img/steve.png" alt="">
+                        <small>Karim</small>
+                        <h1>From History Class</h1>
+                    </div>
+                    <div class="person card">
+                        <img src="../../assets/img/steve.png" alt="">
+                        <small>Karim</small>
+                        <h1>From History Class</h1>
+                    </div>
+                    <div class="person card">
+                        <img src="../../assets/img/steve.png" alt="">
+                        <small>Karim</small>
+                        <h1>From History Class</h1>
+                    </div>
+                    <div class="person card">
+                        <img src="../../assets/img/steve.png" alt="">
+                        <small>Karim</small>
+                        <h1>From History Class</h1>
+                    </div>
+                </section>
+    
+            </div>
+            
+            
         </div>
         <div class="side-bar">
-            <div class="top-menu">
-                <img class="logo" src="../../assets/img/settings_applications.svg" />
-                <img class="logo" src="../../assets/img/account_box.svg" />
-                <h4 id="username"></h4>
-            </div>
+            
             <section class="catchup">
-                <h3>Catch Up</h3>
+                <h3><img src='./assets/img/friends-label.svg' />Catch Up</h3>
                 <div class="user-container">
                     <div class="user-list">
-                        <div class="user">
-                            <img class="logo" src="../../assets/img/avatar.png" />
-                            <div>Karim</div>
-                        </div>
-                        <div class="user">
-                            <img class="logo" src="../../assets/img/avatar.png" />
-                            <div>Karim</div>
-                        </div>
-                        <div class="user">
-                            <img class="logo" src="../../assets/img/avatar.png" />
-                            <div>Karim</div>
-                        </div>
-                        <div class="user">
-                            <img class="logo" src="../../assets/img/avatar.png" />
-                            <div>Karim</div>
-                        </div>
-                        <div class="user">
-                            <img class="logo" src="../../assets/img/avatar.png" />
-                            <div>Karim</div>
-                        </div>
-                        <div class="user">
-                            <img class="logo" src="../../assets/img/avatar.png" />
-                            <div>Karim</div>
-                        </div>
-
+                        
                     </div>
                 </div>
             </section>
-            <section class="chatArea">
-                <h3>Activity</h3>
-                <div class="chat">
+            <section class="activity">
+                <h3><img src='./assets/img/activity-label.svg' />Activity</h3>
+                <div class="thread black-scrollbar">
 
                 </div>
             </section>
             <footer>
-                <h3>Quick Actions</h3>
-                <img id="schedule" src="assets/img/schedule.svg" />
-                <img id="map" src="assets/img/map.svg" />
+                <h3><img src='./assets/img/action-label.svg' />Quick Actions</h3>
+                <button><img id="schedule" src="assets/img/schedule.svg" /></button>
+                <button><img id="map" src="assets/img/map.svg" /></button>
             </footer>
         </div>
+        <div id="friends-bar-widget"></div>
     </div>
 
     <div class="conversation" id="call" hidden><embed type="text/html" src="../../widgets/conversation/conversation.html"></embed></div>
 
     <script src="../../js/window-control.js"></script>
     <script src="../../js/CanvasController.js"></script>
+    <script src="../../widgets/friends_bar/js/friends-bar.js"></script>
 
-    <script src="js/canvas.js"></script>
+    <!-- <script src="js/canvas.js"></script> -->
     <script src="js/lobby.js"></script>
     <script src="js/ui.js"></script>
     <script src="js/chatbot.js"></script>
     <script src="js/search.js"></script>
-    <script src="../../js/rtc.js"></script>
+    <!-- <script src="../../js/rtc.js"></script> -->
     <script src="../../js/participants.js"></script>
 </body>
 </html>

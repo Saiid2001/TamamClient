@@ -1,4 +1,4 @@
-
+const { setCourseMeetingLink,getCourseMeetingLink } = require("../../services/schedule-service");
 
 class Schedule{
 
@@ -14,7 +14,7 @@ class Schedule{
         '#a9a9a9'
     ]
     
-    static buildView(container, classes){
+    static buildView(container, classes, activeCourse){
 
         var classesContainer = container.querySelector('.classes');
         classesContainer.innerHTML = ""
@@ -22,7 +22,7 @@ class Schedule{
 
         function _addClass(classData, colorIndex){
 
-            function _addBlock(dayIndex, startTime, endTime){
+            function _addBlock(dayIndex, startTime, endTime, sched){
                 let elem = document.createElement('div')
                 elem.className = 'class';
                 elem.id = classData.CRN;
@@ -33,6 +33,9 @@ class Schedule{
 
                 elem.style.left = dayIndex*20+"%";
                 elem.style.backgroundColor = Schedule.COLORS[colorIndex]
+                elem.addEventListener('click', ()=>{
+                    Schedule.showCourseView(classData, sched)
+                })
                 console.log(Schedule.COLORS[colorIndex])
                 
                 //time
@@ -49,7 +52,7 @@ class Schedule{
             for (let i = 0; i < classData.S1_DAYS.length; i++) {
                 
                 if(classData.S1_DAYS[i]){
-                    _addBlock(i, classData.S1_START, classData.S1_END)
+                    _addBlock(i, classData.S1_START, classData.S1_END, 'S1')
                 }
                 
             }
@@ -57,7 +60,7 @@ class Schedule{
             for (let i = 0; i < classData.S2_DAYS.length; i++) {
                 
                 if(classData.S2_DAYS[i]){
-                    _addBlock(i, classData.S2_START, classData.S2_END)
+                    _addBlock(i, classData.S2_START, classData.S2_END, 'S2')
                 }
                 
             }
@@ -67,6 +70,11 @@ class Schedule{
         classes.forEach((classData,i) => {
             _addClass(classData,i)
         });
+
+        Schedule.hideCourseView()
+        if(activeCourse){
+            Schedule.showCourseView(activeCourse, 'S1')
+        }
     }
 
     static fillInputArea(container, classes){
@@ -92,6 +100,58 @@ class Schedule{
         }
 
         submitButton.addEventListener('click', submit)
+    }
+
+    static showCourseView(courseInfo, sched_num){
+        var popup = document.getElementById('course-view')
+        var overlay = popup.parentElement
+
+        overlay.classList.remove('hidden')
+
+        console.log(courseInfo)
+
+        function onHoverIn(){
+            document.removeEventListener('click', Schedule.hideCourseView)
+        }
+        function onHoverOut(){
+            document.addEventListener('click', Schedule.hideCourseView)
+        }
+
+        popup.addEventListener('mouseenter', onHoverIn)
+        popup.addEventListener('mouseleave', onHoverOut)
+
+        popup.querySelector('h1').innerHTML = `${courseInfo.SUBJECT} ${courseInfo.CODE}`;
+        popup.querySelector('.s1').innerHTML = courseInfo[sched_num+"_START"][0].toLocaleString('en-US', {minimumIntegerDigits: 2,useGrouping: false})
+        popup.querySelector('.s2').innerHTML = courseInfo[sched_num+"_START"][1].toLocaleString('en-US', {minimumIntegerDigits: 2,useGrouping: false})
+        popup.querySelector('.s3').innerHTML = courseInfo[sched_num+"_END"][0].toLocaleString('en-US', {minimumIntegerDigits: 2,useGrouping: false})
+        popup.querySelector('.s4').innerHTML = courseInfo[sched_num+"_END"][1].toLocaleString('en-US', {minimumIntegerDigits: 2,useGrouping: false})
+   
+        let meetingLinkTxtBx = popup.querySelector('#meeting-link')
+        meetingLinkTxtBx.removeAttribute('disabled')
+        meetingLinkTxtBx.value=""
+        
+        getCourseMeetingLink(courseInfo.CRN,resp=>{
+            
+            if('link' in resp){
+                meetingLinkTxtBx.value = resp['link']
+            }
+        })
+
+        popup.querySelector('#btn-update-meeting-link').onclick = ()=>{
+            if(meetingLinkTxtBx.value != "")
+                setCourseMeetingLink(courseInfo.CRN, meetingLinkTxtBx.value, ()=>{
+                    meetingLinkTxtBx.setAttribute('disabled','')
+                })
+        }
+    }
+
+    static hideCourseView(){
+        var popup = document.getElementById('course-view')
+        var overlay = popup.parentElement
+
+        overlay.classList.add('hidden')
+
+        document.removeEventListener('click', Schedule.hideCourseView)
     }
     
 }

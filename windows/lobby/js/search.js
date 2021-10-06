@@ -1,5 +1,4 @@
 const { ipcRenderer } = require('electron');
-const rooms = require('../../services/room-service');
 const Fuse = require('fuse.js');
 
 function embolden(str, indexArray) {

@@ -58,6 +58,10 @@ function goTo(pageKey, args) {
         query[arg] = args[arg]
     }
 
+    for (var arg in args){
+        query[arg]= args[arg]
+    }
+
     socketService.resetSocketListeners();
 
     console.log("going to ", pageKey, "with args", args)
@@ -148,7 +152,7 @@ let onSocketConnectCallbacks = []
 function goToDefaultLandingPage(){
     //goTo('roomMap', { source: 'default', 'extra-params': '' });
 
-    onSocketConnectCallbacks.push(()=>{goTo('roomMap',{ source: 'default', 'extra-params': {} })})
+    onSocketConnectCallbacks.push(()=>{goTo('lobby',{  'extra-params': {} })})
 
     socketService.connectSocket(()=>{
         onSocketConnectCallbacks.forEach((callback,i)=>{

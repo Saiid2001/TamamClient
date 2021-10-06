@@ -20,6 +20,12 @@
     margin: 1rem;
     
 }
+
+#friends-bar-widget{
+    height: 0;
+    position: fixed;
+    z-index:100000;
+}
 #friends-bar-btn:hover {
     width: 10rem;
     transition: width 0.2s;
@@ -197,7 +203,7 @@
     left: 10px;
 }
 
-.friend-entry .msg,.location {
+.friend-entry .msg,.friend-entry .location {
     position: absolute;
     bottom: 30%;
     cursor: pointer

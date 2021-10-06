@@ -1,34 +1,51 @@
 body{
     background:white;
+    display: block;
+    width: 100%;
     
 }
-body{
-    border-radius:20px;
+
+.head{
+    position: absolute;
+    width: 100%;
+    z-index: 100;
+    
+
 }
 
 .view {
     display: grid;
-    grid-template-columns: 75% auto;
-    margin-top: -30px;
-    height:calc(100% + 30px);
+    grid-template-columns: auto 20rem;
     grid-template-areas: 'main side';
+    
 }
 .lobby {
-    background-color: lightblue;
+    background-color: var(--main-blue);
+    background-image: url('../assets/img/lobby_bg.png');
+    background-size: cover;
+
+    height: 100%;
+    min-height: 0;
     grid-area: main;
+    position: relative;
+    display: inherit;
 }
 
+.lobby .sections{
+    overflow-y: scroll;
+    height: 100%;
+}
 
 .view header {
-    position: absolute;
-    top: 50px;
-    left: 0px;
-    padding-left: 50px;
+    margin-top: 3rem;
+    padding: 0 1rem;
+    padding-right: 2rem;
     box-sizing: border-box;
-    display: grid;
-    grid-template-columns: auto 300px;
-    align-items: center;
-    width: 75%;
+    display: flex;
+
+    justify-content: space-between;
+
+    width: 100%;
 }
 
 .view header h1 {
@@ -44,7 +61,6 @@ body{
     border: solid white;
     border-radius: 17.5px;
     height:35px;
-    margin-right: 50px;
     padding: 7px;
     box-sizing:border-box;
 }
@@ -95,13 +111,13 @@ body{
     padding:15px;
     display: grid;
     height:calc(95% - 30px);
-    grid-template-rows: 20px 100px auto 100px;
+    grid-template-rows: 100px calc(100% - 200px) 100px;
 }
 
 .side-bar .top-menu h4 {
     font-family: Roboto;
     font-style: normal;
-    font-weight: 300;
+    font-weight: 200;
     font-size: 12px;
     line-height: 14px;
     text-align: right;
@@ -110,10 +126,26 @@ body{
     margin: 0px;
 }
 
-.side-bar footer img {
+.side-bar footer>button {
     position: relative;
     display: inline;
     cursor: pointer;
+    background-color: white;
+    height:2.7rem;
+    width: 2.7rem;
+    box-sizing: border-box;
+    box-shadow: gray 1px 1px 10px -5px;
+    border-radius: 50%;
+    border:none;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    
+}
+
+.side-bar footer>button:hover>img{
+    filter: invert(66%) sepia(79%) saturate(3103%) hue-rotate(170deg) brightness(83%) contrast(105%);
+    transition: filter 0.5s;
 }
 
 
@@ -129,7 +161,15 @@ body{
 }
 
 .side-bar h3{
-    font-size: 16px;
+    font-size: 0.9rem;
+    font-weight: normal;
+    cursor: default;
+}
+
+.side-bar h3 img{
+    vertical-align: middle;
+    margin-right: 0.3rem;
+    height: 1.4rem;
 }
 
 .user-list{
@@ -142,14 +182,23 @@ body{
 .user-list .user{
     width:40px;
     margin:0px 1px;
+    cursor: pointer;
 }
 
 .user-list .user img{
+    height: 80%;
+    padding-top: 2px;
+}
+.user-list .user .avatar{
     height: 40px;
+    width: 40px;
+    background-color: rgb(116, 211, 198);
+    border-radius: 50%;
 }
 .user-list .user div{
     font-size: 8px;
     text-align: center;
+    
 }
 
 .side-bar .chat{
@@ -243,3 +292,321 @@ div #wave .dot:nth-child(3) {
 .conversation embed {
     width: 75%;
 }
+
+.side-bar{
+    min-height: 0;
+}
+.side-bar .activity{
+    min-height: 0;
+    height: 100%;
+
+    display: grid;
+    grid-template-rows: min-content auto;
+    
+}
+.side-bar .activity .thread{
+    overflow: scroll;
+    overflow-x: hidden;
+}
+
+.side-bar .activity .event{
+    display: grid;
+    grid-template-columns: auto auto;
+    grid-template-rows: auto auto;
+    background-color: rgb(240, 240, 240);
+    margin-bottom: 0.4rem;
+    margin-right: 1rem;
+    padding: 1rem 1rem;
+    cursor: default;
+    border-radius: 10px;
+    
+}
+
+.side-bar .activity .event:hover{
+    background-color: rgb(236, 236, 236);
+}
+.side-bar .activity .event h4{
+    margin: 0;
+    font-size: 0.9rem;
+}
+
+.lobby .sections{
+    margin-left: 1rem;
+    margin-right: 1.7rem;
+    padding-top: 2rem;
+}
+
+.lobby .sections>h1{
+    font-weight: 300;
+    font-size: 1.1rem;
+}
+.room-recommendation{
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr 30%;
+    width: 100%;
+    height: 20%;
+    
+}
+
+.lobby .sections .card{
+    padding:0.5rem;
+    background-color: var(--main-green);
+    box-sizing: border-box;
+    border-radius: 0.4rem;
+    cursor: pointer;
+    transition: transform 0.2s;
+    position:relative;
+    overflow: hidden;
+}
+.room-recommendation .room{
+    background-color: var(--main-green);
+    padding:0.5rem;
+    height:100%;
+    box-sizing: border-box;
+    border-radius: 0.4rem;
+    cursor: pointer;
+    transition: transform 0.2s;
+    position:relative;
+    overflow: hidden;
+    margin-right: 0.7rem;
+    --background: url('');
+    
+}
+.room-recommendation .room .background {    
+    content: "";
+    background-image: var(--background);
+    background-size: cover;
+    position: absolute;
+    top: 0px;
+    right: 0px;
+    bottom: 0px;
+    left: 0px;
+    opacity: 0.75;
+    transition:opacity 0.2s;
+    width: 100%;
+}
+.room-recommendation .room .content{
+    position:absolute;
+    top:0;
+    left:0;
+    width: 100%;
+    height: 100%;
+    z-index: 2;
+    padding: 0.5rem;
+    box-sizing: border-box;
+}
+
+.room-recommendation .room:hover .background {    
+    
+    opacity: 0.3;
+    transition:opacity 0.2s;
+}
+.sections .card:hover{
+    transform: scale(1);
+    transition: transform 0.2s;
+}
+.room-recommendation{
+    margin-bottom: 2rem;
+}
+.room-recommendation .room h1{
+    margin:0;
+    font-size: 1rem;
+    position: relative;
+}
+.room-recommendation .room small{
+    margin:0;
+    font-size: 0.7rem;
+    position: absolute;
+    bottom:0;
+    right:0;
+    margin-bottom: 0.5rem;
+    margin-right: 0.5rem;
+    background-color: var(--main-blue);
+    font-weight: bold;
+    padding: 0.2rem;
+    border-radius: 0.3rem;
+}
+
+.room-recommendation #to-map-entry{
+    display: grid;
+    align-items: center;
+    padding: 0 1rem;
+    text-align: center;
+    margin-right: 0;
+    
+}
+
+.room-recommendation #to-map-entry::before {    
+    content: "";
+    background-image: url('../../roomMap/assets/map.jpg');
+    background-size: cover;
+    position: absolute;
+    top: 0px;
+    right: 0px;
+    bottom: 0px;
+    left: 0px;
+    opacity: 0.5;
+}
+
+.group-recommendation{
+    display: grid;
+    grid-template-columns: auto 40%;
+    width: 100%;
+    min-height: 30%;
+    margin-bottom: 2rem;
+}
+
+.group-recommendation .large-group{
+    margin-right: 0.7rem;
+}
+.group-recommendation .bg{
+    position: absolute;
+    top:0;
+    left:0;
+    right:0;
+    bottom:0;
+    width: 100%;
+}
+.group-recommendation .large-group .content{
+    position: absolute;
+    z-index: 2;
+    top:0;
+    left:0;
+    right:0;
+    bottom:0;
+    padding-top:0.5rem;
+    padding-left:0.5rem;
+    background: linear-gradient(180deg, #00836b94 0.6%, #00628300 99.35%);
+}
+.group-recommendation .large-group h1{
+    margin:0;
+    font-size: 1.3rem;
+}
+.group-recommendation .large-group h2{
+    margin:0;
+    font-size: 1rem;
+    font-weight: 300;
+}
+
+.group-recommendation .large-group .people{
+    display: flex;
+    flex-direction: row;
+    position: absolute;
+    bottom:0;
+    right:0;
+    margin-right: 0.5rem;
+    margin-bottom: 0.5rem;
+}
+
+.group-recommendation .large-group .person{
+    display: flex;
+    flex-direction: column;
+    text-align: center;
+    font-size: 0.8rem;
+}
+
+.group-recommendation .large-group .person img{
+    width: 6rem;
+    margin-bottom: 0.3rem;
+}
+
+.group-recommendation .small-groups{
+    display: flex;
+    flex-direction: column;
+    min-height: 100%;
+    justify-content: space-between;
+}
+.group-recommendation .small-group {
+    background-color: white!important;
+    color:black;
+    display: grid;
+    grid-template-columns: auto 60%;
+    grid-template-rows: auto auto;
+    grid-template-areas: "title title" "loc people";
+    min-height: 30%;
+    align-content: flex-start;
+}
+.group-recommendation .small-group h1{
+    font-size: 1rem;
+    margin:0;
+    grid-area: title;
+}
+.group-recommendation .small-group h2{
+    font-size: 0.7rem;
+    margin:0;
+}
+
+.group-recommendation .small-group .people{
+    grid-area:people;
+    display: flex;
+    flex-direction: row-reverse;
+}
+.group-recommendation .small-group .people img{
+    height:2rem;
+}
+.group-recommendation .small-group .people small{
+    display: none;
+}
+.group-recommendation .small-group .person{
+    margin-right: 0.3rem;
+    background-color: rgb(140, 0, 255);
+    width: 2rem;
+    height: 2rem;
+    align-content: center;
+    align-items: center;
+    text-align: center;
+    padding:0.2rem;
+    border-radius: 50%;
+}
+#to-groups-entry{
+    grid-template-columns: 100%;
+    grid-template-rows: 100%;
+    color:var(--main-blue);
+    text-align: left;
+    align-items: center;
+    transition: color 0.2s, background-color 0.2s;
+}
+#to-groups-entry:hover{
+    
+    background-color:var(--main-blue)!important;
+    color:white;
+    transition: color 0.2s, background-color 0.2s;
+}
+
+.friend-recommendation{
+    display: flex;
+    flex-direction: row;
+    width: 100%;
+    overflow: hidden;
+    margin-bottom: 10rem;
+}
+
+.friend-recommendation .card{
+    background:none!important;
+    
+}
+.friend-recommendation #to-friends-entry{
+    flex-grow: 2;
+    
+}
+.friend-recommendation .person img{
+    width: 100%;
+    -webkit-backdrop-filter: drop-shadow(1px,1px,1px);
+}
+.friend-recommendation .person small{
+    text-align: center;
+    width: 100%;
+    display: block;
+    font-size: 0.6rem;
+}
+
+.friend-recommendation .person h1{
+    font-size: 1rem;
+    background-color: var(--main-blue);
+    margin-top:-120%;
+    padding-top: 130%;
+    padding-left: 0.5rem;
+    padding-bottom: 1rem;
+    border-radius: 1rem;
+}
+

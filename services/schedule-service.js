@@ -66,8 +66,78 @@ function getCommonCourses(user, onSuccess=()=>{}, onFail=()=>{}){
     )
 }
 
+function getUpcomingEvents(onSuccess = ()=>{}, onFail= ()=>{}){
+    let token = ipcRenderer.sendSync('get-access-token');
+    $.ajax(
+        {
+            type: "GET",
+            url: SERVER_ADDRESS+"/courses/upcoming",
+            headers: { 'Authorization': "Bearer " + token },
+            success: function (msg, status, data) {
+                
+                onSuccess(data.responseJSON)
+                
+            },
+            error: function (msg){
+                console.error(msg)
+                onFail()
+            },
+        }
+    )
+}
+
+function getCourseMeetingLink(CRN, onSuccess = ()=>{}, onFail= ()=>{}){
+    let token = ipcRenderer.sendSync('get-access-token');
+    $.ajax(
+        {
+            type: "GET",
+            url: SERVER_ADDRESS+"/courses/byCRN/"+CRN+"/link",
+            headers: { 'Authorization': "Bearer " + token },
+            success: function (msg, status, data) {
+                
+                onSuccess(data.responseJSON)
+                
+            },
+            error: function (msg){
+                console.error(msg)
+                onFail()
+            },
+        }
+    )
+}
+
+function setCourseMeetingLink(CRN, link, onSuccess=()=>{}, onFail = ()=>{}){
+    let token = ipcRenderer.sendSync('get-access-token');
+    console.log(link)
+    $.ajax(
+        {
+            type: "POST",
+            url: SERVER_ADDRESS+"/courses/byCRN/"+CRN+"/link",
+            dataType: 'json',
+            contentType: 'application/json',
+            headers: { 'Authorization': "Bearer " + token },
+            success: function (msg, status, data) {
+                
+                onSuccess(data.responseJSON)
+                
+            },
+            error: function (msg){
+                console.error(msg)
+                onFail()
+            },
+ 
+            data: JSON.stringify({
+                "link":link
+            })
+        }
+    )
+}
+
 module.exports = {
     getUserCourses,
     setUserCourses,
-    getCommonCourses
+    getCommonCourses,
+    getUpcomingEvents,
+    getCourseMeetingLink,
+    setCourseMeetingLink
 }

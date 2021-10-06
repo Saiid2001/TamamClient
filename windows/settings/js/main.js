@@ -32,7 +32,8 @@ document.addEventListener('DOMContentLoaded', ()=>{
             (classes)=>{
                 Schedule.buildView(
                     document.getElementById('schedule-view'),
-                    classes
+                    classes,
+                    urlData.course
                 )
                 Schedule.fillInputArea(
                     document.querySelector('#schedule-tab .input-area'),

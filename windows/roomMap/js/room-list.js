@@ -27,8 +27,6 @@ function showRooms(cardsContainer, roomList, labelContainer, label) {
     labelContainer.innerHTML = label;
     cardsContainer.innerHTML = "";
     roomList.forEach((room, i) => {
-
-        
         let box = document.createElement('div')
         box.className = "room";
         box.innerHTML = `<div>
@@ -43,15 +41,13 @@ function showRooms(cardsContainer, roomList, labelContainer, label) {
             }
         } else {
             box.onclick = () => {
-
                 openRoomPreview(room);
-
             }
         }
-        
-
         cardsContainer.appendChild(box)
     })
+
+    labelContainer.scrollIntoView()
 
 }
 

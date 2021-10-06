@@ -39,7 +39,23 @@ function getRooms(query, onSuccess, onFail = () => { }) {
         }
     });
 }
+function getRoomRecommendation(onSuccess, onFail = () => { }) {
+    let token = ipcRenderer.sendSync('get-access-token');
+    $.ajax({
+        type: 'GET',
+        method: 'GET',
+        url: SERVER_ADDRESS + "/history/rooms/recommended",
+        headers: { 'Authorization': "Bearer " + token },
+        success: function (message, status, data) {
+            onSuccess(data.responseJSON)
+        },
+        error: function (message, status, data) {
+            onFail();
+        }
+    });
+}
 module.exports = {
     getRoom,
-    getRooms
+    getRooms,
+    getRoomRecommendation
 }
