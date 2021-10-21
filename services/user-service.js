@@ -5,14 +5,18 @@ const url = require("url");
 const $ = require('jquery')
 const {ipcRenderer}= require('electron');
 
+const settings = require('electron-settings')
+function _getServerAddress(){
 
+    return settings.getSync('SERVER_ADDRESS')
+}
 
 function getUserData(onSuccess, onFail = () => { }) {
     let token = ipcRenderer.sendSync('get-access-token');
     $.ajax({
         type: 'GET',
         method: 'GET',
-        url: SERVER_ADDRESS + "/users/get-user",
+        url: _getServerAddress() + "/users/get-user",
         headers: { 'Authorization':"Bearer " + token },
         success: function (message, status, data) {
             console.log(message)
@@ -40,7 +44,7 @@ function getAllUsers(onSuccess, params = null, onFail = () => { }) {
     $.ajax({
         type: 'GET',
         method: 'GET',
-        url: SERVER_ADDRESS + "/users/get-users" + paramString,
+        url: _getServerAddress() + "/users/get-users" + paramString,
         headers: { 'Authorization': "Bearer " + token },
         success: function (message, status, data) {
             onSuccess(data.responseJSON);
@@ -67,7 +71,7 @@ function getFriends(onSuccess, room = null, onFail = () => { }) {
     $.ajax({
         type: 'GET',
         method: 'GET',
-        url: SERVER_ADDRESS + "/relations/friendships" + paramString,
+        url: _getServerAddress() + "/relations/friendships" + paramString,
         headers: { 'Authorization': "Bearer " + token },
         success: function (message, status, data) {
             console.log(message)
@@ -82,7 +86,7 @@ function getIncomingFriendRequests(onSuccess, onFail = () => { }) {
     $.ajax({
         type: 'GET',
         method: 'GET',
-        url: SERVER_ADDRESS + "/relations/friendships/requests/received",
+        url: _getServerAddress() + "/relations/friendships/requests/received",
         headers: { 'Authorization': "Bearer " + token },
         success: function (message, status, data) {
             console.log(message)
@@ -97,7 +101,7 @@ function getOutgoingFriendRequests(onSuccess, onFail = () => { }) {
     $.ajax({
         type: 'GET',
         method: 'GET',
-        url: SERVER_ADDRESS + "/relations/friendships/requests/sent",
+        url: _getServerAddress() + "/relations/friendships/requests/sent",
         headers: { 'Authorization': "Bearer " + token },
         success: function (message, status, data) {
             console.log(message)
@@ -112,7 +116,7 @@ function sendFriendRequest(userID, onSuccess, onFail = () => { }) {
     $.ajax({
         type: 'GET',
         method: 'GET',
-        url: SERVER_ADDRESS + "/relations/friendships/request/" + userID,
+        url: _getServerAddress() + "/relations/friendships/request/" + userID,
         headers: { 'Authorization': "Bearer " + token },
         success: function (message, status, data) {
             console.log(message)
@@ -127,7 +131,7 @@ function acceptFriendRequest(userID, onSuccess, onFail = () => { }) {
     $.ajax({
         type: 'GET',
         method: 'GET',
-        url: SERVER_ADDRESS + "/relations/friendships/accept/" + userID,
+        url: _getServerAddress() + "/relations/friendships/accept/" + userID,
         headers: { 'Authorization': "Bearer " + token },
         success: function (message, status, data) {
             console.log(message)
@@ -144,7 +148,7 @@ function searchUsers(searchQuery, onSuccess, onFail = () => { }) {
     $.ajax({
         type: 'GET',
         method: 'GET',
-        url: SERVER_ADDRESS + "/users/search-users" + paramString,
+        url: _getServerAddress() + "/users/search-users" + paramString,
         headers: { 'Authorization': "Bearer " + token },
         success: function (message, status, data) {
             onSuccess(data.responseJSON);
@@ -164,7 +168,7 @@ function getMutualFriends(otherUser, onSuccess, onFail = () => { }) {
     $.ajax({
         type: 'GET',
         method: 'GET',
-        url: SERVER_ADDRESS + "/relations/friendships/mutuals/" + otherUser,
+        url: _getServerAddress() + "/relations/friendships/mutuals/" + otherUser,
         headers: { 'Authorization': "Bearer " + token },
         success: function (message, status, data) {
             console.log(message)
@@ -179,7 +183,7 @@ function getLastInteraction(otherUser, onSuccess, onFail = () => { }) {
     $.ajax({
         type: 'GET',
         method: 'GET',
-        url: SERVER_ADDRESS + "/relations/interactions/last/" + otherUser,
+        url: _getServerAddress() + "/relations/interactions/last/" + otherUser,
         headers: { 'Authorization': "Bearer " + token },
         success: function (message, status, data) {
             console.log(message)
@@ -194,7 +198,7 @@ function getInteractionRecommendations(onSuccess){
     $.ajax({
         type: 'GET',
         method: 'GET',
-        url: SERVER_ADDRESS + "/relations/interactions/recommendation",
+        url: _getServerAddress() + "/relations/interactions/recommendation",
         headers: { 'Authorization': "Bearer " + token },
         success: function (message, status, data) {
             console.log(message)
@@ -209,7 +213,7 @@ function getGroupRecommendations(onSuccess){
     $.ajax({
         type: 'GET',
         method: 'GET',
-        url: SERVER_ADDRESS + "/relations/groups/recommended",
+        url: _getServerAddress() + "/relations/groups/recommended",
         headers: { 'Authorization': "Bearer " + token },
         success: function (message, status, data) {
             console.log(message)
@@ -224,7 +228,7 @@ function getFriendRecommendations(onSuccess){
     $.ajax({
         type: 'GET',
         method: 'GET',
-        url: SERVER_ADDRESS + "/relations/friendships/recommended",
+        url: _getServerAddress() + "/relations/friendships/recommended",
         headers: { 'Authorization': "Bearer " + token },
         success: function (message, status, data) {
             console.log(message)

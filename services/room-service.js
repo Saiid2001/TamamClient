@@ -5,14 +5,18 @@ const url = require("url");
 const $ = require('jquery')
 const {ipcRenderer}= require('electron')
 
+const settings = require('electron-settings')
+function _getServerAddress(){
 
+    return settings.getSync('SERVER_ADDRESS')
+}
 
 function getRoom(roomId, onSuccess, onFail = () => { }) {
     let token = ipcRenderer.sendSync('get-access-token');
     $.ajax({
         type: 'GET',
         method: 'GET',
-        url: SERVER_ADDRESS + "/rooms/get-room/"+roomId,
+        url: _getServerAddress() + "/rooms/get-room/"+roomId,
         headers: { 'Authorization':"Bearer " + token },
         success: function (message, status, data) {
             console.log(data)
@@ -28,7 +32,7 @@ function getRooms(query, onSuccess, onFail = () => { }) {
     $.ajax({
         type: 'GET',
         method: 'GET',
-        url: SERVER_ADDRESS + "/rooms/get-rooms",
+        url: _getServerAddress() + "/rooms/get-rooms",
         data: query,
         headers: { 'Authorization': "Bearer " + token },
         success: function (message, status, data) {
@@ -44,7 +48,7 @@ function getRoomRecommendation(onSuccess, onFail = () => { }) {
     $.ajax({
         type: 'GET',
         method: 'GET',
-        url: SERVER_ADDRESS + "/history/rooms/recommended",
+        url: _getServerAddress() + "/history/rooms/recommended",
         headers: { 'Authorization': "Bearer " + token },
         success: function (message, status, data) {
             onSuccess(data.responseJSON)

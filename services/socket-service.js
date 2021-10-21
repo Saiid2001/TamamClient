@@ -2,6 +2,11 @@ const {SERVER_ADDRESS} = require('../config/settings.json')
 const io = require('socket.io-client')
 const { ipcRenderer } = require('electron');
 const { getAccessToken } = require('./auth-service');
+const settings = require('electron-settings')
+function _getServerAddress(){
+
+    return settings.getSync('SERVER_ADDRESS')
+}
 
 var socket = null;
 
@@ -30,9 +35,9 @@ function connectSocket(onSuccess) {
     const token = getToken();
     if(!socket || !(socket.connected)){
 
-    console.log('Connecting socket ')
+    console.log('Connecting socket to ', _getServerAddress())
     
-    socket = io(SERVER_ADDRESS, {
+    socket = io(_getServerAddress(), {
         extraHeaders: {
             Authorization: "Bearer " + token
 

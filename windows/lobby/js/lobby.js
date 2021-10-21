@@ -220,7 +220,7 @@ function fillGroupRecommendationSection(groups){
                 break;
             case 'section':
 
-                title.innerHTML = "Study "+group[i].name+ " in"
+                title.innerHTML = "Study "+groups[i].name+ " in"
                 rooms.getRooms({'_id': groups[i].room}, (rooms)=>{
                     room_name.innerHTML = rooms[0].name
                     if(i == 0)
@@ -231,7 +231,7 @@ function fillGroupRecommendationSection(groups){
                 break;
             case 'course':
 
-                title.innerHTML = "Study "+group[i].name+ " in"
+                title.innerHTML = "Study "+groups[i].name+ " in"
                 rooms.getRooms({'_id': groups[i].room}, (rooms)=>{
                     room_name.innerHTML = rooms[0].name
                     if(i == 0)

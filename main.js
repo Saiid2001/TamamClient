@@ -7,7 +7,15 @@ const authService = require('./services/auth-service');
 const aspect = require('electron-aspectratio')
 const { session } = require('electron');
 const { getAccessToken } = require('./services/auth-service');
-const socketService = require('./services/socket-service')
+const socketService = require('./services/socket-service');
+const SETTINGS = require('./config/settings.json');
+const e_settings = require('electron-settings');
+
+e_settings.setSync('SERVER_ADDRESS', SETTINGS.SERVER_ADDRESS)
+e_settings.setSync('AUTHENTICATE_ADDRESS', SETTINGS.AUTHENTICATE_ADDRESS)
+e_settings.setSync('REFRESH_ADDRESS', SETTINGS.REFRESH_ADDRESS)
+
+console.log(e_settings.getSync())
 
 var chatWindowOpen = false;
 
@@ -91,9 +99,6 @@ async function createMainWindow() {
     
     //mainWindowHandler.setRatio(screenSize.width, screenSize.height, 10);
 
-
-    
-
     try {
         
         await authService.refreshTokens();
@@ -117,7 +122,11 @@ async function createMainWindow() {
 async function createAuthWindow(win) {
 
 
-    ipcMain.on('go-to-ms-login', () => {
+    ipcMain.on('go-to-ms-login', (event, data) => {
+
+        if(data.server){
+            e_settings.setSync('SERVER_ADDRESS', data.server)
+        }
 
         win.loadURL(authService.getAuthenticationURL());
         const { session: { webRequest } } = win.webContents;
@@ -354,6 +363,10 @@ ipcMain.on('socketEmit', (event, event_name, args)=>{
             socketService.enterRoom(args.roomId, users =>{
                 event.reply('EnterRoom', users)
             })
+            break;
+
+        case "LeaveRoom":
+            socketService.exitRoom()
             break;
 
         case "EnterGroup":

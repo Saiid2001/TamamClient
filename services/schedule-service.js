@@ -5,6 +5,12 @@ const url = require("url");
 const $ = require('jquery')
 const {ipcRenderer}= require('electron');
 
+const settings = require('electron-settings')
+function _getServerAddress(){
+
+    return settings.getSync('SERVER_ADDRESS')
+}
+
 function getUserCourses( onSuccess = ()=>{}, onFail=()=>{}){
 
     let token = ipcRenderer.sendSync('get-access-token');
@@ -12,7 +18,7 @@ function getUserCourses( onSuccess = ()=>{}, onFail=()=>{}){
     $.ajax({
         type: 'GET',
         method: 'GET',
-        url: SERVER_ADDRESS + "/courses" ,
+        url: _getServerAddress() + "/courses" ,
         headers: { 'Authorization': "Bearer " + token },
         success: function (message, status, data) {
             onSuccess(data.responseJSON)
@@ -25,7 +31,7 @@ function setUserCourses(crns, onSuccess=()=>{}, onFail = ()=>{}){
     $.ajax(
         {
             type: "POST",
-            url: SERVER_ADDRESS+"/courses/setCRNs",
+            url: _getServerAddress()+"/courses/setCRNs",
             dataType: 'json',
             contentType: 'application/json',
             headers: { 'Authorization': "Bearer " + token },
@@ -51,7 +57,7 @@ function getCommonCourses(user, onSuccess=()=>{}, onFail=()=>{}){
     $.ajax(
         {
             type: "GET",
-            url: SERVER_ADDRESS+"/courses/common/"+user,
+            url: _getServerAddress()+"/courses/common/"+user,
             headers: { 'Authorization': "Bearer " + token },
             success: function (msg, status, data) {
                 
@@ -71,7 +77,7 @@ function getUpcomingEvents(onSuccess = ()=>{}, onFail= ()=>{}){
     $.ajax(
         {
             type: "GET",
-            url: SERVER_ADDRESS+"/courses/upcoming",
+            url: _getServerAddress()+"/courses/upcoming",
             headers: { 'Authorization': "Bearer " + token },
             success: function (msg, status, data) {
                 
@@ -91,7 +97,7 @@ function getCourseMeetingLink(CRN, onSuccess = ()=>{}, onFail= ()=>{}){
     $.ajax(
         {
             type: "GET",
-            url: SERVER_ADDRESS+"/courses/byCRN/"+CRN+"/link",
+            url: _getServerAddress()+"/courses/byCRN/"+CRN+"/link",
             headers: { 'Authorization': "Bearer " + token },
             success: function (msg, status, data) {
                 
@@ -112,7 +118,7 @@ function setCourseMeetingLink(CRN, link, onSuccess=()=>{}, onFail = ()=>{}){
     $.ajax(
         {
             type: "POST",
-            url: SERVER_ADDRESS+"/courses/byCRN/"+CRN+"/link",
+            url: _getServerAddress()+"/courses/byCRN/"+CRN+"/link",
             dataType: 'json',
             contentType: 'application/json',
             headers: { 'Authorization': "Bearer " + token },

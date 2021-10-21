@@ -52,6 +52,22 @@ body{
         margin:0;
     }
 
+    .login-container .login{
+        display: flex  ;
+        flex-direction: column;
+        color: black;
+    }
+
+    .login-container .login label{
+        text-align: left;
+        font-size: 1rem;
+        margin-bottom: 0.5rem;
+    }
+
+    .login-container .login input{
+        margin-bottom: 1rem;
+    }
+
     .login-container .login button {
         background: #FBFBFB;
         border-radius: 4px;

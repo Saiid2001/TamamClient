@@ -181,7 +181,8 @@ document.addEventListener('DOMContentLoaded', () => {
             document.getElementById('room-title').innerHTML = roomData['name']
             document.getElementById('exit-room').onclick = () => {
              myConversationInterface.close()
-                let r = ipcRenderer.send('go-to', 'roomMap', { source: urlData['return-data']['source'], 'extra-params': urlData['return-data']['extra-params'] })
+             ipcRenderer.send('socketEmit', 'LeaveRoom', {"roomId": roomId})
+             let r = ipcRenderer.send('go-to', 'roomMap', { source: urlData['return-data']['source'], 'extra-params': urlData['return-data']['extra-params'] })
             }
             
         })

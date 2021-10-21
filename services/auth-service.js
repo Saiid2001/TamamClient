@@ -15,6 +15,14 @@ const keytarService = "electron-openid-oauth";
 const keytarAccessService = 'electron-access-token';
 const keytarAccount = os.userInfo().username;
 
+const settings = require('electron-settings')
+function _getServerAddress(){
+
+    return settings.getSync('SERVER_ADDRESS')
+}
+
+
+
 let accessToken = null;
 let profile = null;
 let refreshToken = null;
@@ -28,7 +36,8 @@ function getProfile() {
 }
 
 function getAuthenticationURL() {
-    return (SERVER_ADDRESS + AUTHENTICATE_ADDRESS);
+    
+    return (_getServerAddress() + AUTHENTICATE_ADDRESS);
 }
 
 async function refreshTokens() {
@@ -43,7 +52,7 @@ async function refreshTokens() {
         console.log('refresh')
         const refreshOptions = {
             method: "POST",
-            url: SERVER_ADDRESS+REFRESH_ADDRESS,
+            url: _getServerAddress()+REFRESH_ADDRESS,
             headers: {
                 'Authorization': ' Bearer ' + refreshToken,
                 'Content-Type': 'Application/json'
@@ -143,7 +152,7 @@ function sendPersonalInfo(data, onSuccess= ()=>{}, onFail = ()=>{}){
     $.ajax(
         {
             type: "POST",
-            url: SERVER_ADDRESS+"/authenticate/request-signup",
+            url: _getServerAddress()+"/authenticate/request-signup",
             dataType: "json",
             success: function (msg, status, data) {
                 
@@ -164,7 +173,7 @@ function finalizeSignup(data, onSuccess= ()=>{}, onFail = ()=>{}){
     $.ajax(
         {
             type: "POST",
-            url: SERVER_ADDRESS+"/authenticate/finalize-signup",
+            url: _getServerAddress()+"/authenticate/finalize-signup",
             dataType: "json",
             contentType: 'application/json',
             success: function (msg, status, data) {
@@ -185,7 +194,7 @@ function getUserStatus(userId, onSuccess, onFail = () => { }) {
     $.ajax({
         type: 'GET',
         method: 'GET',
-        url: SERVER_ADDRESS + "/users/get-user-status/"+userId,
+        url: _getServerAddress() + "/users/get-user-status/"+userId,
         success: function (message, status, data) {
             console.log(data)
             onSuccess(data.responseJSON)
